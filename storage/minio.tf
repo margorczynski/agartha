@@ -4,10 +4,6 @@ resource "helm_release" "minio_operator" {
   repository = "https://operator.min.io"
   chart      = "operator"
 
-  values = [
-    file("${path.module}/files/minio-operator-values.yaml")
-  ]
-
   set {
     name =  "console.env[0].name"
     value = "OPERATOR_SUBPATH"
@@ -25,9 +21,15 @@ resource "helm_release" "minio_tenant" {
   repository = "https://operator.min.io"
   chart      = "tenant"
 
-  values = [
-    file("${path.module}/files/minio-tenant-values.yaml")
-  ]
+  set {
+    name =  "tenant.name"
+    value = local.tenant_name
+  }
+
+  set {
+    name =  "tenant.certificate.requestAutoCert"
+    value = "false"
+  }
 
   #
   # Console subpath settings

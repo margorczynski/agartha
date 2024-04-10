@@ -43,7 +43,7 @@ resource "kubernetes_ingress_v1" "storage_ingress_tenant_console" {
             path_type = "Prefix"
             backend {
               service {
-                name = "minio-tenant-console"
+                name = "${local.tenant_name}-console"
                 port {
                   number = 9090
                 }
