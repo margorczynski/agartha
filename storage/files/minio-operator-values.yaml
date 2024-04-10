@@ -201,7 +201,7 @@ console:
   ###
   # An array of environment variables to pass to the Operator Console deployment.
   # Pass an empty array to start Operator Console with defaults.
-  env: [ ]
+    env: []
   ###
   #
   # An array of Kubernetes secrets to use for pulling images from a private ``image.repository``.

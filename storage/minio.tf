@@ -7,6 +7,16 @@ resource "helm_release" "minio_operator" {
   values = [
     file("${path.module}/files/minio-operator-values.yaml")
   ]
+
+  set {
+    name =  "console.env[0].name"
+    value = "OPERATOR_SUBPATH"
+  }
+
+    set {
+    name =  "console.env[0].value"
+    value = local.operator_console_path
+  }
 }
 
 resource "helm_release" "minio_tenant" {
