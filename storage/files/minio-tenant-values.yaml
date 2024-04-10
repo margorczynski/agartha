@@ -260,7 +260,7 @@ tenant:
     externalCertSecret: [ ]
     ###
     # Enable automatic Kubernetes based `certificate generation and signing <https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster>`__
-    requestAutoCert: true
+    requestAutoCert: false
     ###
     # This field is used only when ``requestAutoCert: true``.
     # Use this field to set CommonName for the auto-generated certificate. 

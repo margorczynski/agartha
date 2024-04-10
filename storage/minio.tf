@@ -13,9 +13,9 @@ resource "helm_release" "minio_operator" {
     value = "OPERATOR_SUBPATH"
   }
 
-    set {
+  set {
     name =  "console.env[0].value"
-    value = local.operator_console_path
+    value = "${local.operator_console_path}/"
   }
 }
 
@@ -29,6 +29,22 @@ resource "helm_release" "minio_tenant" {
     file("${path.module}/files/minio-tenant-values.yaml")
   ]
 
+  #
+  # Console subpath settings
+  #
+  set {
+    name =  "tenant.env[0].name"
+    value = "MINIO_BROWSER_REDIRECT_URL"
+  }
+
+  set {
+    name =  "tenant.env[0].value"
+    value = "http://${var.kubernetes_ingress_host}${local.tenant_console_path}"
+  }
+
+  #
+  # Tenant pool resource settings
+  #
   set {
     name =  "tenant.pools[0].servers"
     value = tostring(var.minio_tenant_servers_num)

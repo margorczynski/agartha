@@ -8,6 +8,11 @@ variable "kubernetes_storage_namespace" {
   description = "The Kubernetes namespace to use for storage"
 }
 
+variable "kubernetes_ingress_host" {
+  type        = string
+  description = "The host for the Ingress paths"
+}
+
 variable "kubernetes_ingress_base_path" {
   type        = string
   description = "The base path upon which to build the module Ingress paths"
