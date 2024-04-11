@@ -1,11 +1,6 @@
-variable "kubernetes_config_path" {
-  type        = string
-  description = "The config path for Kubernetes"
-}
-
 variable "kubernetes_storage_namespace" {
   type        = string
-  description = "The Kubernetes namespace to use for storage"
+  description = "The Kubernetes namespace to use for the storage"
 }
 
 variable "kubernetes_ingress_host" {
@@ -16,6 +11,21 @@ variable "kubernetes_ingress_host" {
 variable "kubernetes_ingress_base_path" {
   type        = string
   description = "The base path upon which to build the module Ingress paths"
+}
+
+variable "s3_access_key" {
+  type        = string
+  description = "The S3 access key of the initial user to be created"
+}
+
+variable "s3_secret_key" {
+  type        = string
+  description = "The S3 secret key of the initial user to be created"
+}
+
+variable "s3_warehouse_bucket_name" {
+  type        = string
+  description = "The name of the S3 that will be provisioned for the warehouse"
 }
 
 variable "minio_tenant_servers_num" {

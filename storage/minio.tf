@@ -1,6 +1,6 @@
 resource "helm_release" "minio_operator" {
   namespace  = var.kubernetes_storage_namespace
-  name       = "agartha-minio-operator"
+  name       = "minio-operator"
   repository = "https://operator.min.io"
   chart      = "operator"
 
@@ -17,7 +17,7 @@ resource "helm_release" "minio_operator" {
 
 resource "helm_release" "minio_tenant" {
   namespace  = var.kubernetes_storage_namespace
-  name       = "agartha-minio-tenant"
+  name       = "minio-tenant"
   repository = "https://operator.min.io"
   chart      = "tenant"
 
@@ -31,17 +31,9 @@ resource "helm_release" "minio_tenant" {
     value = "false"
   }
 
-  #
-  # Console subpath settings
-  #
   set {
-    name =  "tenant.env[0].name"
-    value = "MINIO_BROWSER_REDIRECT_URL"
-  }
-
-  set {
-    name =  "tenant.env[0].value"
-    value = "http://${var.kubernetes_ingress_host}${local.tenant_console_path}"
+    name =  "tenant.configuration.name"
+    value = local.tenant_env_secret_name
   }
 
   #
@@ -60,6 +52,14 @@ resource "helm_release" "minio_tenant" {
   set {
     name =  "tenant.pools[0].size"
     value = "${tostring(var.minio_tenant_size_per_volume_gb)}Gi"
+  }
+
+  #
+  # Bucket provisioning
+  #
+  set {
+    name =  "tenant.buckets[0].name"
+    value = "${var.s3_warehouse_bucket_name}"
   }
 
   depends_on = [ helm_release.minio_operator ]

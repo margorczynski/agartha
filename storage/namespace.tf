@@ -1,4 +1,4 @@
-resource "kubernetes_namespace" "agartha_storage_namespace" {
+resource "kubernetes_namespace" "storage_namespace" {
   metadata {
     name = var.kubernetes_storage_namespace
   }
