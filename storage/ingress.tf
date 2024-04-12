@@ -51,3 +51,30 @@ resource "kubernetes_ingress_v1" "ingress_storage_minio_tenant_console" {
 
   depends_on = [ helm_release.minio_tenant ]
 }
+
+resource "kubernetes_ingress_v1" "ingress_storage_minio" {
+   metadata {
+      name      = "ingress-storage-minio"
+      namespace = var.kubernetes_storage_namespace
+   }
+   spec {
+      ingress_class_name = "nginx"
+      rule {
+        host = "minio.${var.kubernetes_ingress_base_host}"
+        http {
+         path {
+           backend {
+             service {
+               name = "minio"
+               port {
+                 number = 80
+               }
+             }
+           }
+        }
+      }
+    }
+  }
+
+  depends_on = [ helm_release.minio_tenant ]
+}

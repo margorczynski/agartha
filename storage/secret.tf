@@ -12,5 +12,3 @@ resource "kubernetes_secret" "minio_tenant_env" {
     
   }
 }
-
-//export MINIO_BROWSER_REDIRECT_URL=http://${var.kubernetes_ingress_host}${local.tenant_console_path}
