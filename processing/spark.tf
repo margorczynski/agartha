@@ -13,4 +13,14 @@ resource "helm_release" "spark_operator" {
     name  = "webhook.enable"
     value = "true"
   }
+
+  set {
+    name  = "sparkUIOptions.ingressAnnotations.kubernetes\\.io/ingress.class"
+    value = "nginx"
+  }
+
+  set {
+    name  = "ingressUrlFormat"
+    value = "spark.agartha.minikubehost.com/{{$appName}}"
+  }
 }

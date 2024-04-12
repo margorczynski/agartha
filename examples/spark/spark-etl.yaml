@@ -1,0 +1,61 @@
+apiVersion: "sparkoperator.k8s.io/v1beta2"
+kind: SparkApplication
+metadata:
+  name: spark-etl
+  namespace: agartha-processing-spark
+spec:
+  type: Python
+  pythonVersion: "3"
+  mode: cluster
+  image: "spark-etl:v1.0.0"
+  imagePullPolicy: IfNotPresent
+  mainApplicationFile: local:///app/main.py
+  sparkVersion: "3.3.2"
+  restartPolicy:
+    type: Never
+  sparkConf:
+    spark.jars.packages: "org.apache.iceberg:iceberg-spark-runtime-3.3_2.12:1.5.0,org.projectnessie.nessie-integrations:nessie-spark-extensions-3.3_2.12:0.79.0"
+    spark.sql.extensions: "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions,org.projectnessie.spark.extensions.NessieSparkSessionExtensions"
+    spark.sql.catalog.agartha.io-impl: "org.apache.iceberg.aws.s3.S3FileIO"
+    spark.sql.catalog.agartha.warehouse: "s3a://agartha-warehouse/"
+    spark.sql.catalog.agartha.s3.endpoint: "http://minio.agartha-storage.svc.cluster.local"
+    spark.sql.catalog.agartha.catalog-impl: "org.apache.iceberg.nessie.NessieCatalog"
+    spark.sql.catalog.agartha.uri: "http://nessie.agartha-catalog.svc.cluster.local:19120/api/v1/"
+    spark.sql.catalog.agartha.authentication.type: "NONE"
+    spark.sql.catalog.agartha.ref: "main"
+    spark.sql.catalog.agartha: "org.apache.iceberg.spark.SparkCatalog"
+  hadoopConf:
+    fs.s3a.access.key: "agartha"
+    fs.s3a.secret.key: "superpass"
+    fs.s3a.endpoint: "http://minio.agartha-storage.svc.cluster.local"
+    fs.s3a.connection.ssl.enabled: "false"
+    fs.s3a.path.style.access: "true"
+    fs.s3a.attempts.maximum: "1"
+    fs.s3a.connection.establish.timeout: "5000"
+    fs.s3a.connection.timeout: "10000"
+  driver:
+    cores: 1
+    memory: "1024m"
+    labels:
+      version: 3.3.2
+    serviceAccount: spark-sa
+    env:
+        -   name: AWS_REGION
+            value: us-east-1
+        -   name: AWS_ACCESS_KEY_ID
+            value: agartha
+        -   name: AWS_SECRET_ACCESS_KEY
+            value: superpass
+  executor:
+    cores: 1
+    instances: 1
+    memory: "1024m"
+    labels:
+      version: 3.3.2
+    env:
+        -   name: AWS_REGION
+            value: us-east-1
+        -   name: AWS_ACCESS_KEY_ID
+            value: agartha
+        -   name: AWS_SECRET_ACCESS_KEY
+            value: superpass
