@@ -8,7 +8,7 @@
 |processing | Processing data (batches and streams) | Spark, Trino, Flink|agartha-processing-[spark/flink/trino]|
 |notebooks| Notebooks for interactive processing | JupyterHub|agartha-notebooks|
 |business_intelligence| Data visualization, dashboards and BI| Superset|agartha-bi|
-|workflows| Workflow management and scheduling| Airflow|agartha-workflows|
+|orchestration| Workflow management and scheduling| Airflow|agartha-orchestration|
 |monitoring| Logging, monitoring and alerts |Grafana, Prometheus|agartha-monitoring-[grafana/prometheus]|
 |identity| Identity and access management |Keycloak| agartha-identity|
 
@@ -33,6 +33,13 @@
 
 # Deployment and testing
 
+## Post-deployment setup
+
+* MinIO
+    * Enable versioning - can rewind lost data
+    * Enable encryption
+    * Enable replication
+
 ## Testing with Minikube
 
 ### Prerequisites
@@ -43,6 +50,7 @@
 ### Start minikube
 
 ```
+minikube delete
 minikube config set cpus 8
 minikube config set memory 16384
 minikube start && minikube addons enable ingress &&  minikube dashboard
