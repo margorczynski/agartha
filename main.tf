@@ -18,20 +18,19 @@ module "agartha_catalog" {
   source = "./catalog"
 
   kubernetes_catalog_namespace = "agartha-catalog"
-  kubernetes_ingress_base_path = "${var.ingress_base_path}/catalog"
+  kubernetes_ingress_base_host = local.agartha_host
 }
 
 module "agartha_processing" {
   source = "./processing"
 
   kubernetes_processing_namespace_base = "agartha-processing"
-  kubernetes_ingress_base_path         = "${var.ingress_base_path}/processing"
-
-  trino_cluster_coordinator_num = 1
-  trino_cluster_worker_num      = 2
+  kubernetes_ingress_base_host         = local.agartha_host
 
   storage_s3_warehouse_location = "s3a://agartha-warehouse/"
   storage_s3_endpoint           = "http://minio.agartha-storage.svc.cluster.local"
   storage_s3_access_key         = "agartha"
   storage_s3_secret_key         = "agartha"
+
+  trino_cluster_worker_num      = 2
 }

@@ -1,9 +1,3 @@
-resource "kubernetes_namespace" "processing_namespace" {
-  metadata {
-    name = var.kubernetes_processing_namespace_base
-  }
-}
-
 resource "kubernetes_namespace" "processing_namespace_spark" {
   metadata {
     name = local.spark_namespace
