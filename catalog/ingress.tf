@@ -6,7 +6,7 @@ resource "kubernetes_ingress_v1" "ingress_catalog_nessie" {
    spec {
       ingress_class_name = "nginx"
       rule {
-        host = "nessie.agartha.com"
+        host = "nessie.${var.kubernetes_ingress_base_host}"
         http {
          path {
            backend {

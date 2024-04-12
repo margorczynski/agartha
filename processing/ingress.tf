@@ -9,8 +9,6 @@ resource "kubernetes_ingress_v1" "ingress_processing_trino" {
         host = "trino.${var.kubernetes_ingress_base_host}"
         http {
          path {
-           path = "/"
-           path_type = "Prefix"
            backend {
              service {
                name = "trino"
