@@ -4,9 +4,9 @@ module "agartha_storage" {
   kubernetes_storage_namespace = "agartha-storage"
   kubernetes_ingress_base_host = local.agartha_host
 
-  s3_warehouse_bucket_name = "agartha"
-  s3_access_key            = "agartha"
-  s3_secret_key            = "agartha"
+  s3_warehouse_bucket_name = local.s3_warehouse_bucket_name
+  s3_access_key            = local.storage_s3_access_key
+  s3_secret_key            = local.storage_s3_secret_key
 
   minio_tenant_servers_num            = 1
   minio_tenant_volumes_per_server_num = 4
@@ -26,10 +26,10 @@ module "agartha_processing" {
   kubernetes_processing_namespace_base = "agartha-processing"
   kubernetes_ingress_base_host         = local.agartha_host
 
-  storage_s3_warehouse_location = "s3a://agartha-warehouse/"
+  storage_s3_warehouse_location = "s3a://${local.s3_warehouse_bucket_name}/"
   storage_s3_endpoint           = "http://minio.agartha-storage.svc.cluster.local"
-  storage_s3_access_key         = "agartha"
-  storage_s3_secret_key         = "agartha"
+  storage_s3_access_key         = local.storage_s3_access_key
+  storage_s3_secret_key         = local.storage_s3_secret_key
 
   trino_cluster_worker_num      = 2
 }
