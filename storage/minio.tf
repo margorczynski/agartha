@@ -3,16 +3,6 @@ resource "helm_release" "minio_operator" {
   name       = "minio-operator"
   repository = "https://operator.min.io"
   chart      = "operator"
-
-  set {
-    name =  "console.env[0].name"
-    value = "OPERATOR_SUBPATH"
-  }
-
-  set {
-    name =  "console.env[0].value"
-    value = "${local.operator_console_path}/"
-  }
 }
 
 resource "helm_release" "minio_tenant" {

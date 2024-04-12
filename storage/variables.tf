@@ -3,14 +3,9 @@ variable "kubernetes_storage_namespace" {
   description = "The Kubernetes namespace to use for the storage"
 }
 
-variable "kubernetes_ingress_host" {
+variable "kubernetes_ingress_base_host" {
   type        = string
-  description = "The host for the Ingress paths"
-}
-
-variable "kubernetes_ingress_base_path" {
-  type        = string
-  description = "The base path upon which to build the module Ingress paths"
+  description = "The base host upon which to build the module Ingress subdomains"
 }
 
 variable "s3_access_key" {

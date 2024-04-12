@@ -1,15 +1,14 @@
-resource "kubernetes_ingress_v1" "storage_ingress_operator_console" {
+resource "kubernetes_ingress_v1" "ingress_storage_minio_operator_console" {
    metadata {
-      name      = "storage-ingress-operator-console"
+      name      = "ingress-storage-minio-operator-console"
       namespace = var.kubernetes_storage_namespace
    }
    spec {
       ingress_class_name = "nginx"
       rule {
+        host = "minio-operator-console.${var.kubernetes_ingress_base_host}"
         http {
          path {
-           path = "${local.operator_console_path}"
-           path_type = "Prefix"
            backend {
              service {
                name = "console"
@@ -26,30 +25,26 @@ resource "kubernetes_ingress_v1" "storage_ingress_operator_console" {
   depends_on = [ helm_release.minio_operator ]
 }
 
-resource "kubernetes_ingress_v1" "storage_ingress_tenant_console" {
+resource "kubernetes_ingress_v1" "ingress_storage_minio_tenant_console" {
    metadata {
-      name      = "storage-ingress-tenant-console"
+      name      = "ingress-storage-minio-tenant-console"
       namespace = var.kubernetes_storage_namespace
-      annotations = {
-        "nginx.ingress.kubernetes.io/rewrite-target" = "/$1"
-      }
    }
    spec {
       ingress_class_name = "nginx"
       rule {
+        host = "minio-tenant-console.${var.kubernetes_ingress_base_host}"
         http {
-          path {
-            path = "${local.tenant_console_path}/(.*)"
-            path_type = "Prefix"
-            backend {
-              service {
-                name = "${local.tenant_name}-console"
-                port {
-                  number = 9090
-                }
-              }
-            }
-          }
+         path {
+           backend {
+             service {
+               name = "${local.tenant_name}-console"
+               port {
+                 number = 9090
+               }
+             }
+           }
+        }
       }
     }
   }

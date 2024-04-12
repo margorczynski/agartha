@@ -8,8 +8,9 @@ resource "kubernetes_secret" "minio_tenant_env" {
     "config.env" = <<EOH
       export MINIO_ROOT_USER=agartha
       export MINIO_ROOT_PASSWORD=mypassword
-      export MINIO_BROWSER_REDIRECT_URL=http://${var.kubernetes_ingress_host}${local.tenant_console_path}
       EOH
     
   }
 }
+
+//export MINIO_BROWSER_REDIRECT_URL=http://${var.kubernetes_ingress_host}${local.tenant_console_path}

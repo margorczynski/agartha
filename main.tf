@@ -2,8 +2,7 @@ module "agartha_storage" {
   source = "./storage"
 
   kubernetes_storage_namespace = "agartha-storage"
-  kubernetes_ingress_host      = var.ingress_host
-  kubernetes_ingress_base_path = "${var.ingress_base_path}/storage"
+  kubernetes_ingress_base_host = local.agartha_host
 
   s3_warehouse_bucket_name = "agartha"
   s3_access_key            = "agartha"
