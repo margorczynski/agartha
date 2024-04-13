@@ -1,6 +1,6 @@
 resource "kubernetes_ingress_v1" "ingress_catalog_nessie" {
    metadata {
-      name      = "ingress-processing-trino"
+      name      = "ingress-catalog-nessie"
       namespace = var.kubernetes_catalog_namespace
    }
    spec {

@@ -1,0 +1,8 @@
+databases:
+- allow_file_upload: false
+  allow_ctas: false
+  allow_cvas: false
+  database_name: Agartha
+  extra: ""
+  sqlalchemy_uri: trino://agartha@trino.agartha-processing-trino.svc.cluster.local:8080/agartha
+  tables: []

@@ -31,5 +31,15 @@ module "agartha_processing" {
   storage_s3_access_key         = var.storage_s3_access_key
   storage_s3_secret_key         = var.storage_s3_secret_key
 
-  trino_cluster_worker_num      = 2
+  trino_cluster_worker_num = 2
+}
+
+module "business_intelligence" {
+  source = "./business_intelligence"
+
+  kubernetes_bi_namespace      = "agartha-bi"
+  kubernetes_ingress_base_host = local.agartha_host
+
+  superset_node_replica_num   = 1
+  superset_worker_replica_num = 1
 }
