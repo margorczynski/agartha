@@ -11,6 +11,6 @@ resource "helm_release" "flink_operator" {
 
   set {
     name  = "webhook.create"
-    value = "true"
+    value = "false"
   }
 }

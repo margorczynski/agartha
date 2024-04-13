@@ -3,6 +3,7 @@ resource "helm_release" "spark_operator" {
   name       = "spark"
   repository = "https://kubeflow.github.io/spark-operator"
   chart      = "spark-operator"
+  version    = "1.1.27"
 
   set {
     name  = "sparkJobNamespace"

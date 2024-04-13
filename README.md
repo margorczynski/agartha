@@ -72,7 +72,7 @@ This can be done via the following commands:
 AGARTHA_HOST=minikubehost.com
 MINIKUBE_IP=$(minikube ip)
 
-echo minio-operator-console,minio-tenant-console,minio,nessie,trino | \
+echo minio-operator-console,minio-tenant-console,minio,nessie,trino,spark,flink | \
  tr ',' '\n' | \
  xargs -I {} echo ${MINIKUBE_IP} {}.agartha.${AGARTHA_HOST} | \
  sudo tee -a /etc/hosts

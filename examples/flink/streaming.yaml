@@ -1,0 +1,45 @@
+apiVersion: flink.apache.org/v1beta1
+kind: FlinkDeployment
+metadata:
+  name: agartha-streaming
+spec:
+  image: streaming:v1.0.0
+  flinkVersion: v1_18
+  flinkConfiguration:
+    taskmanager.numberOfTaskSlots: "2"
+    state.backend: filesystem
+    s3.impl: org.apache.hadoop.fs.s3a.S3AFileSystem
+    s3.path.style.access: true
+    s3.access-key: "agartha" #your-access-key
+    s3.secret-key: "superpass" #your-secret-key
+    s3.endpoint: "http://minio.agartha.minikubehost.com"
+    containerized.master.env.AWS_ACCESS_KEY: agartha
+    containerized.master.env.AWS_SECRET_KEY: superpass
+    containerized.master.env.AWS_REGION: us-east-1
+    containerized.master.env.AWS_ENDPOINT_URL: agartha
+    containerized.master.env.ENABLE_BUILT_IN_PLUGINS: flink-s3-fs-hadoop-1.18.1.jar
+    containerized.taskmanager.env.AWS_ACCESS_KEY: agartha
+    containerized.taskmanager.env.AWS_SECRET_KEY: superpass
+    containerized.taskmanager.env.AWS_REGION: us-east-1
+    containerized.taskmanager.env.AWS_ENDPOINT_URL: agartha
+    containerized.taskmanager.env.ENABLE_BUILT_IN_PLUGINS: flink-s3-fs-hadoop-1.18.1.jar
+  serviceAccount: flink
+  ingress:
+    template: "flink.agartha.minikubehost.com/{{name}}(/|$)(.*)"
+    className: "nginx"
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: "/$2"
+  jobManager:
+    resource:
+      memory: "2048m"
+      cpu: 1
+  taskManager:
+    resource:
+      memory: "2048m"
+      cpu: 1
+  job:
+    jarURI: local:///opt/flink/opt/flink-python_2.12-1.18.1.jar # Note, this jarURI is actually a placeholder
+    entryClass: "org.apache.flink.client.python.PythonDriver"
+    args: ["-pyclientexec", "/usr/bin/python3", "-py", "/opt/flink/main.py"]
+    parallelism: 1
+    upgradeMode: stateless
