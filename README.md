@@ -1,35 +1,40 @@
 # Agartha
 
-### Terraform/OpenTofu modules, components and k8s namespaces summary
+## Terraform/OpenTofu modules, components and k8s namespaces summary
 |TF Module|Description|Components|Kubernetes Namespace|
 |:-:|:-:|:-:|:-:|
 |storage | Data & metadata storage | MinIO, maybe switch to Garage|agartha-storage|
 |catalog | Data catalog and table metadata | Nessie|agartha-catalog|
 |processing | Processing data (batches and streams) | Spark, Trino, Flink|agartha-processing-[spark/flink/trino]|
 |notebooks| Notebooks for interactive processing | JupyterHub|agartha-notebooks|
-|business_intelligence| Data visualization, dashboards and BI| Superset|agartha-bi|
+|bi| Data visualization, dashboards and BI| Superset|agartha-bi|
 |orchestration| Workflow management and scheduling| Airflow|agartha-orchestration|
 |monitoring| Logging, monitoring and alerts |Grafana, Prometheus|agartha-monitoring-[grafana/prometheus]|
 |identity| Identity and access management |Keycloak| agartha-identity|
 
-### Storage module details
+## Storage
 |Component|Subcomponent|Description|Endpoint|Kubernetes Namespace|
 |:-:|:-:|:-:|:-:|:-:|
 |MinIO|MinIO Operator Console|Operator console of MinIO used for managing and provisioning tenants|minio-operator-console.agartha.*|agartha-storage|
 |MinIO|MinIO Tenant Console|Tenant console of MinIO used for managing the tenant|minio-tenant-console.agartha.*|agartha-storage|
 |MinIO|MinIO Server|Tenant server and S3 endpoint|minio.agartha.*|agartha-storage|
 
-### Catalog module details
+## Catalog
 |Component|Subcomponent|Description|Endpoint|Kubernetes Namespace|
 |:-:|:-:|:-:|:-:|:-:|
 |Nessie||Catalog for metadata tracking|nessie.agartha.*|agartha-catalog|
 
-### Processing module details
+## Processing
 |Component|Subcomponent|Description|Endpoint|Kubernetes Namespace|
 |:-:|:-:|:-:|:-:|:-:|
-|Spark||Batch processing engine|trino.agartha.*|agartha-processing-spark|
-|Flink||Streaming processing engine|trino.agartha.*|agartha-processing-flink|
+|Spark||Batch processing engine|spark.agartha.*/SPARK_APP_NAME|agartha-processing-spark|
+|Flink||Streaming processing engine|flink.agartha.*/FLINK_APP_NAME|agartha-processing-flink|
 |Trino||SQL query engine|trino.agartha.*|agartha-processing-trino|
+
+## BI
+|Component|Subcomponent|Description|Endpoint|Kubernetes Namespace|
+|:-:|:-:|:-:|:-:|:-:|
+|Superset||Data exploration and visualization|superset.agartha.*|agartha-bi|
 
 # Deployment and testing
 
