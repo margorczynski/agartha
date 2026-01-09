@@ -1,4 +1,4 @@
-resource "kubernetes_namespace" "bi_namespace" {
+resource "kubernetes_namespace_v1" "bi_namespace" {
   metadata {
     name = var.kubernetes_bi_namespace
   }

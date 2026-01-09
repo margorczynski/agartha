@@ -14,18 +14,18 @@ resource "helm_release" "trino" {
     })}"
   ]
 
-  set {
-    name =  "server.workers"
-    value = var.trino_cluster_worker_num
-  }
-
-  set {
-    name =  "serviceAccount.create"
-    value = "true"
-  }
-
-  set {
-    name =  "server.workers"
-    value = "trino-sa"
-  }
+  set = [
+    {
+      name  = "server.workers"
+      value = var.trino_cluster_worker_num
+    },
+    {
+      name  = "serviceAccount.create"
+      value = "true"
+    },
+    {
+      name  = "server.workers"
+      value = "trino-sa"
+    }
+  ]
 }

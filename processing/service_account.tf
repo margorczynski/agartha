@@ -1,11 +1,11 @@
-resource "kubernetes_service_account" "spark_sa" {
+resource "kubernetes_service_account_v1" "spark_sa" {
   metadata {
     name      = "spark-sa"
     namespace = local.spark_namespace
   }
 }
 
-resource "kubernetes_cluster_role_binding" "spark_sa_role" {
+resource "kubernetes_cluster_role_binding_v1" "spark_sa_role" {
   metadata {
     name = "spark-sa-role"
   }
