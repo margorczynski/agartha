@@ -4,23 +4,22 @@ resource "helm_release" "nessie" {
   repository = "https://charts.projectnessie.org"
   chart      = "nessie"
 
-set {
-    name =  "serviceAccount.name"
-    value = "nessie-sa"
-  }
-
-  set {
-    name =  "versionStoreType"
-    value = "ROCKSDB"
-  }
-
-  set {
-    name =  "rocksdb.storageClassName"
-    value = "standard"
-  }
-
-  set {
-    name =  "rocksdb.storageSize"
-    value = "2Gi"
-  }
+  set = [
+    {
+      name  = "serviceAccount.name"
+      value = "nessie-sa"
+    },
+    {
+      name  = "versionStoreType"
+      value = "ROCKSDB"
+    },
+    {
+      name  = "rocksdb.storageClassName"
+      value = "standard"
+    },
+    {
+      name  = "rocksdb.storageSize"
+      value = "2Gi"
+    }
+  ]
 }

@@ -3,7 +3,7 @@ provider "kubernetes" {
 }
 
 provider "helm" {
-  kubernetes {
+  kubernetes = {
     config_path = "${var.kubernetes_config_path}"
   }
 }
