@@ -36,6 +36,13 @@
 |:-:|:-:|:-:|:-:|:-:|
 |Superset||Data exploration and visualization|superset.agartha.*|agartha-bi|
 
+## Monitoring
+|Component|Subcomponent|Description|Endpoint|Kubernetes Namespace|
+|:-:|:-:|:-:|:-:|:-:|
+|Grafana||Metrics visualization and dashboards|grafana.agartha.*|agartha-monitoring|
+|Prometheus||Metrics collection and storage|prometheus.agartha.*|agartha-monitoring|
+|Alertmanager||Alert management and routing|alertmanager.agartha.*|agartha-monitoring|
+
 # Deployment and testing
 
 ## Post-deployment setup
@@ -77,7 +84,7 @@ This can be done via the following commands:
 AGARTHA_HOST=minikubehost.com
 MINIKUBE_IP=$(minikube ip)
 
-echo minio-operator-console,minio-tenant-console,minio,nessie,trino,spark,flink,superset | \
+echo minio-operator-console,minio-tenant-console,minio,nessie,trino,spark,flink,superset,grafana,prometheus,alertmanager | \
  tr ',' '\n' | \
  xargs -I {} echo ${MINIKUBE_IP} {}.agartha.${AGARTHA_HOST} | \
  sudo tee -a /etc/hosts
