@@ -21,12 +21,16 @@ resource "helm_release" "minio_tenant" {
       value = "false"
     },
     {
-      name  = "tenant.configuration.name"
+      name  = "tenant.configSecret.name"
       value = local.tenant_env_secret_name
     },
     #
     # Tenant pool resource settings
     #
+    {
+      name  = "tenant.pools[0].name"
+      value = "pool-0"
+    },
     {
       name  = "tenant.pools[0].servers"
       value = tostring(var.minio_tenant_servers_num)

@@ -24,7 +24,7 @@ resource "helm_release" "trino" {
       value = "true"
     },
     {
-      name  = "server.workers"
+      name  = "serviceAccount.name"
       value = "trino-sa"
     }
   ]

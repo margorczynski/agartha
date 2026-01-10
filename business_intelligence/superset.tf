@@ -41,6 +41,14 @@ resource "helm_release" "superset" {
     {
       name  = "extraConfigs.import_datasources\\.yaml"
       value = file("${path.module}/files/superset_import_agartha.yaml")
+    },
+    {
+      name  = "postgresql.image.tag"
+      value = "latest"
+    },
+    {
+      name  = "redis.image.tag"
+      value = "latest"
     }
   ]
 }
