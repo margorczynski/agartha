@@ -1,0 +1,174 @@
+prometheus:
+  prometheusSpec:
+    retention: ${prometheus_retention_days}d
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: ${prometheus_storage_size_gb}Gi
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+
+grafana:
+  enabled: true
+  adminPassword: "${grafana_admin_password}"
+  persistence:
+    enabled: true
+    size: ${grafana_storage_size_gb}Gi
+  sidecar:
+    dashboards:
+      enabled: true
+      searchNamespace: ALL
+    datasources:
+      enabled: true
+
+alertmanager:
+  enabled: true
+  alertmanagerSpec:
+    storage:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 1Gi
+
+nodeExporter:
+  enabled: true
+
+kubeStateMetrics:
+  enabled: true
+
+defaultRules:
+  create: true
+  rules:
+    alertmanager: true
+    etcd: true
+    configReloaders: true
+    general: true
+    k8s: true
+    kubeApiserverAvailability: true
+    kubeApiserverBurnrate: true
+    kubeApiserverHistogram: true
+    kubeApiserverSlos: true
+    kubeControllerManager: true
+    kubelet: true
+    kubeProxy: true
+    kubePrometheusGeneral: true
+    kubePrometheusNodeRecording: true
+    kubernetesApps: true
+    kubernetesResources: true
+    kubernetesStorage: true
+    kubernetesSystem: true
+    kubeSchedulerAlerting: true
+    kubeSchedulerRecording: true
+    kubeStateMetrics: true
+    network: true
+    node: true
+    nodeExporterAlerting: true
+    nodeExporterRecording: true
+    prometheus: true
+    prometheusOperator: true
+
+additionalPrometheusRulesMap:
+  agartha-platform-alerts:
+    groups:
+      - name: agartha-component-availability
+        rules:
+          - alert: MinIODown
+            expr: up{namespace="${minio_namespace}"} == 0
+            for: 5m
+            labels:
+              severity: critical
+              component: minio
+            annotations:
+              summary: "MinIO is down"
+              description: "MinIO storage has been down for more than 5 minutes."
+          - alert: NessieDown
+            expr: up{namespace="${nessie_namespace}"} == 0
+            for: 5m
+            labels:
+              severity: critical
+              component: nessie
+            annotations:
+              summary: "Nessie catalog is down"
+              description: "Nessie catalog service has been down for more than 5 minutes."
+          - alert: TrinoDown
+            expr: up{namespace="${trino_namespace}", pod=~"trino-coordinator.*"} == 0
+            for: 5m
+            labels:
+              severity: critical
+              component: trino
+            annotations:
+              summary: "Trino coordinator is down"
+              description: "Trino query engine coordinator has been down for more than 5 minutes."
+          - alert: SparkOperatorDown
+            expr: up{namespace="${spark_namespace}", pod=~"spark-spark-operator.*"} == 0
+            for: 5m
+            labels:
+              severity: warning
+              component: spark
+            annotations:
+              summary: "Spark Operator is down"
+              description: "Spark Operator has been down for more than 5 minutes."
+          - alert: FlinkOperatorDown
+            expr: up{namespace="${flink_namespace}", pod=~"flink-kubernetes-operator.*"} == 0
+            for: 5m
+            labels:
+              severity: warning
+              component: flink
+            annotations:
+              summary: "Flink Operator is down"
+              description: "Flink Operator has been down for more than 5 minutes."
+      - name: agartha-storage-alerts
+        rules:
+          - alert: MinIOStorageHighUtilization
+            expr: (minio_cluster_capacity_usable_total_bytes - minio_cluster_capacity_usable_free_bytes) / minio_cluster_capacity_usable_total_bytes * 100 > 80
+            for: 15m
+            labels:
+              severity: warning
+              component: minio
+            annotations:
+              summary: "MinIO storage utilization is high"
+              description: "MinIO storage utilization is above 80%."
+          - alert: MinIOStorageCritical
+            expr: (minio_cluster_capacity_usable_total_bytes - minio_cluster_capacity_usable_free_bytes) / minio_cluster_capacity_usable_total_bytes * 100 > 95
+            for: 5m
+            labels:
+              severity: critical
+              component: minio
+            annotations:
+              summary: "MinIO storage utilization is critical"
+              description: "MinIO storage utilization is above 95%."
+      - name: agartha-resource-alerts
+        rules:
+          - alert: PodCrashLooping
+            expr: increase(kube_pod_container_status_restarts_total{namespace=~"agartha-.*"}[1h]) > 3
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "Pod is crash looping"
+              description: "Pod {{ $labels.pod }} has restarted more than 3 times in the last hour."
+          - alert: PodNotReady
+            expr: kube_pod_status_ready{namespace=~"agartha-.*", condition="false"} == 1
+            for: 10m
+            labels:
+              severity: warning
+            annotations:
+              summary: "Pod is not ready"
+              description: "Pod {{ $labels.pod }} has been not ready for more than 10 minutes."
+      - name: agartha-query-alerts
+        rules:
+          - alert: TrinoHighQueuedQueries
+            expr: trino_execution_query_manager_queued_queries > 10
+            for: 10m
+            labels:
+              severity: warning
+              component: trino
+            annotations:
+              summary: "High number of queued queries in Trino"
+              description: "There are more than 10 queries queued in Trino."
