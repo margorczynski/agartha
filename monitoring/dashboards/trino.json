@@ -106,7 +106,7 @@
       "pluginVersion": "10.0.0",
       "targets": [
         {
-          "expr": "trino_execution_query_manager_running_queries or vector(0)",
+          "expr": "trino_execution_querymanager_runningqueries or vector(0)",
           "legendFormat": "Running",
           "refId": "A"
         }
@@ -137,7 +137,7 @@
       "pluginVersion": "10.0.0",
       "targets": [
         {
-          "expr": "trino_execution_query_manager_queued_queries or vector(0)",
+          "expr": "trino_execution_querymanager_queuedqueries or vector(0)",
           "legendFormat": "Queued",
           "refId": "A"
         }
@@ -168,7 +168,7 @@
       "pluginVersion": "10.0.0",
       "targets": [
         {
-          "expr": "increase(trino_execution_query_manager_completed_queries_total[1h])",
+          "expr": "increase(trino_execution_querymanager_completedqueries_totalcount[1h])",
           "legendFormat": "Completed (1h)",
           "refId": "A"
         }
@@ -205,7 +205,7 @@
       "pluginVersion": "10.0.0",
       "targets": [
         {
-          "expr": "increase(trino_execution_query_manager_failed_queries_total[1h])",
+          "expr": "increase(trino_execution_querymanager_failedqueries_totalcount[1h])",
           "legendFormat": "Failed (1h)",
           "refId": "A"
         }
@@ -362,12 +362,12 @@
       "pluginVersion": "10.0.0",
       "targets": [
         {
-          "expr": "rate(trino_execution_query_manager_completed_queries_total[5m])",
+          "expr": "rate(trino_execution_querymanager_completedqueries_totalcount[5m])",
           "legendFormat": "Completed",
           "refId": "A"
         },
         {
-          "expr": "rate(trino_execution_query_manager_failed_queries_total[5m])",
+          "expr": "rate(trino_execution_querymanager_failedqueries_totalcount[5m])",
           "legendFormat": "Failed",
           "refId": "B"
         }

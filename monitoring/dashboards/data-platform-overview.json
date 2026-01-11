@@ -46,7 +46,7 @@
       "pluginVersion": "10.0.0",
       "targets": [
         {
-          "expr": "up{namespace=~\"agartha-storage\"}",
+          "expr": "count(kube_pod_status_ready{namespace=\"agartha-storage\", pod=~\"minio-tenant.*\", condition=\"true\"}) or vector(0)",
           "legendFormat": "MinIO",
           "refId": "A"
         }
@@ -83,7 +83,7 @@
       "pluginVersion": "10.0.0",
       "targets": [
         {
-          "expr": "up{namespace=~\"agartha-catalog\"}",
+          "expr": "count(kube_pod_status_ready{namespace=\"agartha-catalog\", pod=~\"nessie.*\", condition=\"true\"}) or vector(0)",
           "legendFormat": "Nessie",
           "refId": "A"
         }
@@ -120,7 +120,7 @@
       "pluginVersion": "10.0.0",
       "targets": [
         {
-          "expr": "up{namespace=~\"agartha-processing-trino\"}",
+          "expr": "count(kube_pod_status_ready{namespace=\"agartha-processing-trino\", pod=~\"trino-coordinator.*\", condition=\"true\"}) or vector(0)",
           "legendFormat": "Trino",
           "refId": "A"
         }
@@ -157,7 +157,7 @@
       "pluginVersion": "10.0.0",
       "targets": [
         {
-          "expr": "up{namespace=~\"agartha-processing-spark\"}",
+          "expr": "count(kube_pod_status_ready{namespace=\"agartha-processing-spark\", pod=~\"spark.*\", condition=\"true\"}) or vector(0)",
           "legendFormat": "Spark Operator",
           "refId": "A"
         }
@@ -194,7 +194,7 @@
       "pluginVersion": "10.0.0",
       "targets": [
         {
-          "expr": "up{namespace=~\"agartha-processing-flink\"}",
+          "expr": "count(kube_pod_status_ready{namespace=\"agartha-processing-flink\", pod=~\"flink.*\", condition=\"true\"}) or vector(0)",
           "legendFormat": "Flink Operator",
           "refId": "A"
         }
@@ -231,7 +231,7 @@
       "pluginVersion": "10.0.0",
       "targets": [
         {
-          "expr": "up{namespace=~\"agartha-bi\"}",
+          "expr": "count(kube_pod_status_ready{namespace=\"agartha-bi\", pod=~\"superset.*\", condition=\"true\"}) or vector(0)",
           "legendFormat": "Superset",
           "refId": "A"
         }

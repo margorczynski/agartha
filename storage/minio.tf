@@ -54,6 +54,14 @@ resource "helm_release" "minio_tenant" {
     # Prometheus metrics
     #
     {
+      name  = "tenant.metrics.enabled"
+      value = "true"
+    },
+    {
+      name  = "tenant.metrics.port"
+      value = "9000"
+    },
+    {
       name  = "tenant.prometheusOperator"
       value = "true"
     }

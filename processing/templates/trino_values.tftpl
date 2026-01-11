@@ -11,3 +11,28 @@ additionalCatalogs:
     s3.endpoint=${storage_s3_endpoint}
     s3.aws-access-key=${storage_s3_access_key}
     s3.aws-secret-key=${storage_s3_secret_key}
+
+jmx:
+  enabled: true
+  registryPort: 9080
+  serverPort: 9081
+  exporter:
+    enabled: true
+    port: 5556
+    configProperties: |
+      hostPort: localhost:9080
+      lowercaseOutputName: true
+      lowercaseOutputLabelNames: true
+      whitelistObjectNames:
+        - "trino.execution:*"
+        - "trino.memory:*"
+        - "trino.plugin:*"
+        - "java.lang:*"
+      rules:
+        - pattern: ".*"
+
+serviceMonitor:
+  enabled: true
+  labels:
+    release: kube-prometheus-stack
+  interval: "30s"
