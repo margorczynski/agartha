@@ -54,4 +54,12 @@ module "agartha_monitoring" {
   prometheus_retention_days  = 15
   prometheus_storage_size_gb = 10
   grafana_storage_size_gb    = 2
+
+  minio_namespace  = "agartha-storage"
+  nessie_namespace = "agartha-catalog"
+  trino_namespace  = "agartha-processing-trino"
+  spark_namespace  = "agartha-processing-spark"
+  flink_namespace  = "agartha-processing-flink"
+
+  loki_storage_size_gb = 10
 }

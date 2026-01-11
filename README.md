@@ -9,7 +9,7 @@
 |notebooks| Notebooks for interactive processing | JupyterHub|agartha-notebooks|
 |bi| Data visualization, dashboards and BI| Superset|agartha-bi|
 |orchestration| Workflow management and scheduling| Airflow|agartha-orchestration|
-|monitoring| Logging, monitoring and alerts |Grafana, Prometheus|agartha-monitoring-[grafana/prometheus]|
+|monitoring| Logging, monitoring and alerts |Grafana, Prometheus, Loki, Alertmanager|agartha-monitoring|
 |identity| Identity and access management |Keycloak| agartha-identity|
 
 ## Storage
@@ -42,6 +42,22 @@
 |Grafana||Metrics visualization and dashboards|grafana.agartha.*|agartha-monitoring|
 |Prometheus||Metrics collection and storage|prometheus.agartha.*|agartha-monitoring|
 |Alertmanager||Alert management and routing|alertmanager.agartha.*|agartha-monitoring|
+|Loki||Log aggregation and querying|Internal only|agartha-monitoring|
+
+### Pre-configured Dashboards
+- **Agartha Data Platform Overview** - High-level view of all platform components
+- **MinIO Storage** - Storage utilization, traffic, and S3 operations
+- **Trino Query Engine** - Query performance, worker status, and resource usage
+- **Spark Batch Processing** - Application status, executor metrics, and resource consumption
+- **Flink Stream Processing** - Job manager/task manager status and streaming metrics
+
+### Alert Rules
+The monitoring stack includes pre-configured alerts for:
+- Component availability (MinIO, Nessie, Trino, Spark Operator, Flink Operator)
+- Storage utilization warnings (80%) and critical alerts (95%)
+- High memory/CPU usage detection
+- Pod crash looping and readiness issues
+- Trino query queue and failure rate monitoring
 
 # Deployment and testing
 

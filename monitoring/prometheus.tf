@@ -11,6 +11,11 @@ resource "helm_release" "kube_prometheus_stack" {
       prometheus_retention_days  = var.prometheus_retention_days
       prometheus_storage_size_gb = var.prometheus_storage_size_gb
       grafana_storage_size_gb    = var.grafana_storage_size_gb
+      minio_namespace            = var.minio_namespace
+      nessie_namespace           = var.nessie_namespace
+      trino_namespace            = var.trino_namespace
+      spark_namespace            = var.spark_namespace
+      flink_namespace            = var.flink_namespace
     })
   ]
 

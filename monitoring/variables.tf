@@ -31,3 +31,34 @@ variable "grafana_storage_size_gb" {
   description = "Storage size in GB for Grafana data"
   default     = 2
 }
+
+variable "minio_namespace" {
+  type        = string
+  description = "The Kubernetes namespace where MinIO is deployed"
+}
+
+variable "nessie_namespace" {
+  type        = string
+  description = "The Kubernetes namespace where Nessie is deployed"
+}
+
+variable "trino_namespace" {
+  type        = string
+  description = "The Kubernetes namespace where Trino is deployed"
+}
+
+variable "spark_namespace" {
+  type        = string
+  description = "The Kubernetes namespace where Spark is deployed"
+}
+
+variable "flink_namespace" {
+  type        = string
+  description = "The Kubernetes namespace where Flink is deployed"
+}
+
+variable "loki_storage_size_gb" {
+  type        = number
+  description = "Storage size in GB for Loki log data"
+  default     = 10
+}
