@@ -20,6 +20,26 @@ module "agartha_catalog" {
   kubernetes_ingress_base_host = local.agartha_host
 }
 
+module "agartha_monitoring" {
+  source = "./monitoring"
+
+  kubernetes_monitoring_namespace = "agartha-monitoring"
+  kubernetes_ingress_base_host    = local.agartha_host
+
+  grafana_admin_password     = var.monitoring_grafana_admin_password
+  prometheus_retention_days  = 15
+  prometheus_storage_size_gb = 10
+  grafana_storage_size_gb    = 2
+
+  minio_namespace  = "agartha-storage"
+  nessie_namespace = "agartha-catalog"
+  trino_namespace  = "agartha-processing-trino"
+  spark_namespace  = "agartha-processing-spark"
+  flink_namespace  = "agartha-processing-flink"
+
+  loki_storage_size_gb = 10
+}
+
 module "agartha_processing" {
   source = "./processing"
 
@@ -42,24 +62,4 @@ module "business_intelligence" {
 
   superset_node_replica_num   = 1
   superset_worker_replica_num = 1
-}
-
-module "agartha_monitoring" {
-  source = "./monitoring"
-
-  kubernetes_monitoring_namespace = "agartha-monitoring"
-  kubernetes_ingress_base_host    = local.agartha_host
-
-  grafana_admin_password     = var.monitoring_grafana_admin_password
-  prometheus_retention_days  = 15
-  prometheus_storage_size_gb = 10
-  grafana_storage_size_gb    = 2
-
-  minio_namespace  = "agartha-storage"
-  nessie_namespace = "agartha-catalog"
-  trino_namespace  = "agartha-processing-trino"
-  spark_namespace  = "agartha-processing-spark"
-  flink_namespace  = "agartha-processing-flink"
-
-  loki_storage_size_gb = 10
 }
