@@ -28,6 +28,14 @@ resource "helm_release" "minio_tenant" {
       name  = "tenant.configSecret.name"
       value = local.tenant_env_secret_name
     },
+    {
+      name  = "tenant.configSecret.accessKey"
+      value = var.s3_access_key
+    },
+    {
+      name  = "tenant.configSecret.secretKey"
+      value = var.s3_secret_key
+    },
     #
     # Tenant pool resource settings
     #
