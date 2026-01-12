@@ -52,6 +52,10 @@ module "agartha_processing" {
   storage_s3_secret_key         = var.storage_s3_secret_key
 
   trino_cluster_worker_num = 2
+
+  depends_on = [
+    module.agartha_monitoring
+  ]
 }
 
 module "business_intelligence" {
@@ -62,4 +66,8 @@ module "business_intelligence" {
 
   superset_node_replica_num   = 1
   superset_worker_replica_num = 1
+
+  depends_on = [
+    module.agartha_processing
+  ]
 }

@@ -13,6 +13,10 @@ resource "kubernetes_secret_v1" "secret_superset_secret_key" {
   data = {
     "SECRET_KEY" = random_password.superset_secret_key.result
   }
+
+  depends_on = [
+    kubernetes_namespace_v1.bi_namespace
+  ]
 }
 
 resource "helm_release" "superset" {
@@ -50,5 +54,9 @@ resource "helm_release" "superset" {
       name  = "redis.image.tag"
       value = "latest"
     }
+  ]
+
+  depends_on = [
+    kubernetes_namespace_v1.bi_namespace
   ]
 }

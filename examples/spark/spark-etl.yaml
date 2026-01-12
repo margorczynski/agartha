@@ -20,13 +20,13 @@ spec:
     spark.sql.catalog.agartha.warehouse: "s3a://agartha-warehouse/"
     spark.sql.catalog.agartha.s3.endpoint: "http://minio.agartha-storage.svc.cluster.local"
     spark.sql.catalog.agartha.catalog-impl: "org.apache.iceberg.nessie.NessieCatalog"
-    spark.sql.catalog.agartha.uri: "http://nessie.agartha-catalog.svc.cluster.local:19120/api/v1/"
+    spark.sql.catalog.agartha.uri: "http://nessie.agartha-catalog.svc.cluster.local:19120/api/v2"
     spark.sql.catalog.agartha.authentication.type: "NONE"
     spark.sql.catalog.agartha.ref: "main"
     spark.sql.catalog.agartha: "org.apache.iceberg.spark.SparkCatalog"
   hadoopConf:
-    fs.s3a.access.key: "agartha"
-    fs.s3a.secret.key: "superpass"
+    fs.s3a.access.key: "minioadmin"
+    fs.s3a.secret.key: "minioadmin"
     fs.s3a.endpoint: "http://minio.agartha-storage.svc.cluster.local"
     fs.s3a.connection.ssl.enabled: "false"
     fs.s3a.path.style.access: "true"
@@ -43,9 +43,9 @@ spec:
         -   name: AWS_REGION
             value: us-east-1
         -   name: AWS_ACCESS_KEY_ID
-            value: agartha
+            value: minioadmin
         -   name: AWS_SECRET_ACCESS_KEY
-            value: superpass
+            value: minioadmin
   executor:
     cores: 1
     instances: 1
@@ -56,6 +56,6 @@ spec:
         -   name: AWS_REGION
             value: us-east-1
         -   name: AWS_ACCESS_KEY_ID
-            value: agartha
+            value: minioadmin
         -   name: AWS_SECRET_ACCESS_KEY
-            value: superpass
+            value: minioadmin

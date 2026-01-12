@@ -28,4 +28,8 @@ resource "helm_release" "trino" {
       value = "trino-sa"
     }
   ]
+
+  depends_on = [
+    kubernetes_namespace_v1.processing_namespace_trino
+  ]
 }

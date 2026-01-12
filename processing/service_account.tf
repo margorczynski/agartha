@@ -3,6 +3,10 @@ resource "kubernetes_service_account_v1" "spark_sa" {
     name      = "spark-sa"
     namespace = local.spark_namespace
   }
+
+  depends_on = [
+    kubernetes_namespace_v1.processing_namespace_spark
+  ]
 }
 
 resource "kubernetes_cluster_role_binding_v1" "spark_sa_role" {
@@ -19,4 +23,8 @@ resource "kubernetes_cluster_role_binding_v1" "spark_sa_role" {
     name      = "spark-sa"
     namespace = local.spark_namespace
   }
+
+  depends_on = [
+    kubernetes_service_account_v1.spark_sa
+  ]
 }

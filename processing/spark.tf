@@ -23,4 +23,8 @@ resource "helm_release" "spark_operator" {
       value = "spark.agartha.minikubehost.com/{{$appName}}"
     }
   ]
+
+  depends_on = [
+    kubernetes_namespace_v1.processing_namespace_spark
+  ]
 }

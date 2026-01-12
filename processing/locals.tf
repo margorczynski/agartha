@@ -3,36 +3,7 @@ locals {
   flink_namespace = "${var.kubernetes_processing_namespace_base}-flink"
   trino_namespace = "${var.kubernetes_processing_namespace_base}-trino"
 
-  trino_additional_catalogs_config = {
-    agartha = {
-      connector = {
-        name = "iceberg"
-      }
-
-      iceberg = {
-        file-format = "PARQUET"
-
-        catalog = {
-          type = "nessie"
-        }
-
-        nessie-catalog = {
-          uri = "http://nessie.lakehouse.svc.cluster.local:19120/api/v1/"
-          default-warehouse-dir = "s3a://standardized/"
-        }
-      }
-
-      hive = {
-        s3 = {
-          path-style-access = true
-          ssl = {
-            enabled = false
-          }
-          aws-access-key = "abc"
-          aws-secret-key = "abc"
-          endpoint = "abc"
-        }
-      }
-    }
-  }
+  nessie_catalog_uri = "http://nessie.agartha-catalog.svc.cluster.local:19120/api/v2"
+  s3_endpoint        = var.storage_s3_endpoint
+  warehouse_location  = var.storage_s3_warehouse_location
 }

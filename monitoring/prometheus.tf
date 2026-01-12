@@ -19,5 +19,7 @@ resource "helm_release" "kube_prometheus_stack" {
     })
   ]
 
-  depends_on = [kubernetes_namespace_v1.monitoring_namespace]
+  depends_on = [
+    kubernetes_namespace_v1.monitoring_namespace
+  ]
 }

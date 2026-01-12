@@ -11,11 +11,11 @@ table_env.execute_sql(
         """CREATE CATALOG agartha WITH (
         'type'='iceberg',
         'catalog-impl'='org.apache.iceberg.nessie.NessieCatalog',
-        'uri'='http://nessie.agartha-catalog.svc.cluster.local:19120/api/v1',
+        'uri'='http://nessie.agartha-catalog.svc.cluster.local:19120/api/v2',
         'ref'='main',
-        's3.access-key-id'='agartha',
-        's3.secret-access-key'='superpass',
-        's3.endpoint'='http://minio.agartha.minikubehost.com',
+        's3.access-key-id'='minioadmin',
+        's3.secret-access-key'='minioadmin',
+        's3.endpoint'='http://minio.agartha-storage.svc.cluster.local:9000',
         'client.region'='us-east-1',
         'warehouse'='s3a://agartha-warehouse/')"""
     )

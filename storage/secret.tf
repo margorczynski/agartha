@@ -18,4 +18,8 @@ export MINIO_ROOT_PASSWORD="${var.s3_secret_key}"
 export MINIO_BROWSER=on
 EOH
   }
+
+  depends_on = [
+    kubernetes_namespace_v1.storage_namespace
+  ]
 }

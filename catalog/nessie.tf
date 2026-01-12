@@ -22,4 +22,8 @@ resource "helm_release" "nessie" {
       value = "2Gi"
     }
   ]
+
+  depends_on = [
+    kubernetes_namespace_v1.catalog_namespace
+  ]
 }

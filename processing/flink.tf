@@ -17,4 +17,8 @@ resource "helm_release" "flink_operator" {
       value = "false"
     }
   ]
+
+  depends_on = [
+    kubernetes_namespace_v1.processing_namespace_flink
+  ]
 }
