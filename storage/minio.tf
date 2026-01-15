@@ -79,5 +79,5 @@ resource "helm_release" "minio_tenant" {
     }
   ]
 
-  depends_on = [ helm_release.minio_operator ]
+  depends_on = [helm_release.minio_operator]
 }

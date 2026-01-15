@@ -7,7 +7,7 @@ resource "helm_release" "flink_operator" {
   set_list = [
     {
       name  = "watchNamespaces"
-      value = [ local.flink_namespace ]
+      value = [local.flink_namespace]
     }
   ]
 
