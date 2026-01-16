@@ -32,7 +32,7 @@ resource "kubernetes_config_map_v1" "dagster_spark_config" {
   data = {
     SPARK_NAMESPACE       = var.spark_namespace
     SPARK_SERVICE_ACCOUNT = "spark-sa"
-    SPARK_IMAGE           = "openlake/spark-py:3.3.2"
+    SPARK_IMAGE           = "apache/spark:3.5.3-python3"
   }
 
   depends_on = [

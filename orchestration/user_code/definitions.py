@@ -43,7 +43,7 @@ class SparkOperatorResource(ConfigurableResource):
         description="Service account for Spark pods",
     )
     image: str = Field(
-        default_factory=lambda: os.environ.get("SPARK_IMAGE", "apache/spark:3.5.0-python3"),
+        default_factory=lambda: os.environ.get("SPARK_IMAGE", "apache/spark:3.5.3-python3"),
         description="Spark container image",
     )
     scripts_config_map: str = Field(
@@ -145,8 +145,9 @@ class SparkOperatorResource(ConfigurableResource):
 
             if state in ("FAILED", "SUBMISSION_FAILED"):
                 error_msg = status.get("applicationState", {}).get("errorMessage", "Unknown error")
-                self._cleanup_job(api, job_name)
-                raise Failure(description=f"Spark job {job_name} failed: {error_msg}")
+                # Don't cleanup on failure so we can inspect logs
+                # self._cleanup_job(api, job_name)
+                raise Failure(description=f"Spark job {job_name} failed: {error_msg}. Job NOT deleted for debugging - run: kubectl logs -n {self.namespace} {job_name}-driver")
 
             time.sleep(self.poll_interval)
 
@@ -166,7 +167,7 @@ class SparkOperatorResource(ConfigurableResource):
                 "image": self.image,
                 "imagePullPolicy": "IfNotPresent",
                 "mainApplicationFile": f"local://{self.scripts_mount_path}/{script_name}",
-                "sparkVersion": "3.5.0",
+                "sparkVersion": "3.5.3",
                 "restartPolicy": {"type": "Never"},
                 "sparkConf": {
                     # Iceberg and Nessie configuration
@@ -186,6 +187,14 @@ class SparkOperatorResource(ConfigurableResource):
                     "spark.hadoop.fs.s3a.path.style.access": "true",
                     "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem",
                     "spark.hadoop.fs.s3a.connection.ssl.enabled": "false",
+                    # Disable executor metrics to avoid JMX issues in containers
+                    "spark.executor.processTreeMetrics.enabled": "false",
+                    "spark.metrics.conf.*.sink.prometheusServlet.class": "org.apache.spark.metrics.sink.PrometheusServlet",
+                    "spark.metrics.conf.*.source.jvm.class": "org.apache.spark.metrics.source.JvmSource",
+                    "spark.ui.prometheus.enabled": "false",
+                    # JVM options to handle container JMX limitations
+                    "spark.driver.extraJavaOptions": "-Dcom.sun.management.jmxremote=false -XX:+UseContainerSupport",
+                    "spark.executor.extraJavaOptions": "-Dcom.sun.management.jmxremote=false -XX:+UseContainerSupport",
                 },
                 "deps": {
                     "jars": [],
@@ -200,13 +209,17 @@ class SparkOperatorResource(ConfigurableResource):
                     "cores": 1,
                     "coreLimit": "1200m",
                     "memory": "1g",
-                    "labels": {"version": "3.5.0"},
+                    "labels": {"version": "3.5.3"},
                     "serviceAccount": self.service_account,
                     "volumeMounts": [
                         {
                             "name": "spark-scripts",
                             "mountPath": self.scripts_mount_path,
-                        }
+                        },
+                        {
+                            "name": "ivy-cache",
+                            "mountPath": "/home/spark/.ivy2",
+                        },
                     ],
                     "env": [
                         {"name": "NESSIE_URI", "value": self.nessie_uri},
@@ -220,12 +233,16 @@ class SparkOperatorResource(ConfigurableResource):
                     "cores": 1,
                     "instances": 1,
                     "memory": "1g",
-                    "labels": {"version": "3.5.0"},
+                    "labels": {"version": "3.5.3"},
                     "volumeMounts": [
                         {
                             "name": "spark-scripts",
                             "mountPath": self.scripts_mount_path,
-                        }
+                        },
+                        {
+                            "name": "ivy-cache",
+                            "mountPath": "/home/spark/.ivy2",
+                        },
                     ],
                     "env": [
                         {"name": "NESSIE_URI", "value": self.nessie_uri},
@@ -239,7 +256,11 @@ class SparkOperatorResource(ConfigurableResource):
                     {
                         "name": "spark-scripts",
                         "configMap": {"name": self.scripts_config_map},
-                    }
+                    },
+                    {
+                        "name": "ivy-cache",
+                        "emptyDir": {},
+                    },
                 ],
             },
         }

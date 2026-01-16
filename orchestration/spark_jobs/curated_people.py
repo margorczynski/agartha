@@ -10,7 +10,7 @@ from pyspark.sql.functions import col, initcap
 
 
 def main():
-    spark = create_spark_session()
+    spark = get_spark_session()
     try:
         # Create namespace if not exists
         spark.sql("CREATE NAMESPACE IF NOT EXISTS agartha.curated")
@@ -42,43 +42,9 @@ def main():
         spark.stop()
 
 
-def create_spark_session() -> SparkSession:
-    """Create SparkSession configured for Iceberg with Nessie catalog."""
-    import os
-
-    nessie_uri = os.environ.get(
-        "NESSIE_URI", "http://nessie.agartha-catalog.svc.cluster.local:19120/api/v2"
-    )
-    nessie_ref = os.environ.get("NESSIE_REF", "main")
-    warehouse = os.environ.get("S3_WAREHOUSE", "s3a://agartha-warehouse/")
-    s3_endpoint = os.environ.get(
-        "S3_ENDPOINT", "http://minio.agartha-storage.svc.cluster.local:9000"
-    )
-    s3_access_key = os.environ.get("S3_ACCESS_KEY_ID", "")
-    s3_secret_key = os.environ.get("S3_SECRET_ACCESS_KEY", "")
-
-    return (
-        SparkSession.builder.appName("curated_people")
-        .config(
-            "spark.sql.extensions",
-            "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions,"
-            "org.projectnessie.spark.extensions.NessieSparkSessionExtensions",
-        )
-        .config("spark.sql.catalog.agartha", "org.apache.iceberg.spark.SparkCatalog")
-        .config(
-            "spark.sql.catalog.agartha.catalog-impl",
-            "org.apache.iceberg.nessie.NessieCatalog",
-        )
-        .config("spark.sql.catalog.agartha.uri", nessie_uri)
-        .config("spark.sql.catalog.agartha.ref", nessie_ref)
-        .config("spark.sql.catalog.agartha.warehouse", warehouse)
-        .config("spark.hadoop.fs.s3a.endpoint", s3_endpoint)
-        .config("spark.hadoop.fs.s3a.access.key", s3_access_key)
-        .config("spark.hadoop.fs.s3a.secret.key", s3_secret_key)
-        .config("spark.hadoop.fs.s3a.path.style.access", "true")
-        .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
-        .getOrCreate()
-    )
+def get_spark_session() -> SparkSession:
+    """Get the existing SparkSession (created by spark-submit with all config)."""
+    return SparkSession.builder.getOrCreate()
 
 
 if __name__ == "__main__":
