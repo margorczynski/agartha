@@ -68,10 +68,21 @@ runLauncher:
   type: K8sRunLauncher
   config:
     k8sRunLauncher:
+      image:
+        repository: "docker.io/dagster/dagster-k8s"
+        tag: "latest"
+        pullPolicy: IfNotPresent
       envConfigMaps:
         - name: ${storage_config_map_name}
         - name: ${spark_config_map_name}
         - name: ${flink_config_map_name}
+      volumes:
+        - name: dagster-code
+          configMap:
+            name: ${user_code_config_map_name}
+      volumeMounts:
+        - name: dagster-code
+          mountPath: /opt/dagster/app
       runK8sConfig:
         containerConfig:
           resources:
