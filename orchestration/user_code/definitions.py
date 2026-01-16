@@ -201,6 +201,7 @@ class SparkOperatorResource(ConfigurableResource):
                     "packages": [
                         "org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.5.0",
                         "org.projectnessie.nessie-integrations:nessie-spark-extensions-3.5_2.12:0.79.0",
+                        "org.apache.hadoop:hadoop-aws:3.3.4",
                         "software.amazon.awssdk:bundle:2.24.8",
                         "software.amazon.awssdk:url-connection-client:2.24.8",
                     ],
