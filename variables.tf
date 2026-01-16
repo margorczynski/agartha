@@ -28,3 +28,9 @@ variable "monitoring_grafana_admin_password" {
   description = "The admin password for Grafana"
   sensitive   = true
 }
+
+variable "orchestration_dagster_postgres_password" {
+  type        = string
+  description = "The password for the Dagster PostgreSQL database"
+  sensitive   = true
+}

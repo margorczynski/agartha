@@ -1,0 +1,120 @@
+global:
+  serviceAccountName: ${service_account_name}
+
+dagsterWebserver:
+  replicaCount: ${webserver_replica_num}
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+  env:
+    - name: NESSIE_URI
+      value: "${nessie_uri}"
+    - name: S3_ENDPOINT
+      value: "${s3_endpoint}"
+    - name: S3_WAREHOUSE
+      value: "${s3_warehouse}"
+    - name: S3_ACCESS_KEY_ID
+      value: "${s3_access_key}"
+    - name: S3_SECRET_ACCESS_KEY
+      value: "${s3_secret_key}"
+    - name: S3_REGION
+      value: "us-east-1"
+    - name: S3_PATH_STYLE_ACCESS
+      value: "true"
+  # Custom workspace pointing to our user code server (managed outside subchart)
+  workspace:
+    enabled: true
+    servers:
+      - host: "dagster-agartha-pipelines"
+        port: 3030
+        name: "agartha-pipelines"
+
+dagsterDaemon:
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+  env:
+    - name: NESSIE_URI
+      value: "${nessie_uri}"
+    - name: S3_ENDPOINT
+      value: "${s3_endpoint}"
+    - name: S3_WAREHOUSE
+      value: "${s3_warehouse}"
+    - name: S3_ACCESS_KEY_ID
+      value: "${s3_access_key}"
+    - name: S3_SECRET_ACCESS_KEY
+      value: "${s3_secret_key}"
+    - name: S3_REGION
+      value: "us-east-1"
+    - name: S3_PATH_STYLE_ACCESS
+      value: "true"
+
+runCoordinator:
+  enabled: true
+  type: QueuedRunCoordinator
+  config:
+    queuedRunCoordinator:
+      maxConcurrentRuns: ${max_concurrent_runs}
+
+runLauncher:
+  type: K8sRunLauncher
+  config:
+    k8sRunLauncher:
+      image:
+        repository: "docker.io/dagster/dagster-k8s"
+        tag: "latest"
+        pullPolicy: IfNotPresent
+      envConfigMaps:
+        - name: ${storage_config_map_name}
+        - name: ${spark_config_map_name}
+        - name: ${flink_config_map_name}
+      volumes:
+        - name: dagster-code
+          configMap:
+            name: ${user_code_config_map_name}
+      volumeMounts:
+        - name: dagster-code
+          mountPath: /opt/dagster/app
+      runK8sConfig:
+        containerConfig:
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 2Gi
+
+postgresql:
+  enabled: true
+  auth:
+    password: "${dagster_postgres_password}"
+    postgresPassword: "${dagster_postgres_password}"
+  primary:
+    persistence:
+      enabled: true
+      size: 8Gi
+
+rabbitmq:
+  enabled: false
+
+redis:
+  enabled: false
+
+# Keep workspace enabled but disable subchart deployment
+# (we manage user code deployment separately)
+dagster-user-deployments:
+  enabled: true
+  enableSubchart: false
+
+serviceAccount:
+  create: false
+  name: ${service_account_name}

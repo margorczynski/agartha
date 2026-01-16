@@ -7,10 +7,10 @@ resource "helm_release" "trino" {
   # Issues with setting additionalCatalogs via 'set' so using template
   values = [
     "${templatefile("${path.module}/templates/trino_values.tftpl", {
-        storage_s3_warehouse_location = "${var.storage_s3_warehouse_location}"
-        storage_s3_endpoint           = "${var.storage_s3_endpoint}"
-        storage_s3_access_key         = "${var.storage_s3_access_key}"
-        storage_s3_secret_key         = "${var.storage_s3_secret_key}"
+      storage_s3_warehouse_location = "${var.storage_s3_warehouse_location}"
+      storage_s3_endpoint           = "${var.storage_s3_endpoint}"
+      storage_s3_access_key         = "${var.storage_s3_access_key}"
+      storage_s3_secret_key         = "${var.storage_s3_secret_key}"
     })}"
   ]
 

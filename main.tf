@@ -71,3 +71,26 @@ module "business_intelligence" {
     module.agartha_processing
   ]
 }
+
+module "agartha_orchestration" {
+  source = "./orchestration"
+
+  kubernetes_orchestration_namespace = "agartha-orchestration"
+  kubernetes_ingress_base_host       = local.agartha_host
+
+  storage_s3_warehouse_location = "s3a://${var.storage_s3_warehouse_bucket_name}/"
+  storage_s3_endpoint           = "http://minio.agartha-storage.svc.cluster.local"
+  storage_s3_access_key         = var.storage_s3_access_key
+  storage_s3_secret_key         = var.storage_s3_secret_key
+
+  dagster_webserver_replica_num               = 1
+  dagster_postgres_password                   = var.orchestration_dagster_postgres_password
+  dagster_run_coordinator_max_concurrent_runs = 10
+
+  spark_namespace = "agartha-processing-spark"
+  flink_namespace = "agartha-processing-flink"
+
+  depends_on = [
+    module.agartha_processing
+  ]
+}
