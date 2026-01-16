@@ -12,6 +12,9 @@ additionalCatalogs:
     s3.aws-access-key=${storage_s3_access_key}
     s3.aws-secret-key=${storage_s3_secret_key}
 
+additionalConfigProperties:
+  - http-server.process-forwarded=true
+
 jmx:
   enabled: true
   registryPort: 9080
