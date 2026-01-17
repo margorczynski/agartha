@@ -5,6 +5,7 @@ module "agartha_storage" {
   kubernetes_ingress_base_host = local.agartha_host
 
   s3_warehouse_bucket_name = var.storage_s3_warehouse_bucket_name
+  s3_raw_bucket_name       = var.storage_s3_raw_bucket_name
   s3_access_key            = var.storage_s3_access_key
   s3_secret_key            = var.storage_s3_secret_key
 

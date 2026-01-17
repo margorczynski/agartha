@@ -76,13 +76,20 @@ runLauncher:
         - name: ${storage_config_map_name}
         - name: ${spark_config_map_name}
         - name: ${flink_config_map_name}
+      envVars:
+        - "DLT_S3_BUCKET=agartha-raw"
+        - "DAGSTER_CLI_API_GRPC_LAZY_LOAD_USER_CODE=1"
       volumes:
         - name: dagster-code
           configMap:
             name: ${user_code_config_map_name}
+        - name: dlt-state
+          emptyDir: {}
       volumeMounts:
         - name: dagster-code
           mountPath: /opt/dagster/app
+        - name: dlt-state
+          mountPath: /tmp/dlt_pipelines
       runK8sConfig:
         containerConfig:
           resources:
@@ -92,6 +99,13 @@ runLauncher:
             limits:
               cpu: 1000m
               memory: 2Gi
+          # Override command to install dlt before running dagster
+          command:
+            - "/bin/sh"
+            - "-c"
+            - |
+              pip install --no-cache-dir "dlt[filesystem]>=1.0.0" "s3fs>=2024.2.0" "pyarrow>=15.0.0" "boto3" && exec "$@"
+            - "--"
 
 postgresql:
   enabled: true

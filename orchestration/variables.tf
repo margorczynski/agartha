@@ -56,3 +56,16 @@ variable "flink_namespace" {
   type        = string
   description = "The Kubernetes namespace where Flink operator is deployed"
 }
+
+variable "dagster_user_code_image" {
+  type        = string
+  description = "Docker image for Dagster user code deployment (must include dlt dependencies)"
+  default     = "docker.io/dagster/dagster-k8s:latest"
+}
+
+variable "github_access_token" {
+  type        = string
+  description = "GitHub personal access token for higher API rate limits (optional)"
+  sensitive   = true
+  default     = ""
+}

@@ -4,6 +4,8 @@ resource "helm_release" "trino" {
   repository = "https://trinodb.github.io/charts"
   chart      = "trino"
 
+  timeout = 600  # 10 minutes for image pulls on slow connections
+
   # Issues with setting additionalCatalogs via 'set' so using template
   values = [
     "${templatefile("${path.module}/templates/trino_values.tftpl", {
