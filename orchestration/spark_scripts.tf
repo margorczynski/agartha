@@ -9,8 +9,10 @@ resource "kubernetes_config_map_v1" "spark_scripts" {
   }
 
   data = {
-    "raw_people.py"              = file("${path.module}/spark_jobs/raw_people.py")
-    "curated_people.py"          = file("${path.module}/spark_jobs/curated_people.py")
-    "people_age_distribution.py" = file("${path.module}/spark_jobs/people_age_distribution.py")
+    # GitHub data pipeline: raw -> curated -> analytics
+    "raw_github_repos.py"        = file("${path.module}/spark_jobs/raw_github_repos.py")
+    "raw_github_contributors.py" = file("${path.module}/spark_jobs/raw_github_contributors.py")
+    "curated_github_repos.py"    = file("${path.module}/spark_jobs/curated_github_repos.py")
+    "github_repo_analytics.py"   = file("${path.module}/spark_jobs/github_repo_analytics.py")
   }
 }

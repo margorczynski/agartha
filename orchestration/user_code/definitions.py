@@ -118,7 +118,11 @@ class DltPipelineResource(ConfigurableResource):
         """
         Run a dlt pipeline and return load information.
         """
-        load_info = pipeline.run(source, write_disposition=write_disposition)
+        load_info = pipeline.run(
+            source,
+            write_disposition=write_disposition,
+            loader_file_format="parquet",
+        )
 
         # Count completed jobs across all load packages
         jobs_completed = 0
@@ -209,7 +213,6 @@ def github_source(
                     "pushed_at": repo["pushed_at"],
                     "default_branch": repo["default_branch"],
                     "archived": repo["archived"],
-                    "topics": repo.get("topics", []),
                     "license_name": repo.get("license", {}).get("name") if repo.get("license") else None,
                 }
                 count += 1
@@ -582,68 +585,94 @@ class SparkOperatorResource(ConfigurableResource):
 
 
 # ============================================================================
-# Spark Assets
+# Spark Assets - Process dlt data into Iceberg tables
 # ============================================================================
 
 
 @asset(
-    group_name="raw",
-    description="Raw people data ingested from source files into Iceberg table",
+    group_name="raw_iceberg",
+    description="GitHub repositories loaded from dlt Parquet into Iceberg table",
     compute_kind="spark",
+    deps=["github_repositories"],
 )
-def raw_people(
+def raw_iceberg_github_repos(
     context: AssetExecutionContext,
     spark_operator: SparkOperatorResource,
 ) -> MaterializeResult:
-    """Ingest raw people data from S3 text files into an Iceberg table."""
-    result = spark_operator.submit_and_wait(context, "raw_people.py")
+    """Load GitHub repositories from dlt Parquet files into Iceberg table."""
+    result = spark_operator.submit_and_wait(context, "raw_github_repos.py")
 
     return MaterializeResult(
         metadata={
             "spark_job": MetadataValue.text(result["job_name"]),
-            "table": MetadataValue.text("agartha.raw.people"),
+            "table": MetadataValue.text("agartha.raw.github_repositories"),
+        }
+    )
+
+
+@asset(
+    group_name="raw_iceberg",
+    description="GitHub contributors loaded from dlt Parquet into Iceberg table",
+    compute_kind="spark",
+    deps=["github_contributors"],
+)
+def raw_iceberg_github_contributors(
+    context: AssetExecutionContext,
+    spark_operator: SparkOperatorResource,
+) -> MaterializeResult:
+    """Load GitHub contributors from dlt Parquet files into Iceberg table."""
+    result = spark_operator.submit_and_wait(context, "raw_github_contributors.py")
+
+    return MaterializeResult(
+        metadata={
+            "spark_job": MetadataValue.text(result["job_name"]),
+            "table": MetadataValue.text("agartha.raw.github_contributors"),
         }
     )
 
 
 @asset(
     group_name="curated",
-    description="Curated people data with validation and cleaning applied",
-    deps=[raw_people],
+    description="Curated GitHub repositories with validation and enrichment",
+    deps=[raw_iceberg_github_repos],
     compute_kind="spark",
 )
-def curated_people(
+def curated_github_repos(
     context: AssetExecutionContext,
     spark_operator: SparkOperatorResource,
 ) -> MaterializeResult:
-    """Clean and validate people data from raw layer."""
-    result = spark_operator.submit_and_wait(context, "curated_people.py")
+    """Curate GitHub repositories with data quality rules and enrichment."""
+    result = spark_operator.submit_and_wait(context, "curated_github_repos.py")
 
     return MaterializeResult(
         metadata={
             "spark_job": MetadataValue.text(result["job_name"]),
-            "table": MetadataValue.text("agartha.curated.people"),
+            "table": MetadataValue.text("agartha.curated.github_repositories"),
         }
     )
 
 
 @asset(
     group_name="analytics",
-    description="Age distribution analytics aggregation",
-    deps=[curated_people],
+    description="GitHub repository analytics (language stats, activity, org summary)",
+    deps=[curated_github_repos],
     compute_kind="spark",
 )
-def people_age_distribution(
+def github_repo_analytics(
     context: AssetExecutionContext,
     spark_operator: SparkOperatorResource,
 ) -> MaterializeResult:
-    """Compute age distribution statistics from curated people data."""
-    result = spark_operator.submit_and_wait(context, "people_age_distribution.py")
+    """Compute GitHub repository analytics aggregations."""
+    result = spark_operator.submit_and_wait(context, "github_repo_analytics.py")
 
     return MaterializeResult(
         metadata={
             "spark_job": MetadataValue.text(result["job_name"]),
-            "table": MetadataValue.text("agartha.analytics.people_age_distribution"),
+            "tables": MetadataValue.text(
+                "agartha.analytics.github_language_stats, "
+                "agartha.analytics.github_activity_summary, "
+                "agartha.analytics.github_org_summary"
+            ),
         }
     )
 
@@ -822,36 +851,32 @@ def github_pull_requests(
 # Jobs and Schedules
 # ============================================================================
 
-people_pipeline_job = define_asset_job(
-    name="people_pipeline",
-    description="Full ETL pipeline for people data: raw -> curated -> analytics",
-    selection=AssetSelection.groups("raw", "curated", "analytics"),
+# Full GitHub pipeline: dlt ingestion -> Spark raw -> curated -> analytics
+github_full_pipeline_job = define_asset_job(
+    name="github_full_pipeline",
+    description="Full GitHub ETL: dlt ingestion -> Iceberg raw -> curated -> analytics",
+    selection=AssetSelection.groups("raw_external", "raw_iceberg", "curated", "analytics"),
 )
 
-raw_ingestion_job = define_asset_job(
-    name="raw_ingestion",
-    description="Ingest raw data from source files",
-    selection=AssetSelection.groups("raw"),
-)
-
+# Just the dlt ingestion (for testing or partial runs)
 github_ingestion_job = define_asset_job(
     name="github_ingestion",
-    description="Ingest GitHub repository data via dlt",
+    description="Ingest GitHub data via dlt (Parquet to S3)",
     selection=AssetSelection.groups("raw_external"),
 )
 
-daily_pipeline_schedule = ScheduleDefinition(
-    name="daily_people_pipeline",
-    job=people_pipeline_job,
-    cron_schedule="0 2 * * *",
-    description="Daily full ETL pipeline for people data",
+# Just the Spark processing (assumes dlt data already exists)
+github_spark_pipeline_job = define_asset_job(
+    name="github_spark_pipeline",
+    description="Process GitHub data: Parquet -> Iceberg raw -> curated -> analytics",
+    selection=AssetSelection.groups("raw_iceberg", "curated", "analytics"),
 )
 
-daily_github_schedule = ScheduleDefinition(
-    name="daily_github_ingestion",
-    job=github_ingestion_job,
-    cron_schedule="0 3 * * *",
-    description="Daily GitHub data ingestion via dlt",
+daily_github_pipeline_schedule = ScheduleDefinition(
+    name="daily_github_pipeline",
+    job=github_full_pipeline_job,
+    cron_schedule="0 2 * * *",
+    description="Daily full GitHub data pipeline",
 )
 
 
@@ -861,20 +886,23 @@ daily_github_schedule = ScheduleDefinition(
 
 defs = Definitions(
     assets=[
-        # Spark-based assets
-        raw_people,
-        curated_people,
-        people_age_distribution,
-        # dlt-based assets
+        # dlt assets - ingest from GitHub API to S3 Parquet
         github_repositories,
         github_contributors,
         github_issues,
         github_pull_requests,
+        # Spark assets - load Parquet to Iceberg raw layer
+        raw_iceberg_github_repos,
+        raw_iceberg_github_contributors,
+        # Spark assets - curated layer
+        curated_github_repos,
+        # Spark assets - analytics layer
+        github_repo_analytics,
     ],
     resources={
         "spark_operator": SparkOperatorResource(),
         "dlt_pipeline": DltPipelineResource(),
     },
-    jobs=[people_pipeline_job, raw_ingestion_job, github_ingestion_job],
-    schedules=[daily_pipeline_schedule, daily_github_schedule],
+    jobs=[github_full_pipeline_job, github_ingestion_job, github_spark_pipeline_job],
+    schedules=[daily_github_pipeline_schedule],
 )
