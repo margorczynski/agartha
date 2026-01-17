@@ -22,19 +22,13 @@ resource "kubernetes_config_map_v1" "jupyter_config" {
   }
 
   data = {
-    NESSIE_URI            = var.nessie_uri
-    S3_ENDPOINT           = var.storage_s3_endpoint
-    S3_ACCESS_KEY_ID      = var.storage_s3_access_key
-    S3_SECRET_ACCESS_KEY  = var.storage_s3_secret_key
-    S3_WAREHOUSE          = var.storage_s3_warehouse
-    S3_RAW_BUCKET         = var.storage_s3_raw_bucket
-    TRINO_HOST            = var.trino_host
-    TRINO_PORT            = tostring(var.trino_port)
-    # PyIceberg configuration
-    PYICEBERG_CATALOG__DEFAULT__TYPE       = "rest"
-    PYICEBERG_CATALOG__DEFAULT__URI        = var.nessie_uri
-    PYICEBERG_CATALOG__DEFAULT__S3__ENDPOINT = var.storage_s3_endpoint
-    PYICEBERG_CATALOG__DEFAULT__WAREHOUSE  = var.storage_s3_warehouse
+    # Nessie Iceberg REST catalog (S3 credentials managed server-side)
+    NESSIE_URI = var.nessie_uri
+    TRINO_HOST = var.trino_host
+    TRINO_PORT = tostring(var.trino_port)
+    # PyIceberg default catalog configuration
+    PYICEBERG_CATALOG__DEFAULT__TYPE = "rest"
+    PYICEBERG_CATALOG__DEFAULT__URI  = var.nessie_uri
   }
 
   depends_on = [kubernetes_namespace_v1.notebooks_namespace]

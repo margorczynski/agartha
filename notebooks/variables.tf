@@ -14,35 +14,9 @@ variable "jupyter_image" {
   default     = "quay.io/jupyter/scipy-notebook:latest"
 }
 
-variable "storage_s3_endpoint" {
-  type        = string
-  description = "The S3 endpoint URL for MinIO"
-}
-
-variable "storage_s3_access_key" {
-  type        = string
-  description = "The S3 access key"
-}
-
-variable "storage_s3_secret_key" {
-  type        = string
-  description = "The S3 secret key"
-  sensitive   = true
-}
-
-variable "storage_s3_warehouse" {
-  type        = string
-  description = "The S3 warehouse location"
-}
-
-variable "storage_s3_raw_bucket" {
-  type        = string
-  description = "The S3 raw data bucket"
-}
-
 variable "nessie_uri" {
   type        = string
-  description = "The Nessie REST API URI"
+  description = "The Nessie Iceberg REST catalog URI"
 }
 
 variable "trino_host" {
