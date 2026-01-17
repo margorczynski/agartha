@@ -23,6 +23,11 @@ variable "s3_warehouse_bucket_name" {
   description = "The name of the S3 that will be provisioned for the warehouse"
 }
 
+variable "s3_raw_bucket_name" {
+  type        = string
+  description = "The name of the S3 bucket for raw/ingested data"
+}
+
 variable "minio_tenant_servers_num" {
   type        = number
   description = "The number of servers/pods the MinIO tenant will use"

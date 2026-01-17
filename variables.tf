@@ -23,6 +23,11 @@ variable "storage_s3_warehouse_bucket_name" {
   description = "The S3 bucket name to be created and used for storing the data"
 }
 
+variable "storage_s3_raw_bucket_name" {
+  type        = string
+  description = "The S3 bucket name to be created and used for raw/ingested data"
+}
+
 variable "monitoring_grafana_admin_password" {
   type        = string
   description = "The admin password for Grafana"
