@@ -72,6 +72,11 @@ resource "helm_release" "nessie" {
       name  = "catalog.storage.s3.defaultOptions.accessKeySecret.awsSecretAccessKey"
       value = "aws-secret-key"
     },
+    # Use request signing instead of credential vending (simpler for MinIO)
+    {
+      name  = "catalog.storage.s3.defaultOptions.requestSigningEnabled"
+      value = "true"
+    },
     # Warehouse configuration
     {
       name  = "catalog.iceberg.defaultWarehouse"

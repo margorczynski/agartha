@@ -29,6 +29,13 @@ resource "kubernetes_config_map_v1" "jupyter_config" {
     # PyIceberg default catalog configuration
     PYICEBERG_CATALOG__DEFAULT__TYPE = "rest"
     PYICEBERG_CATALOG__DEFAULT__URI  = var.nessie_uri
+    # Remote signing configuration (keeps credentials secure on Nessie side)
+    # Note: __ is for nesting, _ is converted to -
+    PYICEBERG_CATALOG__DEFAULT__HEADER__X-ICEBERG-ACCESS-DELEGATION = "remote-signing"
+    PYICEBERG_CATALOG__DEFAULT__S3__SIGNER = "S3V4RestSigner"
+    PYICEBERG_CATALOG__DEFAULT__S3__SIGNER__URI = var.nessie_uri
+    PYICEBERG_CATALOG__DEFAULT__S3__SIGNER__ENDPOINT = "v1/aws/s3/sign"
+    PYICEBERG_CATALOG__DEFAULT__PY-IO-IMPL = "pyiceberg.io.fsspec.FsspecFileIO"
   }
 
   depends_on = [kubernetes_namespace_v1.notebooks_namespace]
@@ -93,6 +100,12 @@ resource "kubernetes_deployment_v1" "jupyter" {
           port {
             container_port = 8888
             name           = "http"
+          }
+
+          # Set JUPYTER_PORT explicitly to avoid Kubernetes service env injection
+          env {
+            name  = "JUPYTER_PORT"
+            value = "8888"
           }
 
           env_from {
