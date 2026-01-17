@@ -30,14 +30,20 @@ resource "kubernetes_deployment_v1" "dagster_user_code" {
 
         container {
           name  = "user-code"
-          image = "docker.io/dagster/dagster-k8s:latest"
+          image = var.dagster_user_code_image
 
           port {
             container_port = 3030
             name           = "grpc"
           }
 
-          command = ["dagster", "api", "grpc", "-h", "0.0.0.0", "-p", "3030", "-f", "/opt/dagster/app/definitions.py"]
+          # Install dlt at startup and run the gRPC server
+          command = ["/bin/sh", "-c"]
+          args = [<<-EOT
+            pip install --no-cache-dir "dlt[filesystem]>=1.0.0" "s3fs>=2024.2.0" "pyarrow>=15.0.0" "boto3" && \
+            dagster api grpc -h 0.0.0.0 -p 3030 -f /opt/dagster/app/definitions.py
+          EOT
+          ]
 
           env_from {
             config_map_ref {
@@ -51,9 +57,29 @@ resource "kubernetes_deployment_v1" "dagster_user_code" {
             }
           }
 
+          # dlt-specific environment variables
+          env {
+            name  = "DLT_S3_BUCKET"
+            value = "agartha-raw"
+          }
+
+          # Optional GitHub token for higher rate limits
+          dynamic "env" {
+            for_each = var.github_access_token != "" ? [1] : []
+            content {
+              name  = "GITHUB_ACCESS_TOKEN"
+              value = var.github_access_token
+            }
+          }
+
           volume_mount {
             name       = "dagster-code"
             mount_path = "/opt/dagster/app"
+          }
+
+          volume_mount {
+            name       = "dlt-state"
+            mount_path = "/tmp/dlt_pipelines"
           }
 
           resources {
@@ -71,7 +97,7 @@ resource "kubernetes_deployment_v1" "dagster_user_code" {
             exec {
               command = ["dagster", "api", "grpc-health-check", "-p", "3030"]
             }
-            initial_delay_seconds = 30
+            initial_delay_seconds = 60  # Increased for pip install time
             period_seconds        = 10
           }
 
@@ -79,7 +105,7 @@ resource "kubernetes_deployment_v1" "dagster_user_code" {
             exec {
               command = ["dagster", "api", "grpc-health-check", "-p", "3030"]
             }
-            initial_delay_seconds = 30
+            initial_delay_seconds = 60  # Increased for pip install time
             period_seconds        = 30
           }
         }
@@ -89,6 +115,12 @@ resource "kubernetes_deployment_v1" "dagster_user_code" {
           config_map {
             name = kubernetes_config_map_v1.dagster_user_code.metadata[0].name
           }
+        }
+
+        # Persistent volume for dlt pipeline state (incremental loading)
+        volume {
+          name = "dlt-state"
+          empty_dir {}
         }
       }
     }
