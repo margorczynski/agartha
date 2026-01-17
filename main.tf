@@ -95,3 +95,28 @@ module "agartha_orchestration" {
     module.agartha_processing
   ]
 }
+
+module "agartha_notebooks" {
+  source = "./notebooks"
+
+  kubernetes_notebooks_namespace = "agartha-notebooks"
+  kubernetes_ingress_base_host   = local.agartha_host
+
+  storage_s3_endpoint   = "http://minio.agartha-storage.svc.cluster.local:9000"
+  storage_s3_access_key = var.storage_s3_access_key
+  storage_s3_secret_key = var.storage_s3_secret_key
+  storage_s3_warehouse  = "s3://${var.storage_s3_warehouse_bucket_name}"
+  storage_s3_raw_bucket = var.storage_s3_raw_bucket_name
+
+  nessie_uri = "http://nessie.agartha-catalog.svc.cluster.local:19120/api/v2"
+  trino_host = "trino.agartha-processing-trino.svc.cluster.local"
+  trino_port = 8080
+
+  jupyter_storage_size_gb = 5
+
+  depends_on = [
+    module.agartha_storage,
+    module.agartha_catalog,
+    module.agartha_processing
+  ]
+}
