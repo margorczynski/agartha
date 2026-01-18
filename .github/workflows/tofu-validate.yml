@@ -1,0 +1,30 @@
+name: OpenTofu Validation
+
+on:
+  pull_request:
+    branches: ['**']
+  push:
+    branches:
+      - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: 1.11.2
+          tofu_wrapper: false
+
+      - name: Format check
+        run: tofu fmt -check -recursive
+
+      - name: Initialize
+        run: tofu init
+
+      - name: Validate
+        run: tofu validate
