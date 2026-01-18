@@ -1,4 +1,4 @@
-FROM docker.io/dagster/dagster-k8s:latest
+FROM docker.io/dagster/dagster-k8s:1.12.11
 
 # Install dlt with filesystem support
 # boto3 is added explicitly to ensure version consistency with botocore

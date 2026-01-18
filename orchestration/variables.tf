@@ -60,7 +60,7 @@ variable "flink_namespace" {
 variable "dagster_user_code_image" {
   type        = string
   description = "Docker image for Dagster user code deployment (must include dlt dependencies)"
-  default     = "docker.io/dagster/dagster-k8s:latest"
+  default     = "docker.io/dagster/dagster-k8s:1.12.11"
 }
 
 variable "github_access_token" {

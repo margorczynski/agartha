@@ -11,7 +11,7 @@ variable "kubernetes_ingress_base_host" {
 variable "jupyter_image" {
   type        = string
   description = "The Docker image to use for JupyterLab"
-  default     = "quay.io/jupyter/scipy-notebook:latest"
+  default     = "quay.io/jupyter/scipy-notebook:notebook-7.5.1"
 }
 
 variable "nessie_uri" {
