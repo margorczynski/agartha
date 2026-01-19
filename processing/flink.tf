@@ -4,7 +4,7 @@ resource "helm_release" "flink_operator" {
   repository = "https://archive.apache.org/dist/flink/flink-kubernetes-operator-1.8.0"
   chart      = "flink-kubernetes-operator"
 
-  timeout = 600  # 10 minutes for image pulls on slow connections
+  timeout = 600 # 10 minutes for image pulls on slow connections
 
   set_list = [
     {

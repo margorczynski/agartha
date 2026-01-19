@@ -3,6 +3,7 @@ resource "helm_release" "minio_operator" {
   name       = "minio-operator"
   repository = "https://operator.min.io"
   chart      = "operator"
+  version    = "7.1.1"
 
   depends_on = [
     kubernetes_namespace_v1.storage_namespace
@@ -14,6 +15,7 @@ resource "helm_release" "minio_tenant" {
   name       = "minio-tenant"
   repository = "https://operator.min.io"
   chart      = "tenant"
+  version    = "7.1.1"
 
   set = [
     {

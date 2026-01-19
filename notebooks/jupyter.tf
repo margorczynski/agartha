@@ -32,10 +32,10 @@ resource "kubernetes_config_map_v1" "jupyter_config" {
     # Remote signing configuration (keeps credentials secure on Nessie side)
     # Note: __ is for nesting, _ is converted to -
     PYICEBERG_CATALOG__DEFAULT__HEADER__X-ICEBERG-ACCESS-DELEGATION = "remote-signing"
-    PYICEBERG_CATALOG__DEFAULT__S3__SIGNER = "S3V4RestSigner"
-    PYICEBERG_CATALOG__DEFAULT__S3__SIGNER__URI = var.nessie_uri
-    PYICEBERG_CATALOG__DEFAULT__S3__SIGNER__ENDPOINT = "v1/aws/s3/sign"
-    PYICEBERG_CATALOG__DEFAULT__PY-IO-IMPL = "pyiceberg.io.fsspec.FsspecFileIO"
+    PYICEBERG_CATALOG__DEFAULT__S3__SIGNER                          = "S3V4RestSigner"
+    PYICEBERG_CATALOG__DEFAULT__S3__SIGNER__URI                     = var.nessie_uri
+    PYICEBERG_CATALOG__DEFAULT__S3__SIGNER__ENDPOINT                = "v1/aws/s3/sign"
+    PYICEBERG_CATALOG__DEFAULT__PY-IO-IMPL                          = "pyiceberg.io.fsspec.FsspecFileIO"
   }
 
   depends_on = [kubernetes_namespace_v1.notebooks_namespace]
@@ -90,7 +90,7 @@ resource "kubernetes_deployment_v1" "jupyter" {
 
       spec {
         security_context {
-          fs_group = 100  # jovyan group
+          fs_group = 100 # jovyan group
         }
 
         container {

@@ -97,7 +97,7 @@ resource "kubernetes_deployment_v1" "dagster_user_code" {
             exec {
               command = ["dagster", "api", "grpc-health-check", "-p", "3030"]
             }
-            initial_delay_seconds = 60  # Increased for pip install time
+            initial_delay_seconds = 60 # Increased for pip install time
             period_seconds        = 10
           }
 
@@ -105,7 +105,7 @@ resource "kubernetes_deployment_v1" "dagster_user_code" {
             exec {
               command = ["dagster", "api", "grpc-health-check", "-p", "3030"]
             }
-            initial_delay_seconds = 60  # Increased for pip install time
+            initial_delay_seconds = 60 # Increased for pip install time
             period_seconds        = 30
           }
         }
