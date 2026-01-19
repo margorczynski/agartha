@@ -5,6 +5,7 @@
 |:-:|:-:|:-:|:-:|
 |storage | Data & metadata storage | MinIO, maybe switch to Garage|agartha-storage|
 |catalog | Data catalog and table metadata | Nessie|agartha-catalog|
+|secrets | Secrets management | OpenBao|agartha-secrets|
 |processing | Processing data (batches and streams) | Spark, Trino, Flink|agartha-processing-[spark/flink/trino]|
 |notebooks| Notebooks for interactive processing | JupyterHub|agartha-notebooks|
 |bi| Data visualization, dashboards and BI| Superset|agartha-bi|
@@ -23,6 +24,11 @@
 |Component|Subcomponent|Description|Endpoint|Kubernetes Namespace|
 |:-:|:-:|:-:|:-:|:-:|
 |Nessie||Catalog for metadata tracking|nessie.agartha.*|agartha-catalog|
+
+## Secrets
+|Component|Subcomponent|Description|Endpoint|Kubernetes Namespace|
+|:-:|:-:|:-:|:-:|:-:|
+|OpenBao||Secrets management and storage|openbao.agartha.*|agartha-secrets|
 
 ## Processing
 |Component|Subcomponent|Description|Endpoint|Kubernetes Namespace|
@@ -67,6 +73,11 @@ The monitoring stack includes pre-configured alerts for:
     * Enable versioning - can rewind lost data
     * Enable encryption
     * Enable replication
+* OpenBao
+    * Initialize OpenBao: `kubectl exec -it -n agartha-secrets <openbao-pod> -- bao operator init`
+    * Save the unseal keys and root token securely
+    * Unseal OpenBao: `kubectl exec -it -n agartha-secrets <openbao-pod> -- bao operator unseal` (repeat 3 times with different keys)
+    * Access UI at: `openbao.agartha.<ingress_host>`
 
 ## Testing with Minikube
 
@@ -100,8 +111,8 @@ This can be done via the following commands:
 AGARTHA_HOST=minikubehost.com
 MINIKUBE_IP=$(minikube ip)
 
-echo minio-operator-console,minio-tenant-console,minio,nessie,trino,spark,flink,superset,grafana,prometheus,alertmanager | \
- tr ',' '\n' | \
- xargs -I {} echo ${MINIKUBE_IP} {}.agartha.${AGARTHA_HOST} | \
- sudo tee -a /etc/hosts
+echo minio-operator-console,minio-tenant-console,minio,nessie,openbao,trino,spark,flink,superset,grafana,prometheus,alertmanager | \
+  tr ',' '\n' | \
+  xargs -I {} echo ${MINIKUBE_IP} {}.agartha.${AGARTHA_HOST} | \
+  sudo tee -a /etc/hosts
 ```

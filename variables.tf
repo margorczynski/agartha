@@ -36,6 +36,24 @@ variable "monitoring_grafana_admin_password" {
 
 variable "orchestration_dagster_postgres_password" {
   type        = string
-  description = "The password for the Dagster PostgreSQL database"
+  description = "The password for Dagster PostgreSQL database"
   sensitive   = true
+}
+
+variable "openbao_data_storage_size_gb" {
+  type        = number
+  description = "Storage size in GB for OpenBao data"
+  default     = 5
+}
+
+variable "openbao_ui_enabled" {
+  type        = bool
+  description = "Enable OpenBao UI access via ingress"
+  default     = true
+}
+
+variable "openbao_dev_mode" {
+  type        = bool
+  description = "Run OpenBao in dev mode (no persistence, auto-unsealed)"
+  default     = false
 }

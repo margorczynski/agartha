@@ -30,6 +30,21 @@ module "agartha_catalog" {
   ]
 }
 
+module "agartha_secrets" {
+  source = "./secrets"
+
+  kubernetes_secrets_namespace = "agartha-secrets"
+  kubernetes_ingress_base_host = local.agartha_host
+
+  openbao_data_storage_size_gb = var.openbao_data_storage_size_gb
+  openbao_ui_enabled           = var.openbao_ui_enabled
+  openbao_dev_mode             = var.openbao_dev_mode
+
+  depends_on = [
+    module.agartha_storage
+  ]
+}
+
 module "agartha_monitoring" {
   source = "./monitoring"
 
