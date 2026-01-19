@@ -1,4 +1,6 @@
 locals {
+  openbao_root_token_secret_name = "openbao-root-token"
+
   labels = {
     "app.kubernetes.io/name"       = "openbao"
     "app.kubernetes.io/component"  = "secrets"

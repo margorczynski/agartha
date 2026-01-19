@@ -1,5 +1,5 @@
 state.backend: filesystem
 s3.endpoint: http://minio.agartha-storage.svc.cluster.local:9000
 s3.path.style: true
-s3.access-key: minioadmin
-s3.secret-key: minioadmin
+s3.access-key: YOUR_MINIO_ACCESS_KEY
+s3.secret-key: YOUR_MINIO_SECRET_KEY

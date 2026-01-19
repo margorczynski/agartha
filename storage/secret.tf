@@ -17,6 +17,10 @@ export MINIO_ROOT_USER="${var.s3_access_key}"
 export MINIO_ROOT_PASSWORD="${var.s3_secret_key}"
 export MINIO_BROWSER=on
 EOH
+    "MINIO_ROOT_USER"     = var.s3_access_key
+    "MINIO_ROOT_PASSWORD" = var.s3_secret_key
+    "S3_ACCESS_KEY_ID"    = var.s3_access_key
+    "S3_SECRET_ACCESS_KEY" = var.s3_secret_key
   }
 
   depends_on = [

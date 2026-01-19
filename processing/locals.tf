@@ -6,4 +6,8 @@ locals {
   nessie_catalog_uri = "http://nessie.agartha-catalog.svc.cluster.local:19120/api/v2"
   s3_endpoint        = var.storage_s3_endpoint
   warehouse_location = var.storage_s3_warehouse_location
+
+  spark_s3_secret_name   = "spark-s3-credentials"
+  flink_s3_secret_name   = "flink-s3-credentials"
+  trino_s3_secret_name   = "trino-s3-credentials"
 }

@@ -12,11 +12,10 @@ resource "kubernetes_config_map_v1" "spark_storage_config" {
     NESSIE_REF           = "main"
     S3_ENDPOINT          = "http://minio.agartha-storage.svc.cluster.local:9000"
     S3_WAREHOUSE         = "s3a://agartha-warehouse/"
-    S3_ACCESS_KEY_ID     = var.storage_s3_access_key
-    S3_SECRET_ACCESS_KEY = var.storage_s3_secret_key
     S3_REGION            = "us-east-1"
     S3_PATH_STYLE_ACCESS = "true"
     S3_SSL_ENABLED       = "false"
+    S3_SECRET_NAME       = kubernetes_secret_v1.spark_s3_credentials.metadata[0].name
   }
 
   depends_on = [
@@ -38,10 +37,9 @@ resource "kubernetes_config_map_v1" "flink_storage_config" {
     NESSIE_REF           = "main"
     S3_ENDPOINT          = "http://minio.agartha-storage.svc.cluster.local:9000"
     S3_WAREHOUSE         = "s3a://agartha-warehouse/"
-    S3_ACCESS_KEY_ID     = var.storage_s3_access_key
-    S3_SECRET_ACCESS_KEY = var.storage_s3_secret_key
     S3_REGION            = "us-east-1"
     S3_PATH_STYLE_ACCESS = "true"
+    S3_SECRET_NAME       = kubernetes_secret_v1.flink_s3_credentials.metadata[0].name
   }
 
   depends_on = [
@@ -62,10 +60,9 @@ resource "kubernetes_config_map_v1" "trino_storage_config" {
     NESSIE_URI           = "http://nessie.agartha-catalog.svc.cluster.local:19120/api/v2"
     S3_ENDPOINT          = var.storage_s3_endpoint
     S3_WAREHOUSE         = var.storage_s3_warehouse_location
-    S3_ACCESS_KEY_ID     = var.storage_s3_access_key
-    S3_SECRET_ACCESS_KEY = var.storage_s3_secret_key
     S3_REGION            = "us-east-1"
     S3_PATH_STYLE_ACCESS = "true"
+    S3_SECRET_NAME       = kubernetes_secret_v1.trino_s3_credentials.metadata[0].name
   }
 
   depends_on = [

@@ -8,7 +8,7 @@ resource "helm_release" "kube_prometheus_stack" {
 
   values = [
     templatefile("${path.module}/templates/prometheus_values.tftpl", {
-      grafana_admin_password     = var.grafana_admin_password
+      grafana_secret_name        = local.grafana_secret_name
       prometheus_retention_days  = var.prometheus_retention_days
       prometheus_storage_size_gb = var.prometheus_storage_size_gb
       grafana_storage_size_gb    = var.grafana_storage_size_gb

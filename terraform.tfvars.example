@@ -1,0 +1,39 @@
+# Example terraform.tfvars file for local development
+# Copy this file to terraform.tfvars and update the values
+# IMPORTANT: Do NOT commit terraform.tfvars to version control
+
+# Kubernetes configuration
+kubernetes_config_path                    = "~/.kube/config"
+ingress_host                              = "minikubehost.com"
+
+# Storage configuration
+storage_s3_warehouse_bucket_name     = "agartha-warehouse"
+storage_s3_raw_bucket_name            = "agartha-raw"
+
+# IMPORTANT: Replace these with strong, unique credentials
+storage_s3_access_key               = "YOUR_MINIO_ACCESS_KEY"
+storage_s3_secret_key               = "YOUR_MINIO_SECRET_KEY"
+
+# IMPORTANT: Replace with strong passwords
+monitoring_grafana_admin_password       = "YOUR_GRAFANA_PASSWORD"
+orchestration_dagster_postgres_password = "YOUR_DAGSTER_PASSWORD"
+
+# OpenBao configuration
+openbao_dev_mode                        = true
+
+# Optional: Data storage sizes (GB)
+openbao_data_storage_size_gb             = 5
+prometheus_retention_days                = 15
+prometheus_storage_size_gb              = 10
+grafana_storage_size_gb                 = 2
+loki_storage_size_gb                    = 10
+
+# Optional: Component replica counts
+dagster_webserver_replica_num           = 1
+dagster_run_coordinator_max_concurrent_runs = 10
+trino_cluster_worker_num                = 2
+superset_node_replica_num              = 1
+superset_worker_replica_num            = 1
+
+# Optional: GitHub access token for higher API rate limits (optional)
+# github_access_token                    = ""

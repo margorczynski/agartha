@@ -5,6 +5,8 @@ locals {
   s3_endpoint        = var.storage_s3_endpoint
   warehouse_location = var.storage_s3_warehouse_location
 
+  dagster_postgres_secret_name = "dagster-postgres-credentials"
+
   dagster_labels = {
     "app.kubernetes.io/name"       = "dagster"
     "app.kubernetes.io/component"  = "orchestration"

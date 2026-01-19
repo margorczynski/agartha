@@ -1,3 +1,4 @@
+import os
 from pyflink.table import StreamTableEnvironment
 from pyflink.datastream import StreamExecutionEnvironment
 
@@ -13,8 +14,8 @@ table_env.execute_sql(
         'catalog-impl'='org.apache.iceberg.nessie.NessieCatalog',
         'uri'='http://nessie.agartha-catalog.svc.cluster.local:19120/api/v2',
         'ref'='main',
-        's3.access-key-id'='minioadmin',
-        's3.secret-access-key'='minioadmin',
+        's3.access-key-id'='""" + os.environ.get('MINIO_ACCESS_KEY', 'YOUR_MINIO_ACCESS_KEY') + """',
+        's3.secret-access-key'='""" + os.environ.get('MINIO_SECRET_KEY', 'YOUR_MINIO_SECRET_KEY') + """',
         's3.endpoint'='http://minio.agartha-storage.svc.cluster.local:9000',
         'client.region'='us-east-1',
         'warehouse'='s3a://agartha-warehouse/')"""

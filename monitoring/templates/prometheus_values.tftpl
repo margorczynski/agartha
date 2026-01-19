@@ -14,7 +14,10 @@ prometheus:
 
 grafana:
   enabled: true
-  adminPassword: "${grafana_admin_password}"
+  admin:
+    existingSecret: "${grafana_secret_name}"
+    userKey: username
+    passwordKey: password
   persistence:
     enabled: true
     size: ${grafana_storage_size_gb}Gi

@@ -18,9 +18,15 @@ dagsterWebserver:
     - name: S3_WAREHOUSE
       value: "${s3_warehouse}"
     - name: S3_ACCESS_KEY_ID
-      value: "${s3_access_key}"
+      valueFrom:
+        secretKeyRef:
+          name: "${s3_credentials_secret_name}"
+          key: S3_ACCESS_KEY_ID
     - name: S3_SECRET_ACCESS_KEY
-      value: "${s3_secret_key}"
+      valueFrom:
+        secretKeyRef:
+          name: "${s3_credentials_secret_name}"
+          key: S3_SECRET_ACCESS_KEY
     - name: S3_REGION
       value: "us-east-1"
     - name: S3_PATH_STYLE_ACCESS
@@ -49,9 +55,15 @@ dagsterDaemon:
     - name: S3_WAREHOUSE
       value: "${s3_warehouse}"
     - name: S3_ACCESS_KEY_ID
-      value: "${s3_access_key}"
+      valueFrom:
+        secretKeyRef:
+          name: "${s3_credentials_secret_name}"
+          key: S3_ACCESS_KEY_ID
     - name: S3_SECRET_ACCESS_KEY
-      value: "${s3_secret_key}"
+      valueFrom:
+        secretKeyRef:
+          name: "${s3_credentials_secret_name}"
+          key: S3_SECRET_ACCESS_KEY
     - name: S3_REGION
       value: "us-east-1"
     - name: S3_PATH_STYLE_ACCESS
@@ -110,8 +122,10 @@ runLauncher:
 postgresql:
   enabled: true
   auth:
-    password: "${dagster_postgres_password}"
-    postgresPassword: "${dagster_postgres_password}"
+    existingSecret: "${dagster_postgres_secret_name}"
+    secretKeys:
+      adminPasswordKey: postgres-password
+      userPasswordKey: password
   primary:
     persistence:
       enabled: true

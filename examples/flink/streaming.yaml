@@ -10,16 +10,16 @@ spec:
     state.backend: filesystem
     s3.impl: org.apache.hadoop.fs.s3a.S3AFileSystem
     s3.path.style.access: true
-    s3.access-key: "minioadmin"
-    s3.secret-key: "minioadmin"
+    s3.access-key: "YOUR_MINIO_ACCESS_KEY"
+    s3.secret-key: "YOUR_MINIO_SECRET_KEY"
     s3.endpoint: "http://minio.agartha-storage.svc.cluster.local:9000"
-    containerized.master.env.AWS_ACCESS_KEY: minioadmin
-    containerized.master.env.AWS_SECRET_KEY: minioadmin
+    containerized.master.env.AWS_ACCESS_KEY: YOUR_MINIO_ACCESS_KEY
+    containerized.master.env.AWS_SECRET_KEY: YOUR_MINIO_SECRET_KEY
     containerized.master.env.AWS_REGION: us-east-1
     containerized.master.env.AWS_ENDPOINT_URL: http://minio.agartha-storage.svc.cluster.local:9000
     containerized.master.env.ENABLE_BUILT_IN_PLUGINS: flink-s3-fs-hadoop-1.18.1.jar
-    containerized.taskmanager.env.AWS_ACCESS_KEY: minioadmin
-    containerized.taskmanager.env.AWS_SECRET_KEY: minioadmin
+    containerized.taskmanager.env.AWS_ACCESS_KEY: YOUR_MINIO_ACCESS_KEY
+    containerized.taskmanager.env.AWS_SECRET_KEY: YOUR_MINIO_SECRET_KEY
     containerized.taskmanager.env.AWS_REGION: us-east-1
     containerized.taskmanager.env.AWS_ENDPOINT_URL: http://minio.agartha-storage.svc.cluster.local:9000
     containerized.taskmanager.env.ENABLE_BUILT_IN_PLUGINS: flink-s3-fs-hadoop-1.18.1.jar

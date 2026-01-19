@@ -25,8 +25,8 @@ spec:
     spark.sql.catalog.agartha.ref: "main"
     spark.sql.catalog.agartha: "org.apache.iceberg.spark.SparkCatalog"
   hadoopConf:
-    fs.s3a.access.key: "minioadmin"
-    fs.s3a.secret.key: "minioadmin"
+    fs.s3a.access.key: "YOUR_MINIO_ACCESS_KEY"
+    fs.s3a.secret.key: "YOUR_MINIO_SECRET_KEY"
     fs.s3a.endpoint: "http://minio.agartha-storage.svc.cluster.local"
     fs.s3a.connection.ssl.enabled: "false"
     fs.s3a.path.style.access: "true"
@@ -43,9 +43,9 @@ spec:
         -   name: AWS_REGION
             value: us-east-1
         -   name: AWS_ACCESS_KEY_ID
-            value: minioadmin
+            value: YOUR_MINIO_ACCESS_KEY
         -   name: AWS_SECRET_ACCESS_KEY
-            value: minioadmin
+            value: YOUR_MINIO_SECRET_KEY
   executor:
     cores: 1
     instances: 1
@@ -56,6 +56,6 @@ spec:
         -   name: AWS_REGION
             value: us-east-1
         -   name: AWS_ACCESS_KEY_ID
-            value: minioadmin
+            value: YOUR_MINIO_ACCESS_KEY
         -   name: AWS_SECRET_ACCESS_KEY
-            value: minioadmin
+            value: YOUR_MINIO_SECRET_KEY

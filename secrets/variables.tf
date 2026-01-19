@@ -25,3 +25,10 @@ variable "openbao_dev_mode" {
   description = "Run OpenBao in dev mode (no persistence, auto-unsealed)"
   default     = false
 }
+
+variable "openbao_root_token" {
+  type        = string
+  description = "The root token for OpenBao (only used in dev mode)"
+  sensitive   = true
+  default     = "root"
+}
