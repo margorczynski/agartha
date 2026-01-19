@@ -5,7 +5,7 @@ resource "helm_release" "spark_operator" {
   chart      = "spark-operator"
   version    = "1.1.27"
 
-  timeout = 600  # 10 minutes for image pulls on slow connections
+  timeout = 600 # 10 minutes for image pulls on slow connections
 
   set = [
     {

@@ -20,6 +20,7 @@ resource "helm_release" "nessie" {
   name       = "nessie"
   repository = "https://charts.projectnessie.org"
   chart      = "nessie"
+  version    = "0.106.1"
 
   set = [
     {

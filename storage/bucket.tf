@@ -2,9 +2,9 @@ resource "null_resource" "create_buckets" {
   depends_on = [helm_release.minio_tenant]
 
   triggers = {
-    namespace_uid       = kubernetes_namespace_v1.storage_namespace.id
-    warehouse_bucket    = var.s3_warehouse_bucket_name
-    raw_bucket          = var.s3_raw_bucket_name
+    namespace_uid    = kubernetes_namespace_v1.storage_namespace.id
+    warehouse_bucket = var.s3_warehouse_bucket_name
+    raw_bucket       = var.s3_raw_bucket_name
   }
 
   provisioner "local-exec" {
