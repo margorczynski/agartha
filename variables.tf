@@ -39,3 +39,16 @@ variable "orchestration_dagster_postgres_password" {
   description = "The password for the Dagster PostgreSQL database"
   sensitive   = true
 }
+
+variable "identity_keycloak_admin_password" {
+  type        = string
+  description = "The admin password for Keycloak"
+  sensitive   = true
+}
+
+variable "identity_keycloak_postgres_password" {
+  type        = string
+  description = "The password for Keycloak PostgreSQL database. Leave empty to auto-generate."
+  sensitive   = true
+  default     = ""
+}

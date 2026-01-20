@@ -50,6 +50,22 @@ module "agartha_monitoring" {
   loki_storage_size_gb = 10
 }
 
+module "agartha_identity" {
+  source = "./identity"
+
+  kubernetes_identity_namespace = "agartha-identity"
+  kubernetes_ingress_base_host  = local.agartha_host
+
+  keycloak_admin_password           = var.identity_keycloak_admin_password
+  keycloak_postgres_password        = var.identity_keycloak_postgres_password
+  keycloak_postgres_storage_size_gb = 10
+  keycloak_replicas                 = 1
+
+  depends_on = [
+    module.agartha_monitoring
+  ]
+}
+
 module "agartha_processing" {
   source = "./processing"
 
@@ -64,7 +80,8 @@ module "agartha_processing" {
   trino_cluster_worker_num = 2
 
   depends_on = [
-    module.agartha_monitoring
+    module.agartha_monitoring,
+    module.agartha_identity
   ]
 }
 
