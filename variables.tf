@@ -64,3 +64,15 @@ variable "grafana_keycloak_integration_enabled" {
   description = "Enable Keycloak OAuth integration for Grafana"
   default     = true
 }
+
+variable "superset_keycloak_integration_enabled" {
+  type        = bool
+  description = "Enable Keycloak OAuth integration for Superset"
+  default     = true
+}
+
+variable "identity_superset_oauth_client_secret" {
+  type        = string
+  description = "The client secret for Superset OAuth integration with Keycloak"
+  sensitive   = true
+}

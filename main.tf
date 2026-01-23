@@ -73,7 +73,8 @@ module "agartha_identity" {
   keycloak_postgres_storage_size_gb = 10
   keycloak_replicas                 = 1
 
-  grafana_oauth_client_secret = var.identity_grafana_oauth_client_secret
+  grafana_oauth_client_secret  = var.identity_grafana_oauth_client_secret
+  superset_oauth_client_secret = var.identity_superset_oauth_client_secret
 }
 
 module "agartha_processing" {
@@ -104,8 +105,19 @@ module "business_intelligence" {
   superset_node_replica_num   = 1
   superset_worker_replica_num = 1
 
+  # Keycloak OAuth integration
+  superset_oauth_enabled       = var.superset_keycloak_integration_enabled
+  superset_oauth_client_id     = var.superset_keycloak_integration_enabled ? module.agartha_identity.keycloak_superset_client_id : ""
+  superset_oauth_client_secret = var.superset_keycloak_integration_enabled ? module.agartha_identity.keycloak_superset_client_secret : ""
+  keycloak_auth_url            = var.superset_keycloak_integration_enabled ? module.agartha_identity.keycloak_auth_url : ""
+  keycloak_token_url           = var.superset_keycloak_integration_enabled ? module.agartha_identity.keycloak_token_url : ""
+  keycloak_issuer_url          = var.superset_keycloak_integration_enabled ? module.agartha_identity.keycloak_issuer_url : ""
+  keycloak_jwks_url            = var.superset_keycloak_integration_enabled ? module.agartha_identity.keycloak_jwks_url : ""
+  keycloak_api_base_url        = var.superset_keycloak_integration_enabled ? module.agartha_identity.keycloak_api_base_url : ""
+
   depends_on = [
-    module.agartha_processing
+    module.agartha_processing,
+    module.agartha_identity
   ]
 }
 
