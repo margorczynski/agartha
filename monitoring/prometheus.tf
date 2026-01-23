@@ -17,7 +17,6 @@ resource "helm_release" "kube_prometheus_stack" {
       trino_namespace             = var.trino_namespace
       spark_namespace             = var.spark_namespace
       flink_namespace             = var.flink_namespace
-      grafana_oauth_enabled       = var.grafana_oauth_enabled
       grafana_oauth_client_id     = var.grafana_oauth_client_id
       grafana_oauth_client_secret = var.grafana_oauth_client_secret
       keycloak_auth_url           = var.keycloak_auth_url

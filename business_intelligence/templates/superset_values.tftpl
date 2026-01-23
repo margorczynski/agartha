@@ -1,7 +1,6 @@
 configOverrides:
   secret: |
     SECRET_KEY = '${superset_secret_key}'
-%{ if oauth_enabled ~}
   enable_oauth: |
     from flask_appbuilder.security.manager import AUTH_OAUTH
     AUTH_TYPE = AUTH_OAUTH
@@ -33,19 +32,18 @@ configOverrides:
     import jwt
 
     def get_oauth_user_info(provider, token):
-        if provider == 'keycloak':
-            # Decode the ID token without verification (already verified by authlib)
-            id_token = token.get('id_token')
-            if id_token:
-                # Decode without verification - token was already validated
-                decoded = jwt.decode(id_token, options={"verify_signature": False})
-                return {
-                    'username': decoded.get('preferred_username', ''),
-                    'first_name': decoded.get('given_name', ''),
-                    'last_name': decoded.get('family_name', ''),
-                    'email': decoded.get('email', ''),
-                    'role_keys': decoded.get('groups', []),
-                }
+        # Decode the ID token without verification (already verified by authlib)
+        id_token = token.get('id_token')
+        if id_token:
+            # Decode without verification - token was already validated
+            decoded = jwt.decode(id_token, options={"verify_signature": False})
+            return {
+                'username': decoded.get('preferred_username', ''),
+                'first_name': decoded.get('given_name', ''),
+                'last_name': decoded.get('family_name', ''),
+                'email': decoded.get('email', ''),
+                'role_keys': decoded.get('groups', []),
+            }
         return {}
 
     CUSTOM_SECURITY_MANAGER = None  # Use default, but override user info
@@ -53,17 +51,16 @@ configOverrides:
     from superset.security import SupersetSecurityManager
     class CustomSecurityManager(SupersetSecurityManager):
         def oauth_user_info(self, provider, response=None):
-            if provider == 'keycloak':
-                token = self.appbuilder.sm.oauth_remotes[provider].token
-                if token and 'id_token' in token:
-                    decoded = jwt.decode(token['id_token'], options={"verify_signature": False})
-                    return {
-                        'username': decoded.get('preferred_username', ''),
-                        'first_name': decoded.get('given_name', ''),
-                        'last_name': decoded.get('family_name', ''),
-                        'email': decoded.get('email', ''),
-                        'role_keys': decoded.get('groups', []),
-                    }
+            token = self.appbuilder.sm.oauth_remotes[provider].token
+            if token and 'id_token' in token:
+                decoded = jwt.decode(token['id_token'], options={"verify_signature": False})
+                return {
+                    'username': decoded.get('preferred_username', ''),
+                    'first_name': decoded.get('given_name', ''),
+                    'last_name': decoded.get('family_name', ''),
+                    'email': decoded.get('email', ''),
+                    'role_keys': decoded.get('groups', []),
+                }
             return super().oauth_user_info(provider, response)
 
     CUSTOM_SECURITY_MANAGER = CustomSecurityManager
@@ -82,7 +79,6 @@ configOverrides:
     # Allow users to self-register
     AUTH_USER_REGISTRATION = True
     AUTH_USER_REGISTRATION_ROLE = 'Gamma'
-%{ endif ~}
 
 supersetNode:
   replicaCount: ${superset_node_replica_num}
@@ -96,11 +92,7 @@ init:
     firstname: Admin
     lastname: User
     email: admin@superset.local
-%{ if oauth_enabled ~}
     password: '${superset_admin_password}'
-%{ else ~}
-    password: admin
-%{ endif ~}
 
 postgresql:
   image:
@@ -112,11 +104,7 @@ redis:
 
 bootstrapScript: |
   #!/bin/bash
-%{ if oauth_enabled ~}
   pip install --target=/app/.venv/lib/python3.10/site-packages trino psycopg2-binary authlib PyJWT &&\
-%{ else ~}
-  pip install --target=/app/.venv/lib/python3.10/site-packages trino psycopg2-binary &&\
-%{ endif ~}
   if [ ! -f ~/bootstrap ]; then echo "Running Superset with uid {{ .Values.runAsUser }}" > ~/bootstrap; fi
 
 extraConfigs:
