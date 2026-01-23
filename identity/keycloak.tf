@@ -24,6 +24,10 @@ resource "helm_release" "keycloak" {
 
   set = [
     {
+      name  = "global.security.allowInsecureImages"
+      value = "true"
+    },
+    {
       name  = "auth.adminUser"
       value = "admin"
     },
@@ -150,11 +154,46 @@ resource "helm_release" "keycloak" {
     {
       name  = "resources.requests.memory"
       value = "1Gi"
+    },
+    # Disable keycloakConfigCli - we use native realm import instead
+    {
+      name  = "keycloakConfigCli.enabled"
+      value = "false"
+    },
+    # Native realm import on startup
+    {
+      name  = "extraEnvVars[0].name"
+      value = "KEYCLOAK_EXTRA_ARGS"
+    },
+    {
+      name  = "extraEnvVars[0].value"
+      value = "--import-realm"
+    },
+    {
+      name  = "extraVolumes[0].name"
+      value = "realm-config"
+    },
+    {
+      name  = "extraVolumes[0].configMap.name"
+      value = kubernetes_config_map_v1.keycloak_realm.metadata[0].name
+    },
+    {
+      name  = "extraVolumeMounts[0].name"
+      value = "realm-config"
+    },
+    {
+      name  = "extraVolumeMounts[0].mountPath"
+      value = "/opt/bitnami/keycloak/data/import"
+    },
+    {
+      name  = "extraVolumeMounts[0].readOnly"
+      value = "true"
     }
   ]
 
   depends_on = [
     kubernetes_namespace_v1.identity_namespace,
-    kubernetes_secret_v1.keycloak_database_password
+    kubernetes_secret_v1.keycloak_database_password,
+    kubernetes_config_map_v1.keycloak_realm
   ]
 }

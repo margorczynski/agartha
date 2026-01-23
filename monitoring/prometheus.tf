@@ -8,15 +8,22 @@ resource "helm_release" "kube_prometheus_stack" {
 
   values = [
     templatefile("${path.module}/templates/prometheus_values.tftpl", {
-      grafana_admin_password     = var.grafana_admin_password
-      prometheus_retention_days  = var.prometheus_retention_days
-      prometheus_storage_size_gb = var.prometheus_storage_size_gb
-      grafana_storage_size_gb    = var.grafana_storage_size_gb
-      minio_namespace            = var.minio_namespace
-      nessie_namespace           = var.nessie_namespace
-      trino_namespace            = var.trino_namespace
-      spark_namespace            = var.spark_namespace
-      flink_namespace            = var.flink_namespace
+      grafana_admin_password      = var.grafana_admin_password
+      prometheus_retention_days   = var.prometheus_retention_days
+      prometheus_storage_size_gb  = var.prometheus_storage_size_gb
+      grafana_storage_size_gb     = var.grafana_storage_size_gb
+      minio_namespace             = var.minio_namespace
+      nessie_namespace            = var.nessie_namespace
+      trino_namespace             = var.trino_namespace
+      spark_namespace             = var.spark_namespace
+      flink_namespace             = var.flink_namespace
+      grafana_oauth_enabled       = var.grafana_oauth_enabled
+      grafana_oauth_client_id     = var.grafana_oauth_client_id
+      grafana_oauth_client_secret = var.grafana_oauth_client_secret
+      keycloak_auth_url           = var.keycloak_auth_url
+      keycloak_token_url          = var.keycloak_token_url
+      keycloak_userinfo_url       = var.keycloak_userinfo_url
+      ingress_base_host           = var.kubernetes_ingress_base_host
     })
   ]
 

@@ -52,3 +52,15 @@ variable "identity_keycloak_postgres_password" {
   sensitive   = true
   default     = ""
 }
+
+variable "identity_grafana_oauth_client_secret" {
+  type        = string
+  description = "The client secret for Grafana OAuth integration with Keycloak"
+  sensitive   = true
+}
+
+variable "grafana_keycloak_integration_enabled" {
+  type        = bool
+  description = "Enable Keycloak OAuth integration for Grafana"
+  default     = true
+}
