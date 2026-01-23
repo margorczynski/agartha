@@ -48,6 +48,18 @@ module "agartha_monitoring" {
   flink_namespace  = "agartha-processing-flink"
 
   loki_storage_size_gb = 10
+
+  # Keycloak OAuth integration
+  grafana_oauth_enabled       = var.grafana_keycloak_integration_enabled
+  grafana_oauth_client_id     = var.grafana_keycloak_integration_enabled ? module.agartha_identity.keycloak_grafana_client_id : ""
+  grafana_oauth_client_secret = var.grafana_keycloak_integration_enabled ? module.agartha_identity.keycloak_grafana_client_secret : ""
+  keycloak_auth_url           = var.grafana_keycloak_integration_enabled ? module.agartha_identity.keycloak_auth_url : ""
+  keycloak_token_url          = var.grafana_keycloak_integration_enabled ? module.agartha_identity.keycloak_token_url : ""
+  keycloak_userinfo_url       = var.grafana_keycloak_integration_enabled ? module.agartha_identity.keycloak_userinfo_url : ""
+
+  depends_on = [
+    module.agartha_identity
+  ]
 }
 
 module "agartha_identity" {
@@ -61,9 +73,7 @@ module "agartha_identity" {
   keycloak_postgres_storage_size_gb = 10
   keycloak_replicas                 = 1
 
-  depends_on = [
-    module.agartha_monitoring
-  ]
+  grafana_oauth_client_secret = var.identity_grafana_oauth_client_secret
 }
 
 module "agartha_processing" {

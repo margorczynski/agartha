@@ -32,3 +32,9 @@ variable "keycloak_replicas" {
   description = "Number of Keycloak replicas"
   default     = 1
 }
+
+variable "grafana_oauth_client_secret" {
+  type        = string
+  description = "The client secret for Grafana OAuth integration with Keycloak"
+  sensitive   = true
+}
