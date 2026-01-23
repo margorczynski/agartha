@@ -18,52 +18,39 @@ variable "superset_worker_replica_num" {
   description = "Number of Superset worker replicas"
 }
 
-# OAuth/Keycloak integration variables
-variable "superset_oauth_enabled" {
-  type        = bool
-  description = "Enable OAuth authentication for Superset via Keycloak"
-  default     = false
-}
-
+# Keycloak OAuth integration variables
 variable "superset_oauth_client_id" {
   type        = string
   description = "The OAuth client ID for Superset (from Keycloak)"
-  default     = ""
 }
 
 variable "superset_oauth_client_secret" {
   type        = string
   description = "The OAuth client secret for Superset (from Keycloak)"
   sensitive   = true
-  default     = ""
 }
 
 variable "keycloak_auth_url" {
   type        = string
   description = "The Keycloak OIDC authorization URL (external, for browser redirects)"
-  default     = ""
 }
 
 variable "keycloak_token_url" {
   type        = string
   description = "The Keycloak OIDC token URL (internal, for server-to-server)"
-  default     = ""
 }
 
 variable "keycloak_issuer_url" {
   type        = string
   description = "The Keycloak OIDC issuer URL (external, must match token iss claim)"
-  default     = ""
 }
 
 variable "keycloak_jwks_url" {
   type        = string
   description = "The Keycloak OIDC JWKS URL (internal, for server-to-server)"
-  default     = ""
 }
 
 variable "keycloak_api_base_url" {
   type        = string
   description = "The Keycloak OIDC API base URL (internal, for server-to-server)"
-  default     = ""
 }

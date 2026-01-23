@@ -36,7 +36,6 @@ resource "helm_release" "superset" {
       superset_secret_key         = random_password.superset_secret_key.result
       superset_node_replica_num   = var.superset_node_replica_num
       superset_worker_replica_num = var.superset_worker_replica_num
-      oauth_enabled               = var.superset_oauth_enabled
       oauth_client_id             = var.superset_oauth_client_id
       oauth_client_secret         = var.superset_oauth_client_secret
       keycloak_auth_url           = var.keycloak_auth_url

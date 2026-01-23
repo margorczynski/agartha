@@ -63,40 +63,29 @@ variable "loki_storage_size_gb" {
   default     = 10
 }
 
-# OAuth/Keycloak integration variables
-variable "grafana_oauth_enabled" {
-  type        = bool
-  description = "Enable OAuth authentication for Grafana via Keycloak"
-  default     = false
-}
-
+# Keycloak OAuth integration variables
 variable "grafana_oauth_client_id" {
   type        = string
   description = "The OAuth client ID for Grafana (from Keycloak)"
-  default     = ""
 }
 
 variable "grafana_oauth_client_secret" {
   type        = string
   description = "The OAuth client secret for Grafana (from Keycloak)"
   sensitive   = true
-  default     = ""
 }
 
 variable "keycloak_auth_url" {
   type        = string
   description = "The Keycloak OIDC authorization URL"
-  default     = ""
 }
 
 variable "keycloak_token_url" {
   type        = string
   description = "The Keycloak OIDC token URL"
-  default     = ""
 }
 
 variable "keycloak_userinfo_url" {
   type        = string
   description = "The Keycloak OIDC userinfo URL"
-  default     = ""
 }

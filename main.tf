@@ -50,12 +50,11 @@ module "agartha_monitoring" {
   loki_storage_size_gb = 10
 
   # Keycloak OAuth integration
-  grafana_oauth_enabled       = var.grafana_keycloak_integration_enabled
-  grafana_oauth_client_id     = var.grafana_keycloak_integration_enabled ? module.agartha_identity.keycloak_grafana_client_id : ""
-  grafana_oauth_client_secret = var.grafana_keycloak_integration_enabled ? module.agartha_identity.keycloak_grafana_client_secret : ""
-  keycloak_auth_url           = var.grafana_keycloak_integration_enabled ? module.agartha_identity.keycloak_auth_url : ""
-  keycloak_token_url          = var.grafana_keycloak_integration_enabled ? module.agartha_identity.keycloak_token_url : ""
-  keycloak_userinfo_url       = var.grafana_keycloak_integration_enabled ? module.agartha_identity.keycloak_userinfo_url : ""
+  grafana_oauth_client_id     = module.agartha_identity.keycloak_grafana_client_id
+  grafana_oauth_client_secret = module.agartha_identity.keycloak_grafana_client_secret
+  keycloak_auth_url           = module.agartha_identity.keycloak_auth_url
+  keycloak_token_url          = module.agartha_identity.keycloak_token_url
+  keycloak_userinfo_url       = module.agartha_identity.keycloak_userinfo_url
 
   depends_on = [
     module.agartha_identity
@@ -106,14 +105,13 @@ module "business_intelligence" {
   superset_worker_replica_num = 1
 
   # Keycloak OAuth integration
-  superset_oauth_enabled       = var.superset_keycloak_integration_enabled
-  superset_oauth_client_id     = var.superset_keycloak_integration_enabled ? module.agartha_identity.keycloak_superset_client_id : ""
-  superset_oauth_client_secret = var.superset_keycloak_integration_enabled ? module.agartha_identity.keycloak_superset_client_secret : ""
-  keycloak_auth_url            = var.superset_keycloak_integration_enabled ? module.agartha_identity.keycloak_auth_url : ""
-  keycloak_token_url           = var.superset_keycloak_integration_enabled ? module.agartha_identity.keycloak_token_url : ""
-  keycloak_issuer_url          = var.superset_keycloak_integration_enabled ? module.agartha_identity.keycloak_issuer_url : ""
-  keycloak_jwks_url            = var.superset_keycloak_integration_enabled ? module.agartha_identity.keycloak_jwks_url : ""
-  keycloak_api_base_url        = var.superset_keycloak_integration_enabled ? module.agartha_identity.keycloak_api_base_url : ""
+  superset_oauth_client_id     = module.agartha_identity.keycloak_superset_client_id
+  superset_oauth_client_secret = module.agartha_identity.keycloak_superset_client_secret
+  keycloak_auth_url            = module.agartha_identity.keycloak_auth_url
+  keycloak_token_url           = module.agartha_identity.keycloak_token_url
+  keycloak_issuer_url          = module.agartha_identity.keycloak_issuer_url
+  keycloak_jwks_url            = module.agartha_identity.keycloak_jwks_url
+  keycloak_api_base_url        = module.agartha_identity.keycloak_api_base_url
 
   depends_on = [
     module.agartha_processing,

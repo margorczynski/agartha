@@ -25,7 +25,6 @@ grafana:
       searchNamespace: ALL
     datasources:
       enabled: true
-%{ if grafana_oauth_enabled ~}
   grafana.ini:
     server:
       root_url: "http://grafana.${ingress_base_host}"
@@ -45,7 +44,6 @@ grafana:
       role_attribute_path: "contains(groups[*], 'grafana-admins') && 'Admin' || contains(groups[*], 'grafana-editors') && 'Editor' || 'Viewer'"
       role_attribute_strict: false
       allow_assign_grafana_admin: true
-%{ endif ~}
 
 alertmanager:
   enabled: true
