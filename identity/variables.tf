@@ -38,3 +38,9 @@ variable "grafana_oauth_client_secret" {
   description = "The client secret for Grafana OAuth integration with Keycloak"
   sensitive   = true
 }
+
+variable "superset_oauth_client_secret" {
+  type        = string
+  description = "The client secret for Superset OAuth integration with Keycloak"
+  sensitive   = true
+}

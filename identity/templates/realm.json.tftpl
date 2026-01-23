@@ -26,6 +26,22 @@
     {
       "name": "grafana-viewers",
       "path": "/grafana-viewers"
+    },
+    {
+      "name": "superset-admins",
+      "path": "/superset-admins"
+    },
+    {
+      "name": "superset-alpha",
+      "path": "/superset-alpha"
+    },
+    {
+      "name": "superset-gamma",
+      "path": "/superset-gamma"
+    },
+    {
+      "name": "superset-sql-lab",
+      "path": "/superset-sql-lab"
     }
   ],
   "clientScopes": [
@@ -157,6 +173,33 @@
       "webOrigins": [
         "http://grafana.${ingress_base_host}",
         "https://grafana.${ingress_base_host}"
+      ],
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "defaultClientScopes": [
+        "openid",
+        "profile",
+        "email",
+        "groups"
+      ]
+    },
+    {
+      "clientId": "superset",
+      "name": "Superset",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "${superset_client_secret}",
+      "redirectUris": [
+        "http://superset.${ingress_base_host}/oauth-authorized/keycloak",
+        "https://superset.${ingress_base_host}/oauth-authorized/keycloak"
+      ],
+      "webOrigins": [
+        "http://superset.${ingress_base_host}",
+        "https://superset.${ingress_base_host}"
       ],
       "standardFlowEnabled": true,
       "implicitFlowEnabled": false,

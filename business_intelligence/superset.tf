@@ -4,6 +4,11 @@ resource "random_password" "superset_secret_key" {
   override_special = "+/"
 }
 
+resource "random_password" "superset_admin_password" {
+  length  = 32
+  special = false
+}
+
 resource "kubernetes_secret_v1" "secret_superset_secret_key" {
   metadata {
     name      = "superset-secret-key"
@@ -26,35 +31,21 @@ resource "helm_release" "superset" {
   chart      = "superset"
   version    = "0.15.0"
 
-  set = [
-    {
-      name  = "configOverrides.secret"
-      value = "SECRET_KEY = '${random_password.superset_secret_key.result}'"
-    },
-    {
-      name  = "supersetNode.replicaCount"
-      value = var.superset_node_replica_num
-    },
-    {
-      name  = "supersetWorker.replicaCount"
-      value = var.superset_worker_replica_num
-    },
-    {
-      name  = "bootstrapScript"
-      value = file("${path.module}/files/superset_bootstrap_script.sh")
-    },
-    {
-      name  = "extraConfigs.import_datasources\\.yaml"
-      value = file("${path.module}/files/superset_import_agartha.yaml")
-    },
-    {
-      name  = "postgresql.image.tag"
-      value = "latest"
-    },
-    {
-      name  = "redis.image.tag"
-      value = "latest"
-    }
+  values = [
+    templatefile("${path.module}/templates/superset_values.tftpl", {
+      superset_secret_key         = random_password.superset_secret_key.result
+      superset_node_replica_num   = var.superset_node_replica_num
+      superset_worker_replica_num = var.superset_worker_replica_num
+      oauth_enabled               = var.superset_oauth_enabled
+      oauth_client_id             = var.superset_oauth_client_id
+      oauth_client_secret         = var.superset_oauth_client_secret
+      keycloak_auth_url           = var.keycloak_auth_url
+      keycloak_token_url          = var.keycloak_token_url
+      keycloak_issuer_url         = var.keycloak_issuer_url
+      keycloak_jwks_url           = var.keycloak_jwks_url
+      keycloak_api_base_url       = var.keycloak_api_base_url
+      superset_admin_password     = random_password.superset_admin_password.result
+    })
   ]
 
   depends_on = [

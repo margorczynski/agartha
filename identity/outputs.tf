@@ -34,7 +34,28 @@ output "keycloak_userinfo_url" {
   value       = "http://keycloak.${local.namespace}.svc.cluster.local/realms/agartha/protocol/openid-connect/userinfo"
 }
 
+output "keycloak_jwks_url" {
+  description = "The OIDC JWKS URL (internal, for server-to-server)"
+  value       = "http://keycloak.${local.namespace}.svc.cluster.local/realms/agartha/protocol/openid-connect/certs"
+}
+
+output "keycloak_api_base_url" {
+  description = "The OIDC API base URL (internal, for server-to-server)"
+  value       = "http://keycloak.${local.namespace}.svc.cluster.local/realms/agartha/protocol/"
+}
+
 output "keycloak_host" {
   description = "The Keycloak hostname"
   value       = local.keycloak_host
+}
+
+output "keycloak_superset_client_id" {
+  description = "The client ID for Superset OAuth"
+  value       = "superset"
+}
+
+output "keycloak_superset_client_secret" {
+  description = "The client secret for Superset OAuth"
+  value       = var.superset_oauth_client_secret
+  sensitive   = true
 }
