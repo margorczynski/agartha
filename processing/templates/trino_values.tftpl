@@ -14,6 +14,25 @@ additionalCatalogs:
 
 additionalConfigProperties:
   - http-server.process-forwarded=true
+  - internal-communication.shared-secret=${trino_internal_shared_secret}
+
+server:
+  coordinatorExtraConfig: |
+    http-server.authentication.type=oauth2
+    http-server.authentication.oauth2.issuer=${keycloak_issuer_url}
+    http-server.authentication.oauth2.client-id=${trino_oauth_client_id}
+    http-server.authentication.oauth2.client-secret=${trino_oauth_client_secret}
+    http-server.authentication.oauth2.scopes=openid,profile,email,groups
+    http-server.authentication.oauth2.principal-field=preferred_username
+    http-server.authentication.oauth2.oidc.discovery=false
+    http-server.authentication.oauth2.auth-url=${keycloak_auth_url}
+    http-server.authentication.oauth2.token-url=${keycloak_token_url}
+    http-server.authentication.oauth2.jwks-url=${keycloak_jwks_url}
+    http-server.authentication.oauth2.userinfo-url=${keycloak_userinfo_url}
+    web-ui.enabled=true
+    web-ui.authentication.type=oauth2
+    http-server.authentication.oauth2.refresh-tokens=true
+    http-server.authentication.allow-insecure-over-http=true
 
 jmx:
   enabled: true

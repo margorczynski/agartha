@@ -32,3 +32,45 @@ variable "trino_cluster_worker_num" {
   type        = number
   description = "The number of worker pods in the Trino cluster"
 }
+
+variable "trino_oauth_client_id" {
+  type        = string
+  description = "The OAuth client ID for Trino authentication with Keycloak"
+}
+
+variable "trino_oauth_client_secret" {
+  type        = string
+  description = "The OAuth client secret for Trino authentication with Keycloak"
+  sensitive   = true
+}
+
+variable "keycloak_issuer_url" {
+  type        = string
+  description = "The OIDC issuer URL for Keycloak (external, for token validation)"
+}
+
+variable "keycloak_auth_url" {
+  type        = string
+  description = "The OIDC authorization URL (external, for browser redirects)"
+}
+
+variable "keycloak_token_url" {
+  type        = string
+  description = "The OIDC token URL (internal, for server-to-server)"
+}
+
+variable "keycloak_jwks_url" {
+  type        = string
+  description = "The OIDC JWKS URL (internal, for server-to-server)"
+}
+
+variable "keycloak_userinfo_url" {
+  type        = string
+  description = "The OIDC userinfo URL (internal, for server-to-server)"
+}
+
+variable "trino_internal_shared_secret" {
+  type        = string
+  description = "Shared secret for Trino internal communication when authentication is enabled"
+  sensitive   = true
+}

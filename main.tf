@@ -74,6 +74,7 @@ module "agartha_identity" {
 
   grafana_oauth_client_secret  = var.identity_grafana_oauth_client_secret
   superset_oauth_client_secret = var.identity_superset_oauth_client_secret
+  trino_oauth_client_secret    = var.identity_trino_oauth_client_secret
 }
 
 module "agartha_processing" {
@@ -88,6 +89,16 @@ module "agartha_processing" {
   storage_s3_secret_key         = var.storage_s3_secret_key
 
   trino_cluster_worker_num = 2
+
+  # Keycloak OAuth integration
+  trino_oauth_client_id        = module.agartha_identity.keycloak_trino_client_id
+  trino_oauth_client_secret    = module.agartha_identity.keycloak_trino_client_secret
+  keycloak_issuer_url          = module.agartha_identity.keycloak_issuer_url
+  keycloak_auth_url            = module.agartha_identity.keycloak_auth_url
+  keycloak_token_url           = module.agartha_identity.keycloak_token_url
+  keycloak_jwks_url            = module.agartha_identity.keycloak_jwks_url
+  keycloak_userinfo_url        = module.agartha_identity.keycloak_userinfo_url
+  trino_internal_shared_secret = var.processing_trino_internal_shared_secret
 
   depends_on = [
     module.agartha_monitoring,
