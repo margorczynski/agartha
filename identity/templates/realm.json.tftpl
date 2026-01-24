@@ -42,6 +42,14 @@
     {
       "name": "superset-sql-lab",
       "path": "/superset-sql-lab"
+    },
+    {
+      "name": "trino-admins",
+      "path": "/trino-admins"
+    },
+    {
+      "name": "trino-users",
+      "path": "/trino-users"
     }
   ],
   "clientScopes": [
@@ -200,6 +208,33 @@
       "webOrigins": [
         "http://superset.${ingress_base_host}",
         "https://superset.${ingress_base_host}"
+      ],
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "defaultClientScopes": [
+        "openid",
+        "profile",
+        "email",
+        "groups"
+      ]
+    },
+    {
+      "clientId": "trino",
+      "name": "Trino",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "${trino_client_secret}",
+      "redirectUris": [
+        "http://trino.${ingress_base_host}/oauth2/callback",
+        "https://trino.${ingress_base_host}/oauth2/callback"
+      ],
+      "webOrigins": [
+        "http://trino.${ingress_base_host}",
+        "https://trino.${ingress_base_host}"
       ],
       "standardFlowEnabled": true,
       "implicitFlowEnabled": false,

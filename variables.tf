@@ -64,3 +64,15 @@ variable "identity_superset_oauth_client_secret" {
   description = "The client secret for Superset OAuth integration with Keycloak"
   sensitive   = true
 }
+
+variable "identity_trino_oauth_client_secret" {
+  type        = string
+  description = "The client secret for Trino OAuth integration with Keycloak"
+  sensitive   = true
+}
+
+variable "processing_trino_internal_shared_secret" {
+  type        = string
+  description = "Shared secret for Trino internal communication when authentication is enabled"
+  sensitive   = true
+}

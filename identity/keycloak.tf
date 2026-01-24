@@ -79,6 +79,11 @@ resource "helm_release" "keycloak" {
       name  = "hostname"
       value = local.keycloak_host
     },
+    # Enable strict hostname mode to ensure consistent issuer URLs
+    {
+      name  = "hostnameStrict"
+      value = "true"
+    },
     {
       name  = "image.pullPolicy"
       value = "IfNotPresent"
@@ -168,6 +173,27 @@ resource "helm_release" "keycloak" {
     {
       name  = "extraEnvVars[0].value"
       value = "--import-realm"
+    },
+    # Explicitly set the hostname for Keycloak
+    # This ensures tokens have a consistent issuer URL regardless of how Keycloak is accessed
+    {
+      name  = "extraEnvVars[1].name"
+      value = "KC_HOSTNAME"
+    },
+    {
+      name  = "extraEnvVars[1].value"
+      value = local.keycloak_host
+    },
+    # Ensure Keycloak uses the external hostname for tokens even when accessed internally
+    # This is required for OAuth2 integrations where services call Keycloak via internal URLs
+    {
+      name  = "extraEnvVars[2].name"
+      value = "KC_HOSTNAME_STRICT_BACKCHANNEL"
+    },
+    {
+      name  = "extraEnvVars[2].value"
+      type  = "string"
+      value = "true"
     },
     {
       name  = "extraVolumes[0].name"

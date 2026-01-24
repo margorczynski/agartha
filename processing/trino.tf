@@ -14,6 +14,14 @@ resource "helm_release" "trino" {
       storage_s3_endpoint           = "${var.storage_s3_endpoint}"
       storage_s3_access_key         = "${var.storage_s3_access_key}"
       storage_s3_secret_key         = "${var.storage_s3_secret_key}"
+      keycloak_issuer_url           = "${var.keycloak_issuer_url}"
+      keycloak_auth_url             = "${var.keycloak_auth_url}"
+      keycloak_token_url            = "${var.keycloak_token_url}"
+      keycloak_jwks_url             = "${var.keycloak_jwks_url}"
+      keycloak_userinfo_url         = "${var.keycloak_userinfo_url}"
+      trino_oauth_client_id         = "${var.trino_oauth_client_id}"
+      trino_oauth_client_secret     = "${var.trino_oauth_client_secret}"
+      trino_internal_shared_secret  = "${var.trino_internal_shared_secret}"
     })}"
   ]
 

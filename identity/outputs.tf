@@ -59,3 +59,14 @@ output "keycloak_superset_client_secret" {
   value       = var.superset_oauth_client_secret
   sensitive   = true
 }
+
+output "keycloak_trino_client_id" {
+  description = "The client ID for Trino OAuth"
+  value       = "trino"
+}
+
+output "keycloak_trino_client_secret" {
+  description = "The client secret for Trino OAuth"
+  value       = var.trino_oauth_client_secret
+  sensitive   = true
+}
