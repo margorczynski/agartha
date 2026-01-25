@@ -86,3 +86,14 @@ output "keycloak_openid_config_url" {
   description = "The OpenID Connect discovery URL (internal)"
   value       = "http://keycloak.${local.namespace}.svc.cluster.local/realms/agartha/.well-known/openid-configuration"
 }
+
+output "keycloak_jupyterhub_client_id" {
+  description = "The client ID for JupyterHub OAuth"
+  value       = "jupyterhub"
+}
+
+output "keycloak_jupyterhub_client_secret" {
+  description = "The client secret for JupyterHub OAuth"
+  value       = var.jupyterhub_oauth_client_secret
+  sensitive   = true
+}
