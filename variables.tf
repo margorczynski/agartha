@@ -76,3 +76,9 @@ variable "processing_trino_internal_shared_secret" {
   description = "Shared secret for Trino internal communication when authentication is enabled"
   sensitive   = true
 }
+
+variable "identity_minio_oauth_client_secret" {
+  type        = string
+  description = "The client secret for MinIO OAuth integration with Keycloak"
+  sensitive   = true
+}

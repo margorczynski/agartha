@@ -10,6 +10,7 @@ resource "kubernetes_config_map_v1" "keycloak_realm" {
       grafana_client_secret  = var.grafana_oauth_client_secret
       superset_client_secret = var.superset_oauth_client_secret
       trino_client_secret    = var.trino_oauth_client_secret
+      minio_client_secret    = var.minio_oauth_client_secret
       ingress_base_host      = var.kubernetes_ingress_base_host
     })
   }

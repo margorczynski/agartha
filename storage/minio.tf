@@ -31,12 +31,8 @@ resource "helm_release" "minio_tenant" {
       value = local.tenant_env_secret_name
     },
     {
-      name  = "tenant.configSecret.accessKey"
-      value = var.s3_access_key
-    },
-    {
-      name  = "tenant.configSecret.secretKey"
-      value = var.s3_secret_key
+      name  = "tenant.configSecret.existingSecret"
+      value = "true"
     },
     #
     # Tenant pool resource settings
@@ -81,5 +77,8 @@ resource "helm_release" "minio_tenant" {
     }
   ]
 
-  depends_on = [helm_release.minio_operator]
+  depends_on = [
+    helm_release.minio_operator,
+    kubernetes_secret_v1.minio_tenant_env
+  ]
 }

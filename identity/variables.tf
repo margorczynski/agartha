@@ -50,3 +50,9 @@ variable "trino_oauth_client_secret" {
   description = "The client secret for Trino OAuth integration with Keycloak"
   sensitive   = true
 }
+
+variable "minio_oauth_client_secret" {
+  type        = string
+  description = "The client secret for MinIO OAuth integration with Keycloak"
+  sensitive   = true
+}
