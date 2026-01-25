@@ -42,3 +42,19 @@ variable "minio_tenant_size_per_volume_gb" {
   type        = number
   description = "The size of each volume for each server/pod MinIO tenant will use (in gigabytes)"
 }
+
+variable "minio_oauth_client_id" {
+  type        = string
+  description = "The OAuth client ID for MinIO (from Keycloak)"
+}
+
+variable "minio_oauth_client_secret" {
+  type        = string
+  description = "The OAuth client secret for MinIO (from Keycloak)"
+  sensitive   = true
+}
+
+variable "keycloak_openid_config_url" {
+  type        = string
+  description = "The OpenID Connect discovery URL for Keycloak"
+}

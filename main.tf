@@ -12,6 +12,15 @@ module "agartha_storage" {
   minio_tenant_servers_num            = 1
   minio_tenant_volumes_per_server_num = 4
   minio_tenant_size_per_volume_gb     = 4
+
+  # Keycloak OAuth integration
+  minio_oauth_client_id      = module.agartha_identity.keycloak_minio_client_id
+  minio_oauth_client_secret  = module.agartha_identity.keycloak_minio_client_secret
+  keycloak_openid_config_url = module.agartha_identity.keycloak_openid_config_url
+
+  depends_on = [
+    module.agartha_identity
+  ]
 }
 
 module "agartha_catalog" {
@@ -75,6 +84,7 @@ module "agartha_identity" {
   grafana_oauth_client_secret  = var.identity_grafana_oauth_client_secret
   superset_oauth_client_secret = var.identity_superset_oauth_client_secret
   trino_oauth_client_secret    = var.identity_trino_oauth_client_secret
+  minio_oauth_client_secret    = var.identity_minio_oauth_client_secret
 }
 
 module "agartha_processing" {

@@ -184,8 +184,8 @@ resource "helm_release" "keycloak" {
       name  = "extraEnvVars[1].value"
       value = local.keycloak_host
     },
-    # Ensure Keycloak uses the external hostname for tokens even when accessed internally
-    # This is required for OAuth2 integrations where services call Keycloak via internal URLs
+    # Allow Keycloak to use request-based URLs for backchannel (server-to-server) communication
+    # This enables internal services to fetch OIDC discovery docs with internal URLs
     {
       name  = "extraEnvVars[2].name"
       value = "KC_HOSTNAME_STRICT_BACKCHANNEL"
@@ -193,7 +193,7 @@ resource "helm_release" "keycloak" {
     {
       name  = "extraEnvVars[2].value"
       type  = "string"
-      value = "true"
+      value = "false"
     },
     {
       name  = "extraVolumes[0].name"

@@ -70,3 +70,19 @@ output "keycloak_trino_client_secret" {
   value       = var.trino_oauth_client_secret
   sensitive   = true
 }
+
+output "keycloak_minio_client_id" {
+  description = "The client ID for MinIO OAuth"
+  value       = "minio"
+}
+
+output "keycloak_minio_client_secret" {
+  description = "The client secret for MinIO OAuth"
+  value       = var.minio_oauth_client_secret
+  sensitive   = true
+}
+
+output "keycloak_openid_config_url" {
+  description = "The OpenID Connect discovery URL (internal)"
+  value       = "http://keycloak.${local.namespace}.svc.cluster.local/realms/agartha/.well-known/openid-configuration"
+}

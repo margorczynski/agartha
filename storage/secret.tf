@@ -16,6 +16,13 @@ resource "kubernetes_secret_v1" "minio_tenant_env" {
 export MINIO_ROOT_USER="${var.s3_access_key}"
 export MINIO_ROOT_PASSWORD="${var.s3_secret_key}"
 export MINIO_BROWSER=on
+export MINIO_IDENTITY_OPENID_CONFIG_URL="${var.keycloak_openid_config_url}"
+export MINIO_IDENTITY_OPENID_CLIENT_ID="${var.minio_oauth_client_id}"
+export MINIO_IDENTITY_OPENID_CLIENT_SECRET="${var.minio_oauth_client_secret}"
+export MINIO_IDENTITY_OPENID_SCOPES="openid,profile,email,groups"
+export MINIO_IDENTITY_OPENID_CLAIM_NAME="groups"
+export MINIO_IDENTITY_OPENID_DISPLAY_NAME="Keycloak"
+export MINIO_IDENTITY_OPENID_REDIRECT_URI_DYNAMIC="on"
 EOH
   }
 

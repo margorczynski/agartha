@@ -50,6 +50,18 @@
     {
       "name": "trino-users",
       "path": "/trino-users"
+    },
+    {
+      "name": "minio-admins",
+      "path": "/minio-admins"
+    },
+    {
+      "name": "minio-readwrite",
+      "path": "/minio-readwrite"
+    },
+    {
+      "name": "minio-readonly",
+      "path": "/minio-readonly"
     }
   ],
   "clientScopes": [
@@ -235,6 +247,33 @@
       "webOrigins": [
         "http://trino.${ingress_base_host}",
         "https://trino.${ingress_base_host}"
+      ],
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "defaultClientScopes": [
+        "openid",
+        "profile",
+        "email",
+        "groups"
+      ]
+    },
+    {
+      "clientId": "minio",
+      "name": "MinIO Console",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "${minio_client_secret}",
+      "redirectUris": [
+        "http://minio-tenant-console.${ingress_base_host}/oauth_callback",
+        "https://minio-tenant-console.${ingress_base_host}/oauth_callback"
+      ],
+      "webOrigins": [
+        "http://minio-tenant-console.${ingress_base_host}",
+        "https://minio-tenant-console.${ingress_base_host}"
       ],
       "standardFlowEnabled": true,
       "implicitFlowEnabled": false,
