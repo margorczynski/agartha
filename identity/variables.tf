@@ -56,3 +56,9 @@ variable "minio_oauth_client_secret" {
   description = "The client secret for MinIO OAuth integration with Keycloak"
   sensitive   = true
 }
+
+variable "jupyterhub_oauth_client_secret" {
+  type        = string
+  description = "The client secret for JupyterHub OAuth integration with Keycloak"
+  sensitive   = true
+}

@@ -65,8 +65,8 @@ resource "kubernetes_job_v1" "minio_policy_setup" {
       spec {
         restart_policy = "OnFailure"
         container {
-          name  = "mc"
-          image = "minio/mc:latest"
+          name    = "mc"
+          image   = "minio/mc:latest"
           command = ["/bin/sh", "-c"]
           args = [<<-EOT
             set -e

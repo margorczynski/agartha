@@ -81,10 +81,11 @@ module "agartha_identity" {
   keycloak_postgres_storage_size_gb = 10
   keycloak_replicas                 = 1
 
-  grafana_oauth_client_secret  = var.identity_grafana_oauth_client_secret
-  superset_oauth_client_secret = var.identity_superset_oauth_client_secret
-  trino_oauth_client_secret    = var.identity_trino_oauth_client_secret
-  minio_oauth_client_secret    = var.identity_minio_oauth_client_secret
+  grafana_oauth_client_secret    = var.identity_grafana_oauth_client_secret
+  superset_oauth_client_secret   = var.identity_superset_oauth_client_secret
+  trino_oauth_client_secret      = var.identity_trino_oauth_client_secret
+  minio_oauth_client_secret      = var.identity_minio_oauth_client_secret
+  jupyterhub_oauth_client_secret = var.identity_jupyterhub_oauth_client_secret
 }
 
 module "agartha_processing" {
@@ -173,11 +174,20 @@ module "agartha_notebooks" {
   trino_host = "trino.agartha-processing-trino.svc.cluster.local"
   trino_port = 8080
 
-  jupyter_storage_size_gb = 5
+  jupyterhub_storage_size_gb = 10
+
+  # Keycloak OAuth
+  jupyterhub_oauth_client_id     = module.agartha_identity.keycloak_jupyterhub_client_id
+  jupyterhub_oauth_client_secret = module.agartha_identity.keycloak_jupyterhub_client_secret
+  keycloak_issuer_url            = module.agartha_identity.keycloak_issuer_url
+  keycloak_auth_url              = module.agartha_identity.keycloak_auth_url
+  keycloak_token_url             = module.agartha_identity.keycloak_token_url
+  keycloak_userinfo_url          = module.agartha_identity.keycloak_userinfo_url
 
   depends_on = [
     module.agartha_storage,
     module.agartha_catalog,
-    module.agartha_processing
+    module.agartha_processing,
+    module.agartha_identity
   ]
 }

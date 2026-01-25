@@ -62,6 +62,14 @@
     {
       "name": "minio-readonly",
       "path": "/minio-readonly"
+    },
+    {
+      "name": "jupyterhub-admins",
+      "path": "/jupyterhub-admins"
+    },
+    {
+      "name": "jupyterhub-users",
+      "path": "/jupyterhub-users"
     }
   ],
   "clientScopes": [
@@ -287,6 +295,28 @@
         "email",
         "groups"
       ]
+    },
+    {
+      "clientId": "jupyterhub",
+      "name": "JupyterHub",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "${jupyterhub_client_secret}",
+      "redirectUris": [
+        "http://jupyterhub.${ingress_base_host}/hub/oauth_callback",
+        "https://jupyterhub.${ingress_base_host}/hub/oauth_callback"
+      ],
+      "webOrigins": [
+        "http://jupyterhub.${ingress_base_host}",
+        "https://jupyterhub.${ingress_base_host}"
+      ],
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "defaultClientScopes": ["openid", "profile", "email", "groups"]
     }
   ]
 }

@@ -8,12 +8,6 @@ variable "kubernetes_ingress_base_host" {
   description = "The base host upon which to build the module Ingress subdomains"
 }
 
-variable "jupyter_image" {
-  type        = string
-  description = "The Docker image to use for JupyterLab"
-  default     = "quay.io/jupyter/scipy-notebook:notebook-7.5.1"
-}
-
 variable "nessie_uri" {
   type        = string
   description = "The Nessie Iceberg REST catalog URI"
@@ -30,8 +24,57 @@ variable "trino_port" {
   default     = 8080
 }
 
-variable "jupyter_storage_size_gb" {
+variable "jupyterhub_storage_size_gb" {
   type        = number
-  description = "Size of the persistent storage for Jupyter notebooks"
-  default     = 5
+  description = "Size of the persistent storage for each JupyterHub user"
+  default     = 10
+}
+
+variable "jupyterhub_oauth_client_id" {
+  type        = string
+  description = "The OAuth client ID for JupyterHub"
+}
+
+variable "jupyterhub_oauth_client_secret" {
+  type        = string
+  description = "The OAuth client secret for JupyterHub"
+  sensitive   = true
+}
+
+variable "keycloak_issuer_url" {
+  type        = string
+  description = "The Keycloak OIDC issuer URL"
+}
+
+variable "keycloak_auth_url" {
+  type        = string
+  description = "The Keycloak authorization URL"
+}
+
+variable "keycloak_token_url" {
+  type        = string
+  description = "The Keycloak token URL"
+}
+
+variable "keycloak_userinfo_url" {
+  type        = string
+  description = "The Keycloak userinfo URL"
+}
+
+variable "jupyterhub_singleuser_image" {
+  type        = string
+  description = "The Docker image to use for JupyterHub single-user servers"
+  default     = "quay.io/jupyter/scipy-notebook:notebook-7.5.1"
+}
+
+variable "jupyterhub_singleuser_cpu_limit" {
+  type        = string
+  description = "CPU limit for single-user servers"
+  default     = "2000m"
+}
+
+variable "jupyterhub_singleuser_memory_limit" {
+  type        = string
+  description = "Memory limit for single-user servers"
+  default     = "4Gi"
 }
