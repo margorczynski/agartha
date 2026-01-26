@@ -74,3 +74,9 @@ variable "prometheus_oauth_client_secret" {
   description = "The client secret for Prometheus OAuth integration with Keycloak"
   sensitive   = true
 }
+
+variable "alertmanager_oauth_client_secret" {
+  type        = string
+  description = "The client secret for Alertmanager OAuth integration with Keycloak"
+  sensitive   = true
+}
