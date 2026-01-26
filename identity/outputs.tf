@@ -97,3 +97,14 @@ output "keycloak_jupyterhub_client_secret" {
   value       = var.jupyterhub_oauth_client_secret
   sensitive   = true
 }
+
+output "keycloak_dagster_client_id" {
+  description = "The client ID for Dagster OAuth"
+  value       = "dagster"
+}
+
+output "keycloak_dagster_client_secret" {
+  description = "The client secret for Dagster OAuth"
+  value       = var.dagster_oauth_client_secret
+  sensitive   = true
+}

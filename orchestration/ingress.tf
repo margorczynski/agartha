@@ -18,9 +18,9 @@ resource "kubernetes_ingress_v1" "ingress_orchestration_dagster" {
           path_type = "Prefix"
           backend {
             service {
-              name = "dagster-dagster-webserver"
+              name = "dagster-oauth2-proxy"
               port {
-                number = 80
+                number = 4180
               }
             }
           }
@@ -29,5 +29,5 @@ resource "kubernetes_ingress_v1" "ingress_orchestration_dagster" {
     }
   }
 
-  depends_on = [helm_release.dagster]
+  depends_on = [helm_release.dagster_oauth2_proxy]
 }
