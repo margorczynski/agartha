@@ -13,6 +13,7 @@ resource "kubernetes_config_map_v1" "keycloak_realm" {
       minio_client_secret      = var.minio_oauth_client_secret
       jupyterhub_client_secret = var.jupyterhub_oauth_client_secret
       dagster_client_secret    = var.dagster_oauth_client_secret
+      prometheus_client_secret = var.prometheus_oauth_client_secret
       ingress_base_host        = var.kubernetes_ingress_base_host
     })
   }

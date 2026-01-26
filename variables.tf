@@ -100,3 +100,15 @@ variable "orchestration_dagster_oauth_cookie_secret" {
   description = "The cookie secret for Dagster OAuth2-Proxy session encryption. Must be exactly 16, 24, or 32 characters. Generate with: openssl rand -hex 16"
   sensitive   = true
 }
+
+variable "identity_prometheus_oauth_client_secret" {
+  type        = string
+  description = "The client secret for Prometheus OAuth integration with Keycloak"
+  sensitive   = true
+}
+
+variable "monitoring_prometheus_oauth_cookie_secret" {
+  type        = string
+  description = "The cookie secret for Prometheus OAuth2-Proxy session encryption. Must be exactly 16, 24, or 32 characters. Generate with: openssl rand -hex 16"
+  sensitive   = true
+}

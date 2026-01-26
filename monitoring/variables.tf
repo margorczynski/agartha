@@ -89,3 +89,25 @@ variable "keycloak_userinfo_url" {
   type        = string
   description = "The Keycloak OIDC userinfo URL"
 }
+
+variable "prometheus_oauth_client_id" {
+  type        = string
+  description = "The OAuth client ID for Prometheus (from Keycloak)"
+}
+
+variable "prometheus_oauth_client_secret" {
+  type        = string
+  description = "The OAuth client secret for Prometheus (from Keycloak)"
+  sensitive   = true
+}
+
+variable "prometheus_oauth_cookie_secret" {
+  type        = string
+  description = "The cookie secret for Prometheus OAuth2-Proxy session encryption"
+  sensitive   = true
+}
+
+variable "keycloak_issuer_url" {
+  type        = string
+  description = "The Keycloak OIDC issuer URL"
+}

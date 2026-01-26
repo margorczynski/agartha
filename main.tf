@@ -65,6 +65,12 @@ module "agartha_monitoring" {
   keycloak_token_url          = module.agartha_identity.keycloak_token_url
   keycloak_userinfo_url       = module.agartha_identity.keycloak_userinfo_url
 
+  # Prometheus OAuth2-Proxy integration
+  prometheus_oauth_client_id     = module.agartha_identity.keycloak_prometheus_client_id
+  prometheus_oauth_client_secret = module.agartha_identity.keycloak_prometheus_client_secret
+  prometheus_oauth_cookie_secret = var.monitoring_prometheus_oauth_cookie_secret
+  keycloak_issuer_url            = module.agartha_identity.keycloak_issuer_url
+
   depends_on = [
     module.agartha_identity
   ]
@@ -87,6 +93,7 @@ module "agartha_identity" {
   minio_oauth_client_secret      = var.identity_minio_oauth_client_secret
   jupyterhub_oauth_client_secret = var.identity_jupyterhub_oauth_client_secret
   dagster_oauth_client_secret    = var.identity_dagster_oauth_client_secret
+  prometheus_oauth_client_secret = var.identity_prometheus_oauth_client_secret
 }
 
 module "agartha_processing" {
