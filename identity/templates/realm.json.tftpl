@@ -80,8 +80,8 @@
       "path": "/prometheus-users"
     },
     {
-      "name": "prometheus-admins",
-      "path": "/prometheus-admins"
+      "name": "alertmanager-users",
+      "path": "/alertmanager-users"
     }
   ],
   "clientScopes": [
@@ -394,6 +394,41 @@
           "consentRequired": false,
           "config": {
             "included.client.audience": "prometheus",
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "alertmanager",
+      "name": "Alertmanager",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "${alertmanager_client_secret}",
+      "redirectUris": [
+        "http://alertmanager.${ingress_base_host}/oauth2/callback",
+        "https://alertmanager.${ingress_base_host}/oauth2/callback"
+      ],
+      "webOrigins": [
+        "http://alertmanager.${ingress_base_host}",
+        "https://alertmanager.${ingress_base_host}"
+      ],
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "defaultClientScopes": ["openid", "profile", "email", "groups"],
+      "protocolMappers": [
+        {
+          "name": "audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "alertmanager",
             "id.token.claim": "true",
             "access.token.claim": "true"
           }

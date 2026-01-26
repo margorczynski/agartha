@@ -111,3 +111,20 @@ variable "keycloak_issuer_url" {
   type        = string
   description = "The Keycloak OIDC issuer URL"
 }
+
+variable "alertmanager_oauth_client_id" {
+  type        = string
+  description = "The OAuth client ID for Alertmanager (from Keycloak)"
+}
+
+variable "alertmanager_oauth_client_secret" {
+  type        = string
+  description = "The OAuth client secret for Alertmanager (from Keycloak)"
+  sensitive   = true
+}
+
+variable "alertmanager_oauth_cookie_secret" {
+  type        = string
+  description = "The cookie secret for Alertmanager OAuth2-Proxy session encryption"
+  sensitive   = true
+}

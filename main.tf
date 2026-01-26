@@ -71,6 +71,11 @@ module "agartha_monitoring" {
   prometheus_oauth_cookie_secret = var.monitoring_prometheus_oauth_cookie_secret
   keycloak_issuer_url            = module.agartha_identity.keycloak_issuer_url
 
+  # Alertmanager OAuth2-Proxy integration
+  alertmanager_oauth_client_id     = module.agartha_identity.keycloak_alertmanager_client_id
+  alertmanager_oauth_client_secret = module.agartha_identity.keycloak_alertmanager_client_secret
+  alertmanager_oauth_cookie_secret = var.monitoring_alertmanager_oauth_cookie_secret
+
   depends_on = [
     module.agartha_identity
   ]
@@ -87,13 +92,14 @@ module "agartha_identity" {
   keycloak_postgres_storage_size_gb = 10
   keycloak_replicas                 = 1
 
-  grafana_oauth_client_secret    = var.identity_grafana_oauth_client_secret
-  superset_oauth_client_secret   = var.identity_superset_oauth_client_secret
-  trino_oauth_client_secret      = var.identity_trino_oauth_client_secret
-  minio_oauth_client_secret      = var.identity_minio_oauth_client_secret
-  jupyterhub_oauth_client_secret = var.identity_jupyterhub_oauth_client_secret
-  dagster_oauth_client_secret    = var.identity_dagster_oauth_client_secret
-  prometheus_oauth_client_secret = var.identity_prometheus_oauth_client_secret
+  grafana_oauth_client_secret      = var.identity_grafana_oauth_client_secret
+  superset_oauth_client_secret     = var.identity_superset_oauth_client_secret
+  trino_oauth_client_secret        = var.identity_trino_oauth_client_secret
+  minio_oauth_client_secret        = var.identity_minio_oauth_client_secret
+  jupyterhub_oauth_client_secret   = var.identity_jupyterhub_oauth_client_secret
+  dagster_oauth_client_secret      = var.identity_dagster_oauth_client_secret
+  prometheus_oauth_client_secret   = var.identity_prometheus_oauth_client_secret
+  alertmanager_oauth_client_secret = var.identity_alertmanager_oauth_client_secret
 }
 
 module "agartha_processing" {

@@ -65,9 +65,9 @@ resource "kubernetes_ingress_v1" "ingress_monitoring_alertmanager" {
         path {
           backend {
             service {
-              name = "kube-prometheus-stack-alertmanager"
+              name = "alertmanager-oauth2-proxy"
               port {
-                number = 9093
+                number = 4180
               }
             }
           }
@@ -76,5 +76,5 @@ resource "kubernetes_ingress_v1" "ingress_monitoring_alertmanager" {
     }
   }
 
-  depends_on = [helm_release.kube_prometheus_stack]
+  depends_on = [helm_release.alertmanager_oauth2_proxy]
 }

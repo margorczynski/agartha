@@ -119,3 +119,14 @@ output "keycloak_prometheus_client_secret" {
   value       = var.prometheus_oauth_client_secret
   sensitive   = true
 }
+
+output "keycloak_alertmanager_client_id" {
+  description = "The client ID for Alertmanager OAuth"
+  value       = "alertmanager"
+}
+
+output "keycloak_alertmanager_client_secret" {
+  description = "The client secret for Alertmanager OAuth"
+  value       = var.alertmanager_oauth_client_secret
+  sensitive   = true
+}
