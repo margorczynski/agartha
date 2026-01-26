@@ -74,6 +74,14 @@
     {
       "name": "dagster-users",
       "path": "/dagster-users"
+    },
+    {
+      "name": "prometheus-users",
+      "path": "/prometheus-users"
+    },
+    {
+      "name": "prometheus-admins",
+      "path": "/prometheus-admins"
     }
   ],
   "clientScopes": [
@@ -351,6 +359,41 @@
           "consentRequired": false,
           "config": {
             "included.client.audience": "dagster",
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "prometheus",
+      "name": "Prometheus",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "${prometheus_client_secret}",
+      "redirectUris": [
+        "http://prometheus.${ingress_base_host}/oauth2/callback",
+        "https://prometheus.${ingress_base_host}/oauth2/callback"
+      ],
+      "webOrigins": [
+        "http://prometheus.${ingress_base_host}",
+        "https://prometheus.${ingress_base_host}"
+      ],
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "defaultClientScopes": ["openid", "profile", "email", "groups"],
+      "protocolMappers": [
+        {
+          "name": "audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "prometheus",
             "id.token.claim": "true",
             "access.token.claim": "true"
           }

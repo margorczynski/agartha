@@ -68,3 +68,9 @@ variable "dagster_oauth_client_secret" {
   description = "The client secret for Dagster OAuth integration with Keycloak"
   sensitive   = true
 }
+
+variable "prometheus_oauth_client_secret" {
+  type        = string
+  description = "The client secret for Prometheus OAuth integration with Keycloak"
+  sensitive   = true
+}

@@ -1,0 +1,37 @@
+config:
+  clientID: "${client_id}"
+  clientSecret: "${client_secret}"
+  cookieSecret: "${cookie_secret}"
+  configFile: |-
+    provider = "keycloak-oidc"
+    provider_display_name = "Keycloak"
+    redirect_url = "http://prometheus.${ingress_base_host}/oauth2/callback"
+    oidc_issuer_url = "${oidc_issuer_url}"
+    email_domains = ["*"]
+    cookie_secure = false
+    cookie_samesite = "lax"
+    upstreams = ["http://kube-prometheus-stack-prometheus:9090"]
+    pass_authorization_header = true
+    pass_access_token = true
+    set_authorization_header = true
+    set_xauthrequest = true
+    skip_provider_button = true
+    allowed_groups = ["prometheus-users", "prometheus-admins"]
+    code_challenge_method = "S256"
+    scope = "openid profile email groups"
+
+extraArgs:
+  - --upstream=http://kube-prometheus-stack-prometheus:9090
+  - --http-address=0.0.0.0:4180
+
+service:
+  type: ClusterIP
+  portNumber: 4180
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 100m
+    memory: 128Mi

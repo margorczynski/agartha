@@ -108,3 +108,14 @@ output "keycloak_dagster_client_secret" {
   value       = var.dagster_oauth_client_secret
   sensitive   = true
 }
+
+output "keycloak_prometheus_client_id" {
+  description = "The client ID for Prometheus OAuth"
+  value       = "prometheus"
+}
+
+output "keycloak_prometheus_client_secret" {
+  description = "The client secret for Prometheus OAuth"
+  value       = var.prometheus_oauth_client_secret
+  sensitive   = true
+}

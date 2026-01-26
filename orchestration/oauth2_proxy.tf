@@ -8,10 +8,10 @@ resource "helm_release" "dagster_oauth2_proxy" {
 
   values = [
     templatefile("${path.module}/templates/oauth2_proxy_values.tftpl", {
-      client_id       = var.dagster_oauth_client_id
-      client_secret   = var.dagster_oauth_client_secret
-      cookie_secret   = var.dagster_oauth_cookie_secret
-      oidc_issuer_url = var.keycloak_issuer_url
+      client_id         = var.dagster_oauth_client_id
+      client_secret     = var.dagster_oauth_client_secret
+      cookie_secret     = var.dagster_oauth_cookie_secret
+      oidc_issuer_url   = var.keycloak_issuer_url
       ingress_base_host = var.kubernetes_ingress_base_host
     })
   ]

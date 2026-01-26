@@ -83,20 +83,20 @@ resource "helm_release" "jupyterhub" {
 
   values = [
     templatefile("${path.module}/templates/jupyterhub_values.tftpl", {
-      oauth_client_id         = var.jupyterhub_oauth_client_id
-      oauth_client_secret     = var.jupyterhub_oauth_client_secret
-      jupyterhub_host         = local.jupyterhub_host
-      keycloak_auth_url       = var.keycloak_auth_url
-      keycloak_token_url      = var.keycloak_token_url
-      keycloak_userinfo_url   = var.keycloak_userinfo_url
-      singleuser_image_name   = split(":", var.jupyterhub_singleuser_image)[0]
-      singleuser_image_tag    = length(split(":", var.jupyterhub_singleuser_image)) > 1 ? split(":", var.jupyterhub_singleuser_image)[1] : "latest"
-      singleuser_cpu_limit        = replace(var.jupyterhub_singleuser_cpu_limit, "m", "") / 1000
+      oauth_client_id               = var.jupyterhub_oauth_client_id
+      oauth_client_secret           = var.jupyterhub_oauth_client_secret
+      jupyterhub_host               = local.jupyterhub_host
+      keycloak_auth_url             = var.keycloak_auth_url
+      keycloak_token_url            = var.keycloak_token_url
+      keycloak_userinfo_url         = var.keycloak_userinfo_url
+      singleuser_image_name         = split(":", var.jupyterhub_singleuser_image)[0]
+      singleuser_image_tag          = length(split(":", var.jupyterhub_singleuser_image)) > 1 ? split(":", var.jupyterhub_singleuser_image)[1] : "latest"
+      singleuser_cpu_limit          = replace(var.jupyterhub_singleuser_cpu_limit, "m", "") / 1000
       singleuser_memory_limit_bytes = replace(var.jupyterhub_singleuser_memory_limit, "i", "")
-      storage_size_gb         = var.jupyterhub_storage_size_gb
-      nessie_uri              = var.nessie_uri
-      trino_host              = var.trino_host
-      trino_port              = var.trino_port
+      storage_size_gb               = var.jupyterhub_storage_size_gb
+      nessie_uri                    = var.nessie_uri
+      trino_host                    = var.trino_host
+      trino_port                    = var.trino_port
     })
   ]
 
