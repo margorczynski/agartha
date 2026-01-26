@@ -88,3 +88,15 @@ variable "identity_jupyterhub_oauth_client_secret" {
   description = "The client secret for JupyterHub OAuth integration with Keycloak"
   sensitive   = true
 }
+
+variable "identity_dagster_oauth_client_secret" {
+  type        = string
+  description = "The client secret for Dagster OAuth integration with Keycloak"
+  sensitive   = true
+}
+
+variable "orchestration_dagster_oauth_cookie_secret" {
+  type        = string
+  description = "The cookie secret for Dagster OAuth2-Proxy session encryption. Must be exactly 16, 24, or 32 characters. Generate with: openssl rand -hex 16"
+  sensitive   = true
+}

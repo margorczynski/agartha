@@ -69,3 +69,26 @@ variable "github_access_token" {
   sensitive   = true
   default     = ""
 }
+
+# Keycloak OAuth integration for Dagster
+variable "dagster_oauth_client_id" {
+  type        = string
+  description = "The OAuth client ID for Dagster"
+}
+
+variable "dagster_oauth_client_secret" {
+  type        = string
+  description = "The OAuth client secret for Dagster"
+  sensitive   = true
+}
+
+variable "dagster_oauth_cookie_secret" {
+  type        = string
+  description = "The cookie secret for OAuth2-Proxy session encryption. Must be exactly 16, 24, or 32 characters. Generate with: openssl rand -hex 16"
+  sensitive   = true
+}
+
+variable "keycloak_issuer_url" {
+  type        = string
+  description = "The OIDC issuer URL for Keycloak"
+}

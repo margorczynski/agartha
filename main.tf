@@ -86,6 +86,7 @@ module "agartha_identity" {
   trino_oauth_client_secret      = var.identity_trino_oauth_client_secret
   minio_oauth_client_secret      = var.identity_minio_oauth_client_secret
   jupyterhub_oauth_client_secret = var.identity_jupyterhub_oauth_client_secret
+  dagster_oauth_client_secret    = var.identity_dagster_oauth_client_secret
 }
 
 module "agartha_processing" {
@@ -159,8 +160,15 @@ module "agartha_orchestration" {
   spark_namespace = "agartha-processing-spark"
   flink_namespace = "agartha-processing-flink"
 
+  # Keycloak OAuth integration
+  dagster_oauth_client_id     = module.agartha_identity.keycloak_dagster_client_id
+  dagster_oauth_client_secret = module.agartha_identity.keycloak_dagster_client_secret
+  dagster_oauth_cookie_secret = var.orchestration_dagster_oauth_cookie_secret
+  keycloak_issuer_url         = module.agartha_identity.keycloak_issuer_url
+
   depends_on = [
-    module.agartha_processing
+    module.agartha_processing,
+    module.agartha_identity
   ]
 }
 

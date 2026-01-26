@@ -70,6 +70,10 @@
     {
       "name": "jupyterhub-users",
       "path": "/jupyterhub-users"
+    },
+    {
+      "name": "dagster-users",
+      "path": "/dagster-users"
     }
   ],
   "clientScopes": [
@@ -317,6 +321,41 @@
       "publicClient": false,
       "protocol": "openid-connect",
       "defaultClientScopes": ["openid", "profile", "email", "groups"]
+    },
+    {
+      "clientId": "dagster",
+      "name": "Dagster",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "${dagster_client_secret}",
+      "redirectUris": [
+        "http://dagster.${ingress_base_host}/oauth2/callback",
+        "https://dagster.${ingress_base_host}/oauth2/callback"
+      ],
+      "webOrigins": [
+        "http://dagster.${ingress_base_host}",
+        "https://dagster.${ingress_base_host}"
+      ],
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "defaultClientScopes": ["openid", "profile", "email", "groups"],
+      "protocolMappers": [
+        {
+          "name": "audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "dagster",
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        }
+      ]
     }
   ]
 }
