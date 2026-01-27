@@ -28,3 +28,9 @@ variable "storage_s3_warehouse_bucket" {
   type        = string
   description = "The S3 warehouse bucket name"
 }
+
+variable "catalog_postgres_password" {
+  type        = string
+  description = "The PostgreSQL password for Nessie catalog"
+  sensitive   = true
+}

@@ -40,6 +40,12 @@ variable "orchestration_dagster_postgres_password" {
   sensitive   = true
 }
 
+variable "catalog_postgres_password" {
+  type        = string
+  description = "The password for Nessie PostgreSQL catalog database"
+  sensitive   = true
+}
+
 variable "identity_keycloak_admin_password" {
   type        = string
   description = "The admin password for Keycloak"

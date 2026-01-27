@@ -15,6 +15,76 @@ resource "kubernetes_secret_v1" "nessie_s3_credentials" {
   ]
 }
 
+# Secret for PostgreSQL database password
+resource "kubernetes_secret_v1" "nessie_postgres_password" {
+  metadata {
+    name      = "nessie-postgres-password"
+    namespace = var.kubernetes_catalog_namespace
+  }
+
+  data = {
+    "password" = var.catalog_postgres_password
+  }
+
+  depends_on = [
+    kubernetes_namespace_v1.catalog_namespace
+  ]
+}
+
+# Secret for JDBC datasource credentials (required by Nessie chart)
+resource "kubernetes_secret_v1" "nessie_datasource_creds" {
+  metadata {
+    name      = "datasource-creds"
+    namespace = var.kubernetes_catalog_namespace
+  }
+
+  data = {
+    "username" = "postgres"
+    "password" = var.catalog_postgres_password
+  }
+
+  depends_on = [
+    kubernetes_namespace_v1.catalog_namespace
+  ]
+}
+
+# PostgreSQL for Nessie
+resource "helm_release" "nessie_postgres" {
+  namespace  = var.kubernetes_catalog_namespace
+  name       = "nessie-postgres"
+  repository = "https://charts.bitnami.com/bitnami"
+  chart      = "postgresql"
+  version    = "18.2.3"
+
+  set = [
+    {
+      name  = "auth.password"
+      value = var.catalog_postgres_password
+    },
+    {
+      name  = "auth.database"
+      value = "nessie"
+    },
+    {
+      name  = "primary.persistence.enabled"
+      value = "true"
+    },
+    {
+      name  = "primary.persistence.size"
+      value = "2Gi"
+    },
+    {
+      name  = "volumePermissions.enabled"
+      value = "true"
+    }
+  ]
+
+  depends_on = [
+    kubernetes_namespace_v1.catalog_namespace,
+    kubernetes_secret_v1.nessie_postgres_password
+  ]
+}
+
 resource "helm_release" "nessie" {
   namespace  = var.kubernetes_catalog_namespace
   name       = "nessie"
@@ -29,15 +99,11 @@ resource "helm_release" "nessie" {
     },
     {
       name  = "versionStoreType"
-      value = "ROCKSDB"
+      value = "JDBC"
     },
     {
-      name  = "rocksdb.storageClassName"
-      value = "standard"
-    },
-    {
-      name  = "rocksdb.storageSize"
-      value = "2Gi"
+      name  = "jdbc.jdbcUrl"
+      value = "jdbc:postgresql://nessie-postgres-postgresql:5432/nessie"
     },
     # Iceberg REST catalog configuration
     {
@@ -95,6 +161,7 @@ resource "helm_release" "nessie" {
 
   depends_on = [
     kubernetes_namespace_v1.catalog_namespace,
-    kubernetes_secret_v1.nessie_s3_credentials
+    kubernetes_secret_v1.nessie_s3_credentials,
+    kubernetes_secret_v1.nessie_postgres_password
   ]
 }

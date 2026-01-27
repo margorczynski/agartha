@@ -33,6 +33,7 @@ module "agartha_catalog" {
   storage_s3_access_key       = var.storage_s3_access_key
   storage_s3_secret_key       = var.storage_s3_secret_key
   storage_s3_warehouse_bucket = var.storage_s3_warehouse_bucket_name
+  catalog_postgres_password   = var.catalog_postgres_password
 
   depends_on = [
     module.agartha_storage
