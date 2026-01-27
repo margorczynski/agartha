@@ -34,3 +34,8 @@ variable "catalog_postgres_password" {
   description = "The PostgreSQL password for Nessie catalog"
   sensitive   = true
 }
+
+variable "allowed_ingress_namespaces" {
+  type        = list(string)
+  description = "List of namespaces allowed to ingress to catalog namespace"
+}

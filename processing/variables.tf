@@ -74,3 +74,18 @@ variable "trino_internal_shared_secret" {
   description = "Shared secret for Trino internal communication when authentication is enabled"
   sensitive   = true
 }
+
+variable "spark_allowed_ingress_namespaces" {
+  type        = list(string)
+  description = "List of namespaces allowed to ingress to spark namespace"
+}
+
+variable "flink_allowed_ingress_namespaces" {
+  type        = list(string)
+  description = "List of namespaces allowed to ingress to flink namespace"
+}
+
+variable "trino_allowed_ingress_namespaces" {
+  type        = list(string)
+  description = "List of namespaces allowed to ingress to trino namespace"
+}

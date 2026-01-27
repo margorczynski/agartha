@@ -58,3 +58,8 @@ variable "keycloak_openid_config_url" {
   type        = string
   description = "The OpenID Connect discovery URL for Keycloak"
 }
+
+variable "allowed_ingress_namespaces" {
+  type        = list(string)
+  description = "List of namespaces allowed to ingress to storage namespace"
+}

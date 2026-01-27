@@ -78,3 +78,8 @@ variable "jupyterhub_singleuser_memory_limit" {
   description = "Memory limit for single-user servers"
   default     = "4Gi"
 }
+
+variable "allowed_ingress_namespaces" {
+  type        = list(string)
+  description = "List of namespaces allowed to ingress to notebooks namespace"
+}

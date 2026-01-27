@@ -92,3 +92,8 @@ variable "keycloak_issuer_url" {
   type        = string
   description = "The OIDC issuer URL for Keycloak"
 }
+
+variable "allowed_ingress_namespaces" {
+  type        = list(string)
+  description = "List of namespaces allowed to ingress to orchestration namespace"
+}

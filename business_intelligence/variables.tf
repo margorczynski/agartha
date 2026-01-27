@@ -54,3 +54,8 @@ variable "keycloak_api_base_url" {
   type        = string
   description = "The Keycloak OIDC API base URL (internal, for server-to-server)"
 }
+
+variable "allowed_ingress_namespaces" {
+  type        = list(string)
+  description = "List of namespaces allowed to ingress to bi namespace"
+}

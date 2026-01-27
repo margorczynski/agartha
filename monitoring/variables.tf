@@ -128,3 +128,8 @@ variable "alertmanager_oauth_cookie_secret" {
   description = "The cookie secret for Alertmanager OAuth2-Proxy session encryption"
   sensitive   = true
 }
+
+variable "allowed_ingress_namespaces" {
+  type        = list(string)
+  description = "List of namespaces allowed to ingress to monitoring namespace"
+}

@@ -80,3 +80,8 @@ variable "alertmanager_oauth_client_secret" {
   description = "The client secret for Alertmanager OAuth integration with Keycloak"
   sensitive   = true
 }
+
+variable "allowed_ingress_namespaces" {
+  type        = list(string)
+  description = "List of namespaces allowed to ingress to identity namespace"
+}

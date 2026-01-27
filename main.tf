@@ -18,6 +18,15 @@ module "agartha_storage" {
   minio_oauth_client_secret  = module.agartha_identity.keycloak_minio_client_secret
   keycloak_openid_config_url = module.agartha_identity.keycloak_openid_config_url
 
+  # Network policy - allow ingress from monitoring, catalog, spark, flink
+  allowed_ingress_namespaces = [
+    "agartha-storage",
+    "agartha-monitoring",
+    "agartha-catalog",
+    "agartha-processing-spark",
+    "agartha-processing-flink"
+  ]
+
   depends_on = [
     module.agartha_identity
   ]
@@ -34,6 +43,14 @@ module "agartha_catalog" {
   storage_s3_secret_key       = var.storage_s3_secret_key
   storage_s3_warehouse_bucket = var.storage_s3_warehouse_bucket_name
   catalog_postgres_password   = var.catalog_postgres_password
+
+  # Network policy - allow ingress from monitoring, trino, notebooks
+  allowed_ingress_namespaces = [
+    "agartha-catalog",
+    "agartha-monitoring",
+    "agartha-processing-trino",
+    "agartha-notebooks"
+  ]
 
   depends_on = [
     module.agartha_storage
@@ -77,6 +94,11 @@ module "agartha_monitoring" {
   alertmanager_oauth_client_secret = module.agartha_identity.keycloak_alertmanager_client_secret
   alertmanager_oauth_cookie_secret = var.monitoring_alertmanager_oauth_cookie_secret
 
+  # Network policy - allow ingress from itself only (monitoring primarily initiates connections)
+  allowed_ingress_namespaces = [
+    "agartha-monitoring"
+  ]
+
   depends_on = [
     module.agartha_identity
   ]
@@ -101,6 +123,20 @@ module "agartha_identity" {
   dagster_oauth_client_secret      = var.identity_dagster_oauth_client_secret
   prometheus_oauth_client_secret   = var.identity_prometheus_oauth_client_secret
   alertmanager_oauth_client_secret = var.identity_alertmanager_oauth_client_secret
+
+  # Network policy - allow ingress from all namespaces (OAuth endpoint for all components)
+  allowed_ingress_namespaces = [
+    "agartha-identity",
+    "agartha-storage",
+    "agartha-catalog",
+    "agartha-processing-spark",
+    "agartha-processing-flink",
+    "agartha-processing-trino",
+    "agartha-monitoring",
+    "agartha-notebooks",
+    "agartha-orchestration",
+    "agartha-bi"
+  ]
 }
 
 module "agartha_processing" {
@@ -126,6 +162,26 @@ module "agartha_processing" {
   keycloak_userinfo_url        = module.agartha_identity.keycloak_userinfo_url
   trino_internal_shared_secret = var.processing_trino_internal_shared_secret
 
+  # Network policies - allow ingress from specific namespaces
+  spark_allowed_ingress_namespaces = [
+    "agartha-processing-spark",
+    "agartha-monitoring",
+    "agartha-orchestration"
+  ]
+
+  flink_allowed_ingress_namespaces = [
+    "agartha-processing-flink",
+    "agartha-monitoring",
+    "agartha-orchestration"
+  ]
+
+  trino_allowed_ingress_namespaces = [
+    "agartha-processing-trino",
+    "agartha-monitoring",
+    "agartha-notebooks",
+    "agartha-bi"
+  ]
+
   depends_on = [
     module.agartha_monitoring,
     module.agartha_identity
@@ -147,8 +203,14 @@ module "business_intelligence" {
   keycloak_auth_url            = module.agartha_identity.keycloak_auth_url
   keycloak_token_url           = module.agartha_identity.keycloak_token_url
   keycloak_issuer_url          = module.agartha_identity.keycloak_issuer_url
-  keycloak_jwks_url            = module.agartha_identity.keycloak_jwks_url
+  keycloak_jwks_url           = module.agartha_identity.keycloak_jwks_url
   keycloak_api_base_url        = module.agartha_identity.keycloak_api_base_url
+
+  # Network policy - allow ingress from monitoring only
+  allowed_ingress_namespaces = [
+    "agartha-bi",
+    "agartha-monitoring"
+  ]
 
   depends_on = [
     module.agartha_processing,
@@ -180,6 +242,12 @@ module "agartha_orchestration" {
   dagster_oauth_cookie_secret = var.orchestration_dagster_oauth_cookie_secret
   keycloak_issuer_url         = module.agartha_identity.keycloak_issuer_url
 
+  # Network policy - allow ingress from monitoring only
+  allowed_ingress_namespaces = [
+    "agartha-orchestration",
+    "agartha-monitoring"
+  ]
+
   depends_on = [
     module.agartha_processing,
     module.agartha_identity
@@ -205,6 +273,12 @@ module "agartha_notebooks" {
   keycloak_auth_url              = module.agartha_identity.keycloak_auth_url
   keycloak_token_url             = module.agartha_identity.keycloak_token_url
   keycloak_userinfo_url          = module.agartha_identity.keycloak_userinfo_url
+
+  # Network policy - allow ingress from monitoring only
+  allowed_ingress_namespaces = [
+    "agartha-notebooks",
+    "agartha-monitoring"
+  ]
 
   depends_on = [
     module.agartha_storage,
