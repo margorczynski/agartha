@@ -203,7 +203,7 @@ module "business_intelligence" {
   keycloak_auth_url            = module.agartha_identity.keycloak_auth_url
   keycloak_token_url           = module.agartha_identity.keycloak_token_url
   keycloak_issuer_url          = module.agartha_identity.keycloak_issuer_url
-  keycloak_jwks_url           = module.agartha_identity.keycloak_jwks_url
+  keycloak_jwks_url            = module.agartha_identity.keycloak_jwks_url
   keycloak_api_base_url        = module.agartha_identity.keycloak_api_base_url
 
   # Network policy - allow ingress from monitoring only

@@ -23,7 +23,8 @@ resource "kubernetes_secret_v1" "nessie_postgres_password" {
   }
 
   data = {
-    "password" = var.catalog_postgres_password
+    "password"          = var.catalog_postgres_password
+    "postgres-password" = var.catalog_postgres_password
   }
 
   depends_on = [
@@ -58,8 +59,16 @@ resource "helm_release" "nessie_postgres" {
 
   set = [
     {
-      name  = "auth.password"
-      value = var.catalog_postgres_password
+      name  = "auth.existingSecret"
+      value = kubernetes_secret_v1.nessie_postgres_password.metadata[0].name
+    },
+    {
+      name  = "auth.secretKeys.userPasswordKey"
+      value = "password"
+    },
+    {
+      name  = "auth.secretKeys.adminPasswordKey"
+      value = "postgres-password"
     },
     {
       name  = "auth.database"

@@ -5,7 +5,23 @@ resource "kubernetes_secret_v1" "keycloak_database_password" {
   }
 
   data = {
-    "password" = var.keycloak_postgres_password
+    "password"          = var.keycloak_postgres_password
+    "postgres-password" = var.keycloak_postgres_password
+  }
+
+  depends_on = [
+    kubernetes_namespace_v1.identity_namespace
+  ]
+}
+
+resource "kubernetes_secret_v1" "keycloak_admin_password" {
+  metadata {
+    name      = "keycloak-admin-password"
+    namespace = local.namespace
+  }
+
+  data = {
+    "admin-password" = var.keycloak_admin_password
   }
 
   depends_on = [
@@ -32,8 +48,12 @@ resource "helm_release" "keycloak" {
       value = "admin"
     },
     {
-      name  = "auth.adminPassword"
-      value = var.keycloak_admin_password
+      name  = "auth.existingSecret"
+      value = kubernetes_secret_v1.keycloak_admin_password.metadata[0].name
+    },
+    {
+      name  = "auth.passwordSecretKey"
+      value = "admin-password"
     },
     {
       name  = "auth.createAdminUser"
@@ -104,6 +124,11 @@ resource "helm_release" "keycloak" {
       name  = "postgresql.enabled"
       value = "true"
     },
+    # NOTE: Using existingSecret here causes the Bitnami PostgreSQL subchart to mount
+    # the secret as files (POSTGRES_PASSWORD_FILE) but the image v17.6 validation
+    # still requires POSTGRESQL_PASSWORD env var, causing a CrashLoopBackOff.
+    # Keeping inline password for the subchart; the secret resource still exists
+    # for external reference.
     {
       name  = "postgresql.auth.password"
       value = var.keycloak_postgres_password
@@ -200,8 +225,8 @@ resource "helm_release" "keycloak" {
       value = "realm-config"
     },
     {
-      name  = "extraVolumes[0].configMap.name"
-      value = kubernetes_config_map_v1.keycloak_realm.metadata[0].name
+      name  = "extraVolumes[0].secret.secretName"
+      value = kubernetes_secret_v1.keycloak_realm.metadata[0].name
     },
     {
       name  = "extraVolumeMounts[0].name"
@@ -220,6 +245,7 @@ resource "helm_release" "keycloak" {
   depends_on = [
     kubernetes_namespace_v1.identity_namespace,
     kubernetes_secret_v1.keycloak_database_password,
-    kubernetes_config_map_v1.keycloak_realm
+    kubernetes_secret_v1.keycloak_admin_password,
+    kubernetes_secret_v1.keycloak_realm
   ]
 }

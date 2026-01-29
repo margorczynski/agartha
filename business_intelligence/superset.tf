@@ -24,6 +24,23 @@ resource "kubernetes_secret_v1" "secret_superset_secret_key" {
   ]
 }
 
+resource "kubernetes_secret_v1" "superset_oauth_credentials" {
+  metadata {
+    name      = "superset-oauth-credentials"
+    namespace = var.kubernetes_bi_namespace
+  }
+
+  data = {
+    SUPERSET_SECRET_KEY     = random_password.superset_secret_key.result
+    OAUTH_CLIENT_SECRET     = var.superset_oauth_client_secret
+    SUPERSET_ADMIN_PASSWORD = random_password.superset_admin_password.result
+  }
+
+  depends_on = [
+    kubernetes_namespace_v1.bi_namespace
+  ]
+}
+
 resource "helm_release" "superset" {
   namespace  = var.kubernetes_bi_namespace
   name       = "superset"
@@ -33,21 +50,21 @@ resource "helm_release" "superset" {
 
   values = [
     templatefile("${path.module}/templates/superset_values.tftpl", {
-      superset_secret_key         = random_password.superset_secret_key.result
-      superset_node_replica_num   = var.superset_node_replica_num
-      superset_worker_replica_num = var.superset_worker_replica_num
-      oauth_client_id             = var.superset_oauth_client_id
-      oauth_client_secret         = var.superset_oauth_client_secret
-      keycloak_auth_url           = var.keycloak_auth_url
-      keycloak_token_url          = var.keycloak_token_url
-      keycloak_issuer_url         = var.keycloak_issuer_url
-      keycloak_jwks_url           = var.keycloak_jwks_url
-      keycloak_api_base_url       = var.keycloak_api_base_url
-      superset_admin_password     = random_password.superset_admin_password.result
+      superset_node_replica_num     = var.superset_node_replica_num
+      superset_worker_replica_num   = var.superset_worker_replica_num
+      oauth_client_id               = var.superset_oauth_client_id
+      keycloak_auth_url             = var.keycloak_auth_url
+      keycloak_token_url            = var.keycloak_token_url
+      keycloak_issuer_url           = var.keycloak_issuer_url
+      keycloak_jwks_url             = var.keycloak_jwks_url
+      keycloak_api_base_url         = var.keycloak_api_base_url
+      oauth_credentials_secret_name = kubernetes_secret_v1.superset_oauth_credentials.metadata[0].name
+      superset_admin_password       = random_password.superset_admin_password.result
     })
   ]
 
   depends_on = [
-    kubernetes_namespace_v1.bi_namespace
+    kubernetes_namespace_v1.bi_namespace,
+    kubernetes_secret_v1.superset_oauth_credentials
   ]
 }

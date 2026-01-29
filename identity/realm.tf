@@ -1,5 +1,6 @@
-# ConfigMap containing the Agartha realm configuration for Keycloak import
-resource "kubernetes_config_map_v1" "keycloak_realm" {
+# Secret containing the Agartha realm configuration for Keycloak import
+# Uses a Secret instead of ConfigMap because the realm JSON contains OAuth client secrets
+resource "kubernetes_secret_v1" "keycloak_realm" {
   metadata {
     name      = "keycloak-realm-config"
     namespace = local.namespace

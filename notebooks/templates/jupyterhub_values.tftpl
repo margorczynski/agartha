@@ -5,8 +5,6 @@ hub:
     JupyterHub:
       authenticator_class: generic-oauth
     GenericOAuthenticator:
-      client_id: "${oauth_client_id}"
-      client_secret: "${oauth_client_secret}"
       oauth_callback_url: "http://${jupyterhub_host}/hub/oauth_callback"
       authorize_url: "${keycloak_auth_url}"
       token_url: "${keycloak_token_url}"
@@ -24,9 +22,24 @@ hub:
         - "profile"
         - "email"
         - "groups"
+  extraEnv:
+    - name: OAUTH_CLIENT_ID
+      valueFrom:
+        secretKeyRef:
+          name: ${oauth_secret_name}
+          key: client_id
+    - name: OAUTH_CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: ${oauth_secret_name}
+          key: client_secret
   extraConfig:
     spawner: |
       c.KubeSpawner.cmd = ['jupyterhub-singleuser']
+    oauth-secrets: |
+      import os
+      c.GenericOAuthenticator.client_id = os.environ['OAUTH_CLIENT_ID']
+      c.GenericOAuthenticator.client_secret = os.environ['OAUTH_CLIENT_SECRET']
 
 singleuser:
   image:
