@@ -18,9 +18,15 @@ dagsterWebserver:
     - name: S3_WAREHOUSE
       value: "${s3_warehouse}"
     - name: S3_ACCESS_KEY_ID
-      value: "${s3_access_key}"
+      valueFrom:
+        secretKeyRef:
+          name: ${s3_credentials_secret_name}
+          key: S3_ACCESS_KEY_ID
     - name: S3_SECRET_ACCESS_KEY
-      value: "${s3_secret_key}"
+      valueFrom:
+        secretKeyRef:
+          name: ${s3_credentials_secret_name}
+          key: S3_SECRET_ACCESS_KEY
     - name: S3_REGION
       value: "us-east-1"
     - name: S3_PATH_STYLE_ACCESS
@@ -49,9 +55,15 @@ dagsterDaemon:
     - name: S3_WAREHOUSE
       value: "${s3_warehouse}"
     - name: S3_ACCESS_KEY_ID
-      value: "${s3_access_key}"
+      valueFrom:
+        secretKeyRef:
+          name: ${s3_credentials_secret_name}
+          key: S3_ACCESS_KEY_ID
     - name: S3_SECRET_ACCESS_KEY
-      value: "${s3_secret_key}"
+      valueFrom:
+        secretKeyRef:
+          name: ${s3_credentials_secret_name}
+          key: S3_SECRET_ACCESS_KEY
     - name: S3_REGION
       value: "us-east-1"
     - name: S3_PATH_STYLE_ACCESS
@@ -76,6 +88,8 @@ runLauncher:
         - name: ${storage_config_map_name}
         - name: ${spark_config_map_name}
         - name: ${flink_config_map_name}
+      envSecrets:
+        - name: ${s3_credentials_secret_name}
       envVars:
         - "DLT_S3_BUCKET=agartha-raw"
         - "DAGSTER_CLI_API_GRPC_LAZY_LOAD_USER_CODE=1"
@@ -110,8 +124,10 @@ runLauncher:
 postgresql:
   enabled: true
   auth:
-    password: "${dagster_postgres_password}"
-    postgresPassword: "${dagster_postgres_password}"
+    existingSecret: ${postgres_existing_secret}
+    secretKeys:
+      userPasswordKey: password
+      adminPasswordKey: postgres-password
   primary:
     persistence:
       enabled: true

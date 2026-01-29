@@ -14,7 +14,10 @@ prometheus:
 
 grafana:
   enabled: true
-  adminPassword: "${grafana_admin_password}"
+  admin:
+    existingSecret: ${grafana_admin_existing_secret}
+    userKey: admin-user
+    passwordKey: admin-password
   assertNoLeakedSecrets: false
   persistence:
     enabled: true

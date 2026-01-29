@@ -1,6 +1,7 @@
 configOverrides:
   secret: |
-    SECRET_KEY = '${superset_secret_key}'
+    import os
+    SECRET_KEY = os.environ.get('SUPERSET_SECRET_KEY')
   enable_oauth: |
     from flask_appbuilder.security.manager import AUTH_OAUTH
     AUTH_TYPE = AUTH_OAUTH
@@ -15,7 +16,7 @@ configOverrides:
             'token_key': 'access_token',
             'remote_app': {
                 'client_id': '${oauth_client_id}',
-                'client_secret': '${oauth_client_secret}',
+                'client_secret': os.environ.get('OAUTH_CLIENT_SECRET'),
                 'client_kwargs': {
                     'scope': 'openid profile email groups',
                 },
@@ -79,6 +80,9 @@ configOverrides:
     # Allow users to self-register
     AUTH_USER_REGISTRATION = True
     AUTH_USER_REGISTRATION_ROLE = 'Gamma'
+
+envFromSecrets:
+  - ${oauth_credentials_secret_name}
 
 supersetNode:
   replicaCount: ${superset_node_replica_num}

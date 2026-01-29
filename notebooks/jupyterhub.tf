@@ -83,8 +83,7 @@ resource "helm_release" "jupyterhub" {
 
   values = [
     templatefile("${path.module}/templates/jupyterhub_values.tftpl", {
-      oauth_client_id               = var.jupyterhub_oauth_client_id
-      oauth_client_secret           = var.jupyterhub_oauth_client_secret
+      oauth_secret_name             = kubernetes_secret_v1.jupyterhub_oauth_secret.metadata[0].name
       jupyterhub_host               = local.jupyterhub_host
       keycloak_auth_url             = var.keycloak_auth_url
       keycloak_token_url            = var.keycloak_token_url
@@ -103,6 +102,7 @@ resource "helm_release" "jupyterhub" {
   depends_on = [
     kubernetes_namespace_v1.notebooks_namespace,
     kubernetes_config_map_v1.jupyterhub_examples,
-    kubernetes_role_binding_v1.jupyterhub
+    kubernetes_role_binding_v1.jupyterhub,
+    kubernetes_secret_v1.jupyterhub_oauth_secret
   ]
 }

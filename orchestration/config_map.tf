@@ -10,8 +10,6 @@ resource "kubernetes_config_map_v1" "dagster_storage_config" {
     NESSIE_REF           = "main"
     S3_ENDPOINT          = local.s3_endpoint
     S3_WAREHOUSE         = local.warehouse_location
-    S3_ACCESS_KEY_ID     = var.storage_s3_access_key
-    S3_SECRET_ACCESS_KEY = var.storage_s3_secret_key
     S3_REGION            = "us-east-1"
     S3_PATH_STYLE_ACCESS = "true"
     S3_SSL_ENABLED       = "false"
