@@ -17,7 +17,7 @@ resource "kubernetes_ingress_v1" "keycloak_ingress" {
     name      = "keycloak-ingress"
     namespace = local.namespace
     annotations = {
-      "nginx.ingress.kubernetes.io/ssl-redirect"      = "true"
+      "nginx.ingress.kubernetes.io/ssl-redirect"         = "true"
       "nginx.ingress.kubernetes.io/proxy-body-size"      = "10m"
       "nginx.ingress.kubernetes.io/proxy-buffer-size"    = "128k"
       "nginx.ingress.kubernetes.io/proxy-buffers-number" = "4"
