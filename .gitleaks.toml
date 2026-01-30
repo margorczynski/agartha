@@ -16,36 +16,13 @@ paths = [
     '''LICENSE''',
     '''\.github''',
 ]
-
-# Allow specific known non-secret patterns that may trigger false positives
-[[allowlist.regexes]]
-description = "Allow local file paths"
-regex = '''file\(["\']\./.*["\']\)'''
-
-[[allowlist.regexes]]
-description = "Allow Kubernetes service URLs"
-regex = '''svc\.cluster\.local'''
-
-[[allowlist.regexes]]
-description = "Allow placeholder example values"
-regex = '''example\.com|localhost|127\.0\.0\.1'''
-
-[[allowlist.regexes]]
-description = "Allow generic resource names"
-regex = '''(minio|keycloak|trino|spark|flink|nessie|grafana|prometheus|superset|jupyterhub|dagster|velero)(-[a-z]+)+'''
-
-[[allowlist.regexes]]
-description = "Allow namespace patterns"
-regex = '''agartha-[a-z-]+'''
-
-[[allowlist.regexes]]
-description = "Allow common configuration keys"
-regex = '''(client_id|client_secret|access_key|secret_key|username|password|token)'''
-
-[[allowlist.regexes]]
-description = "Allow non-sensitive OAuth fields"
-regex = '''(issuer_url|auth_url|token_url|userinfo_url|jwks_url|api_base_url)'''
-
-[[allowlist.regexes]]
-description = "Allow storage sizes"
-regex = '''[0-9]+[TGMK]B'''
+regexes = [
+    '''file\(["\']\./.*["\']\)''',
+    '''svc\.cluster\.local''',
+    '''example\.com|localhost|127\.0\.0\.1''',
+    '''(minio|keycloak|trino|spark|flink|nessie|grafana|prometheus|superset|jupyterhub|dagster|velero)(-[a-z]+)+''',
+    '''agartha-[a-z-]+''',
+    '''(client_id|client_secret|access_key|secret_key|username|password|token)''',
+    '''(issuer_url|auth_url|token_url|userinfo_url|jwks_url|api_base_url)''',
+    '''[0-9]+[TGMK]B'''
+]

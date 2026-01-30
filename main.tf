@@ -309,7 +309,6 @@ module "agartha_notebooks" {
   # Keycloak OAuth
   jupyterhub_oauth_client_id     = module.agartha_identity.keycloak_jupyterhub_client_id
   jupyterhub_oauth_client_secret = module.agartha_identity.keycloak_jupyterhub_client_secret
-  keycloak_issuer_url            = module.agartha_identity.keycloak_issuer_url
   keycloak_auth_url              = module.agartha_identity.keycloak_auth_url
   keycloak_token_url             = module.agartha_identity.keycloak_token_url
   keycloak_userinfo_url          = module.agartha_identity.keycloak_userinfo_url
@@ -338,9 +337,9 @@ module "agartha_backup" {
 
   kubernetes_backup_namespace = "agartha-backup"
 
-  s3_endpoint          = "http://minio.agartha-storage.svc.cluster.local"
-  s3_access_key        = var.storage_s3_access_key
-  s3_secret_key        = var.storage_s3_secret_key
+  s3_endpoint           = "http://minio.agartha-storage.svc.cluster.local"
+  s3_access_key         = var.storage_s3_access_key
+  s3_secret_key         = var.storage_s3_secret_key
   s3_backup_bucket_name = var.backup_s3_bucket_name
 
   backup_schedule       = var.backup_schedule

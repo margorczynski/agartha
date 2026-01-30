@@ -1,40 +1,27 @@
-config = {
-  module = true
-  force = false
-  disabled_by_default = false
-  ignore_module = {}
+rule "terraform_comment_syntax" {
+  enabled = false
+}
 
-  plugin_dir = "~/.tflint.d/plugins"
+rule "terraform_naming_convention" {
+  enabled = false
+}
 
-  rule_group {
-    enabled = true
-    name = "aws"
-  }
+rule "terraform_typed_variables" {
+  enabled = false
+}
 
-  rule_group {
-    enabled = true
-    name = "azurerm"
-  }
+rule "terraform_unused_declarations" {
+  enabled = true
+}
 
-  rule_group {
-    enabled = true
-    name = "google"
-  }
+rule "terraform_required_providers" {
+  enabled = true
+}
 
-  rule_group {
-    enabled = true
-    name = "kubernetes"
-  }
+rule "terraform_required_version" {
+  enabled = true
+}
 
-  rule_group {
-    enabled = true
-    name = "terraform"
-  }
-
-  rule_group {
-    enabled = true
-    name = "terraform_framework"
-  }
-
-  varsfile = ""
+rule "terraform_standard_module_structure" {
+  enabled = false
 }

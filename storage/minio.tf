@@ -58,7 +58,7 @@ resource "helm_release" "minio_tenant" {
     #
     {
       name  = "tenant.buckets[0].name"
-      value = "${var.s3_warehouse_bucket_name}"
+      value = var.s3_warehouse_bucket_name
     },
     #
     # Prometheus metrics

@@ -41,11 +41,6 @@ variable "jupyterhub_oauth_client_secret" {
   sensitive   = true
 }
 
-variable "keycloak_issuer_url" {
-  type        = string
-  description = "The Keycloak OIDC issuer URL"
-}
-
 variable "keycloak_auth_url" {
   type        = string
   description = "The Keycloak authorization URL"
