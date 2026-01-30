@@ -85,7 +85,7 @@ resource "kubernetes_ingress_v1" "ingress_monitoring_alertmanager" {
     name      = "ingress-monitoring-alertmanager"
     namespace = var.kubernetes_monitoring_namespace
     annotations = {
-      "nginx.ingress.kubernetes.io/ssl-redirect"        = "true"
+      "nginx.ingress.kubernetes.io/ssl-redirect"         = "true"
       "nginx.ingress.kubernetes.io/proxy-buffer-size"    = "16k"
       "nginx.ingress.kubernetes.io/proxy-buffers-number" = "4"
     }
