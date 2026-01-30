@@ -21,11 +21,11 @@ jobs:
           soft_fail: false
           additional_args: --concise-output
 
-      - name: Run gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+      - name: Install and run gitleaks
+        run: |
+          curl -s https://api.github.com/repos/gitleaks/gitleaks/releases/latest | grep "browser_download_url.*linux_x64.tar.gz" | cut -d '"' -f 4 | xargs curl -sL | tar xz
+          chmod +x gitleaks
+          ./gitleaks detect --source . --config .gitleaks.toml --verbose
 
   linting:
     name: OpenTofu Linting
