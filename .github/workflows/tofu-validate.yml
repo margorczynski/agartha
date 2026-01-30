@@ -8,7 +8,65 @@ on:
       - main
 
 jobs:
+  security-scan:
+    name: Security Scanning
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run tfsec
+        uses: aquasecurity/tfsec-action@v1.0.0
+        with:
+          soft_fail: false
+          additional_args: --concise-output
+
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        with:
+          config-path: .gitleaks.toml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+
+  linting:
+    name: OpenTofu Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v4
+
+      - name: Initialize TFLint
+        run: tflint --init
+
+      - name: Run TFLint
+        run: tflint --recursive --format compact
+
+  helm-validation:
+    name: Helm Chart Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+
+      - name: Validate Helm releases
+        run: |
+          find . -name "*.tf" -exec grep -l "helm_release" {} \; | while read file; do
+            dir=$(dirname "$file")
+            if [ -f "$dir/templates" ]; then
+              echo "Validating Helm chart in $dir"
+              helm lint "$dir/templates"
+            fi
+          done || echo "No Helm charts to validate or validation completed"
+
   validate:
+    name: OpenTofu Validation
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -28,3 +86,41 @@ jobs:
 
       - name: Validate
         run: tofu validate
+
+  plan:
+    name: OpenTofu Plan
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: 1.11.2
+          tofu_wrapper: false
+
+      - name: Initialize
+        run: tofu init
+
+      - name: Plan
+        id: plan
+        run: tofu plan -no-color -out=tfplan 2>&1 | tee plan.txt || true
+        continue-on-error: true
+
+      - name: Comment PR with Plan
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request'
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const plan = fs.readFileSync('plan.txt', 'utf8');
+            const output = `## OpenTofu Plan Output\n\n\`\`\`\n${plan}\n\`\`\``;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            });
