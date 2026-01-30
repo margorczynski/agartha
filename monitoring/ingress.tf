@@ -1,10 +1,31 @@
+resource "kubernetes_secret_v1" "tls_secret" {
+  metadata {
+    name      = "tls-secret"
+    namespace = var.kubernetes_monitoring_namespace
+  }
+
+  type = "kubernetes.io/tls"
+
+  data = {
+    "tls.crt" = var.tls_certificate
+    "tls.key" = var.tls_private_key
+  }
+}
+
 resource "kubernetes_ingress_v1" "ingress_monitoring_grafana" {
   metadata {
     name      = "ingress-monitoring-grafana"
     namespace = var.kubernetes_monitoring_namespace
+    annotations = {
+      "nginx.ingress.kubernetes.io/ssl-redirect" = "true"
+    }
   }
   spec {
     ingress_class_name = "nginx"
+    tls {
+      hosts       = ["grafana.${var.kubernetes_ingress_base_host}"]
+      secret_name = kubernetes_secret_v1.tls_secret.metadata[0].name
+    }
     rule {
       host = "grafana.${var.kubernetes_ingress_base_host}"
       http {
@@ -29,9 +50,16 @@ resource "kubernetes_ingress_v1" "ingress_monitoring_prometheus" {
   metadata {
     name      = "ingress-monitoring-prometheus"
     namespace = var.kubernetes_monitoring_namespace
+    annotations = {
+      "nginx.ingress.kubernetes.io/ssl-redirect" = "true"
+    }
   }
   spec {
     ingress_class_name = "nginx"
+    tls {
+      hosts       = ["prometheus.${var.kubernetes_ingress_base_host}"]
+      secret_name = kubernetes_secret_v1.tls_secret.metadata[0].name
+    }
     rule {
       host = "prometheus.${var.kubernetes_ingress_base_host}"
       http {
@@ -56,9 +84,18 @@ resource "kubernetes_ingress_v1" "ingress_monitoring_alertmanager" {
   metadata {
     name      = "ingress-monitoring-alertmanager"
     namespace = var.kubernetes_monitoring_namespace
+    annotations = {
+      "nginx.ingress.kubernetes.io/ssl-redirect"        = "true"
+      "nginx.ingress.kubernetes.io/proxy-buffer-size"    = "16k"
+      "nginx.ingress.kubernetes.io/proxy-buffers-number" = "4"
+    }
   }
   spec {
     ingress_class_name = "nginx"
+    tls {
+      hosts       = ["alertmanager.${var.kubernetes_ingress_base_host}"]
+      secret_name = kubernetes_secret_v1.tls_secret.metadata[0].name
+    }
     rule {
       host = "alertmanager.${var.kubernetes_ingress_base_host}"
       http {

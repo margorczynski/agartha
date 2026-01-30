@@ -90,6 +90,11 @@ variable "keycloak_userinfo_url" {
   description = "The Keycloak OIDC userinfo URL"
 }
 
+variable "keycloak_jwks_url" {
+  type        = string
+  description = "The Keycloak OIDC JWKS URL"
+}
+
 variable "prometheus_oauth_client_id" {
   type        = string
   description = "The OAuth client ID for Prometheus (from Keycloak)"
@@ -126,6 +131,17 @@ variable "alertmanager_oauth_client_secret" {
 variable "alertmanager_oauth_cookie_secret" {
   type        = string
   description = "The cookie secret for Alertmanager OAuth2-Proxy session encryption"
+  sensitive   = true
+}
+
+variable "tls_certificate" {
+  type        = string
+  description = "TLS certificate (PEM format)"
+}
+
+variable "tls_private_key" {
+  type        = string
+  description = "TLS private key (PEM format)"
   sensitive   = true
 }
 

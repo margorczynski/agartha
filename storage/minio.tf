@@ -74,6 +74,13 @@ resource "helm_release" "minio_tenant" {
     {
       name  = "tenant.prometheusOperator"
       value = "true"
+    },
+    #
+    # Trust the ingress TLS certificate for OpenID Connect
+    #
+    {
+      name  = "tenant.certificate.externalCaCertSecret[0].name"
+      value = "minio-trusted-ca"
     }
   ]
 

@@ -93,6 +93,32 @@ variable "keycloak_issuer_url" {
   description = "The OIDC issuer URL for Keycloak"
 }
 
+variable "keycloak_auth_url" {
+  type        = string
+  description = "The Keycloak OIDC authorization URL (external, for browser redirects)"
+}
+
+variable "keycloak_token_url" {
+  type        = string
+  description = "The Keycloak OIDC token URL (internal, for server-to-server)"
+}
+
+variable "keycloak_jwks_url" {
+  type        = string
+  description = "The Keycloak OIDC JWKS URL (internal, for server-to-server)"
+}
+
+variable "tls_certificate" {
+  type        = string
+  description = "TLS certificate (PEM format)"
+}
+
+variable "tls_private_key" {
+  type        = string
+  description = "TLS private key (PEM format)"
+  sensitive   = true
+}
+
 variable "allowed_ingress_namespaces" {
   type        = list(string)
   description = "List of namespaces allowed to ingress to orchestration namespace"

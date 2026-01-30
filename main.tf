@@ -18,13 +18,18 @@ module "agartha_storage" {
   minio_oauth_client_secret  = module.agartha_identity.keycloak_minio_client_secret
   keycloak_openid_config_url = module.agartha_identity.keycloak_openid_config_url
 
+  # TLS
+  tls_certificate = file(var.tls_certificate_path)
+  tls_private_key = file(var.tls_private_key_path)
+
   # Network policy - allow ingress from monitoring, catalog, spark, flink
   allowed_ingress_namespaces = [
     "agartha-storage",
     "agartha-monitoring",
     "agartha-catalog",
     "agartha-processing-spark",
-    "agartha-processing-flink"
+    "agartha-processing-flink",
+    "ingress-nginx"
   ]
 
   depends_on = [
@@ -44,12 +49,17 @@ module "agartha_catalog" {
   storage_s3_warehouse_bucket = var.storage_s3_warehouse_bucket_name
   catalog_postgres_password   = var.catalog_postgres_password
 
+  # TLS
+  tls_certificate = file(var.tls_certificate_path)
+  tls_private_key = file(var.tls_private_key_path)
+
   # Network policy - allow ingress from monitoring, trino, notebooks
   allowed_ingress_namespaces = [
     "agartha-catalog",
     "agartha-monitoring",
     "agartha-processing-trino",
-    "agartha-notebooks"
+    "agartha-notebooks",
+    "ingress-nginx"
   ]
 
   depends_on = [
@@ -82,6 +92,7 @@ module "agartha_monitoring" {
   keycloak_auth_url           = module.agartha_identity.keycloak_auth_url
   keycloak_token_url          = module.agartha_identity.keycloak_token_url
   keycloak_userinfo_url       = module.agartha_identity.keycloak_userinfo_url
+  keycloak_jwks_url           = module.agartha_identity.keycloak_jwks_url
 
   # Prometheus OAuth2-Proxy integration
   prometheus_oauth_client_id     = module.agartha_identity.keycloak_prometheus_client_id
@@ -94,9 +105,14 @@ module "agartha_monitoring" {
   alertmanager_oauth_client_secret = module.agartha_identity.keycloak_alertmanager_client_secret
   alertmanager_oauth_cookie_secret = var.monitoring_alertmanager_oauth_cookie_secret
 
+  # TLS
+  tls_certificate = file(var.tls_certificate_path)
+  tls_private_key = file(var.tls_private_key_path)
+
   # Network policy - allow ingress from itself only (monitoring primarily initiates connections)
   allowed_ingress_namespaces = [
-    "agartha-monitoring"
+    "agartha-monitoring",
+    "ingress-nginx"
   ]
 
   depends_on = [
@@ -124,6 +140,10 @@ module "agartha_identity" {
   prometheus_oauth_client_secret   = var.identity_prometheus_oauth_client_secret
   alertmanager_oauth_client_secret = var.identity_alertmanager_oauth_client_secret
 
+  # TLS
+  tls_certificate = file(var.tls_certificate_path)
+  tls_private_key = file(var.tls_private_key_path)
+
   # Network policy - allow ingress from all namespaces (OAuth endpoint for all components)
   allowed_ingress_namespaces = [
     "agartha-identity",
@@ -135,7 +155,8 @@ module "agartha_identity" {
     "agartha-monitoring",
     "agartha-notebooks",
     "agartha-orchestration",
-    "agartha-bi"
+    "agartha-bi",
+    "ingress-nginx"
   ]
 }
 
@@ -162,6 +183,10 @@ module "agartha_processing" {
   keycloak_userinfo_url        = module.agartha_identity.keycloak_userinfo_url
   trino_internal_shared_secret = var.processing_trino_internal_shared_secret
 
+  # TLS
+  tls_certificate = file(var.tls_certificate_path)
+  tls_private_key = file(var.tls_private_key_path)
+
   # Network policies - allow ingress from specific namespaces
   spark_allowed_ingress_namespaces = [
     "agartha-processing-spark",
@@ -179,7 +204,8 @@ module "agartha_processing" {
     "agartha-processing-trino",
     "agartha-monitoring",
     "agartha-notebooks",
-    "agartha-bi"
+    "agartha-bi",
+    "ingress-nginx"
   ]
 
   depends_on = [
@@ -206,10 +232,15 @@ module "business_intelligence" {
   keycloak_jwks_url            = module.agartha_identity.keycloak_jwks_url
   keycloak_api_base_url        = module.agartha_identity.keycloak_api_base_url
 
+  # TLS
+  tls_certificate = file(var.tls_certificate_path)
+  tls_private_key = file(var.tls_private_key_path)
+
   # Network policy - allow ingress from monitoring only
   allowed_ingress_namespaces = [
     "agartha-bi",
-    "agartha-monitoring"
+    "agartha-monitoring",
+    "ingress-nginx"
   ]
 
   depends_on = [
@@ -241,11 +272,19 @@ module "agartha_orchestration" {
   dagster_oauth_client_secret = module.agartha_identity.keycloak_dagster_client_secret
   dagster_oauth_cookie_secret = var.orchestration_dagster_oauth_cookie_secret
   keycloak_issuer_url         = module.agartha_identity.keycloak_issuer_url
+  keycloak_auth_url           = module.agartha_identity.keycloak_auth_url
+  keycloak_token_url          = module.agartha_identity.keycloak_token_url
+  keycloak_jwks_url           = module.agartha_identity.keycloak_jwks_url
+
+  # TLS
+  tls_certificate = file(var.tls_certificate_path)
+  tls_private_key = file(var.tls_private_key_path)
 
   # Network policy - allow ingress from monitoring only
   allowed_ingress_namespaces = [
     "agartha-orchestration",
-    "agartha-monitoring"
+    "agartha-monitoring",
+    "ingress-nginx"
   ]
 
   depends_on = [
@@ -274,10 +313,15 @@ module "agartha_notebooks" {
   keycloak_token_url             = module.agartha_identity.keycloak_token_url
   keycloak_userinfo_url          = module.agartha_identity.keycloak_userinfo_url
 
+  # TLS
+  tls_certificate = file(var.tls_certificate_path)
+  tls_private_key = file(var.tls_private_key_path)
+
   # Network policy - allow ingress from monitoring only
   allowed_ingress_namespaces = [
     "agartha-notebooks",
-    "agartha-monitoring"
+    "agartha-monitoring",
+    "ingress-nginx"
   ]
 
   depends_on = [

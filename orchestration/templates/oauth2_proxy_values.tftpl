@@ -3,8 +3,12 @@ config:
   configFile: |-
     provider = "keycloak-oidc"
     provider_display_name = "Keycloak"
-    redirect_url = "http://dagster.${ingress_base_host}/oauth2/callback"
+    redirect_url = "https://dagster.${ingress_base_host}/oauth2/callback"
     oidc_issuer_url = "${oidc_issuer_url}"
+    skip_oidc_discovery = true
+    login_url = "${keycloak_auth_url}"
+    redeem_url = "${keycloak_token_url}"
+    oidc_jwks_url = "${keycloak_jwks_url}"
     email_domains = ["*"]
     cookie_secure = false
     cookie_samesite = "lax"
@@ -21,6 +25,7 @@ config:
 extraArgs:
   - --upstream=http://dagster-dagster-webserver:80
   - --http-address=0.0.0.0:4180
+  - --reverse-proxy=true
 
 service:
   type: ClusterIP

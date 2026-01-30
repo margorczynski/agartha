@@ -96,15 +96,6 @@ resource "helm_release" "keycloak" {
       value = "edge"
     },
     {
-      name  = "hostname"
-      value = local.keycloak_host
-    },
-    # Enable strict hostname mode to ensure consistent issuer URLs
-    {
-      name  = "hostnameStrict"
-      value = "true"
-    },
-    {
       name  = "image.pullPolicy"
       value = "IfNotPresent"
     },
@@ -199,26 +190,23 @@ resource "helm_release" "keycloak" {
       name  = "extraEnvVars[0].value"
       value = "--import-realm"
     },
-    # Explicitly set the hostname for Keycloak
-    # This ensures tokens have a consistent issuer URL regardless of how Keycloak is accessed
+    # Set the hostname so Keycloak generates correct URLs in discovery docs
     {
       name  = "extraEnvVars[1].name"
       value = "KC_HOSTNAME"
     },
     {
       name  = "extraEnvVars[1].value"
-      value = local.keycloak_host
+      value = "https://${local.keycloak_host}"
     },
-    # Allow Keycloak to use request-based URLs for backchannel (server-to-server) communication
-    # This enables internal services to fetch OIDC discovery docs with internal URLs
+    # Trust X-Forwarded-* headers from the nginx ingress proxy
     {
       name  = "extraEnvVars[2].name"
-      value = "KC_HOSTNAME_STRICT_BACKCHANNEL"
+      value = "KC_PROXY_HEADERS"
     },
     {
       name  = "extraEnvVars[2].value"
-      type  = "string"
-      value = "false"
+      value = "xforwarded"
     },
     {
       name  = "extraVolumes[0].name"

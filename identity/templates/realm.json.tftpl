@@ -13,7 +13,7 @@
   "loginWithEmailAllowed": true,
   "duplicateEmailsAllowed": false,
   "editUsernameAllowed": false,
-  "sslRequired": "none",
+  "sslRequired": "external",
   "groups": [
     {
       "name": "grafana-admins",
@@ -207,11 +207,9 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "${grafana_client_secret}",
       "redirectUris": [
-        "http://grafana.${ingress_base_host}/login/generic_oauth",
         "https://grafana.${ingress_base_host}/login/generic_oauth"
       ],
       "webOrigins": [
-        "http://grafana.${ingress_base_host}",
         "https://grafana.${ingress_base_host}"
       ],
       "standardFlowEnabled": true,
@@ -234,11 +232,9 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "${superset_client_secret}",
       "redirectUris": [
-        "http://superset.${ingress_base_host}/oauth-authorized/keycloak",
         "https://superset.${ingress_base_host}/oauth-authorized/keycloak"
       ],
       "webOrigins": [
-        "http://superset.${ingress_base_host}",
         "https://superset.${ingress_base_host}"
       ],
       "standardFlowEnabled": true,
@@ -261,11 +257,9 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "${trino_client_secret}",
       "redirectUris": [
-        "http://trino.${ingress_base_host}/oauth2/callback",
         "https://trino.${ingress_base_host}/oauth2/callback"
       ],
       "webOrigins": [
-        "http://trino.${ingress_base_host}",
         "https://trino.${ingress_base_host}"
       ],
       "standardFlowEnabled": true,
@@ -288,11 +282,9 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "${minio_client_secret}",
       "redirectUris": [
-        "http://minio-tenant-console.${ingress_base_host}/oauth_callback",
         "https://minio-tenant-console.${ingress_base_host}/oauth_callback"
       ],
       "webOrigins": [
-        "http://minio-tenant-console.${ingress_base_host}",
         "https://minio-tenant-console.${ingress_base_host}"
       ],
       "standardFlowEnabled": true,
@@ -315,11 +307,9 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "${jupyterhub_client_secret}",
       "redirectUris": [
-        "http://jupyterhub.${ingress_base_host}/hub/oauth_callback",
         "https://jupyterhub.${ingress_base_host}/hub/oauth_callback"
       ],
       "webOrigins": [
-        "http://jupyterhub.${ingress_base_host}",
         "https://jupyterhub.${ingress_base_host}"
       ],
       "standardFlowEnabled": true,
@@ -337,11 +327,9 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "${dagster_client_secret}",
       "redirectUris": [
-        "http://dagster.${ingress_base_host}/oauth2/callback",
         "https://dagster.${ingress_base_host}/oauth2/callback"
       ],
       "webOrigins": [
-        "http://dagster.${ingress_base_host}",
         "https://dagster.${ingress_base_host}"
       ],
       "standardFlowEnabled": true,
@@ -372,11 +360,9 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "${prometheus_client_secret}",
       "redirectUris": [
-        "http://prometheus.${ingress_base_host}/oauth2/callback",
         "https://prometheus.${ingress_base_host}/oauth2/callback"
       ],
       "webOrigins": [
-        "http://prometheus.${ingress_base_host}",
         "https://prometheus.${ingress_base_host}"
       ],
       "standardFlowEnabled": true,
@@ -407,11 +393,9 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "${alertmanager_client_secret}",
       "redirectUris": [
-        "http://alertmanager.${ingress_base_host}/oauth2/callback",
         "https://alertmanager.${ingress_base_host}/oauth2/callback"
       ],
       "webOrigins": [
-        "http://alertmanager.${ingress_base_host}",
         "https://alertmanager.${ingress_base_host}"
       ],
       "standardFlowEnabled": true,
