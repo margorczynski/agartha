@@ -85,6 +85,17 @@ variable "flink_allowed_ingress_namespaces" {
   description = "List of namespaces allowed to ingress to flink namespace"
 }
 
+variable "tls_certificate" {
+  type        = string
+  description = "TLS certificate (PEM format)"
+}
+
+variable "tls_private_key" {
+  type        = string
+  description = "TLS private key (PEM format)"
+  sensitive   = true
+}
+
 variable "trino_allowed_ingress_namespaces" {
   type        = list(string)
   description = "List of namespaces allowed to ingress to trino namespace"

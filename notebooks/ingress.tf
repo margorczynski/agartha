@@ -1,3 +1,17 @@
+resource "kubernetes_secret_v1" "tls_secret" {
+  metadata {
+    name      = "tls-secret"
+    namespace = local.namespace
+  }
+
+  type = "kubernetes.io/tls"
+
+  data = {
+    "tls.crt" = var.tls_certificate
+    "tls.key" = var.tls_private_key
+  }
+}
+
 resource "kubernetes_ingress_v1" "jupyterhub" {
   metadata {
     name      = "jupyterhub-ingress"
@@ -5,6 +19,9 @@ resource "kubernetes_ingress_v1" "jupyterhub" {
     labels    = local.jupyterhub_labels
 
     annotations = {
+      "nginx.ingress.kubernetes.io/ssl-redirect"         = "true"
+      "nginx.ingress.kubernetes.io/proxy-buffer-size"    = "16k"
+      "nginx.ingress.kubernetes.io/proxy-buffers-number" = "4"
       "nginx.ingress.kubernetes.io/proxy-body-size"     = "100m"
       "nginx.ingress.kubernetes.io/proxy-read-timeout"  = "3600"
       "nginx.ingress.kubernetes.io/proxy-send-timeout"  = "3600"
@@ -19,6 +36,11 @@ resource "kubernetes_ingress_v1" "jupyterhub" {
 
   spec {
     ingress_class_name = "nginx"
+
+    tls {
+      hosts       = [local.jupyterhub_host]
+      secret_name = kubernetes_secret_v1.tls_secret.metadata[0].name
+    }
 
     rule {
       host = local.jupyterhub_host

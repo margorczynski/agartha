@@ -1,3 +1,18 @@
+resource "kubernetes_secret_v1" "minio_trusted_ca" {
+  metadata {
+    name      = "minio-trusted-ca"
+    namespace = var.kubernetes_storage_namespace
+  }
+
+  data = {
+    "public.crt" = var.tls_certificate
+  }
+
+  depends_on = [
+    kubernetes_namespace_v1.storage_namespace
+  ]
+}
+
 resource "kubernetes_secret_v1" "minio_tenant_env" {
   metadata {
     name      = local.tenant_env_secret_name

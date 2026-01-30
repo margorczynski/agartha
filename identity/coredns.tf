@@ -27,7 +27,7 @@ resource "kubernetes_config_map_v1" "coredns_override" {
              192.168.49.1 host.minikube.internal
              fallthrough
           }
-          rewrite name ${local.keycloak_host} keycloak.${local.namespace}.svc.cluster.local
+          rewrite name ${local.keycloak_host} ingress-nginx-controller.ingress-nginx.svc.cluster.local
           forward . /etc/resolv.conf {
              max_concurrent 1000
           }

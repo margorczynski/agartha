@@ -51,6 +51,11 @@ Thumbs.db
 *.bak
 *.backup
 
+
+# Ignore certfiles
+*.crt
+*.key
+
 # Ignore Python cache and artifacts (for examples)
 __pycache__/
 *.py[cod]

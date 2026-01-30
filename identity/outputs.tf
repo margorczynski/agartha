@@ -16,12 +16,12 @@ output "keycloak_grafana_client_secret" {
 
 output "keycloak_issuer_url" {
   description = "The OIDC issuer URL for Keycloak"
-  value       = "http://${local.keycloak_host}/realms/agartha"
+  value       = "https://${local.keycloak_host}/realms/agartha"
 }
 
 output "keycloak_auth_url" {
   description = "The OIDC authorization URL (external, for browser redirects)"
-  value       = "http://${local.keycloak_host}/realms/agartha/protocol/openid-connect/auth"
+  value       = "https://${local.keycloak_host}/realms/agartha/protocol/openid-connect/auth"
 }
 
 output "keycloak_token_url" {

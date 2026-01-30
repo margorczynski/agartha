@@ -130,3 +130,14 @@ variable "monitoring_alertmanager_oauth_cookie_secret" {
   description = "The cookie secret for Alertmanager OAuth2-Proxy session encryption. Must be exactly 16, 24, or 32 characters. Generate with: openssl rand -hex 16"
   sensitive   = true
 }
+
+variable "tls_certificate_path" {
+  type        = string
+  description = "Path to the TLS certificate file (PEM format)"
+}
+
+variable "tls_private_key_path" {
+  type        = string
+  description = "Path to the TLS private key file (PEM format)"
+  sensitive   = true
+}
