@@ -141,3 +141,21 @@ variable "tls_private_key_path" {
   description = "Path to the TLS private key file (PEM format)"
   sensitive   = true
 }
+
+variable "backup_s3_bucket_name" {
+  type        = string
+  description = "The S3 bucket name for storing Velero backups"
+  default     = "agartha-backups"
+}
+
+variable "backup_schedule" {
+  type        = string
+  description = "Cron schedule for automated Velero backups"
+  default     = "0 2 * * *"
+}
+
+variable "backup_retention_days" {
+  type        = number
+  description = "Number of days to retain Velero backups"
+  default     = 7
+}

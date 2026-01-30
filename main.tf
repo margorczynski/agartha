@@ -29,6 +29,7 @@ module "agartha_storage" {
     "agartha-catalog",
     "agartha-processing-spark",
     "agartha-processing-flink",
+    "agartha-backup",
     "ingress-nginx"
   ]
 
@@ -329,5 +330,43 @@ module "agartha_notebooks" {
     module.agartha_catalog,
     module.agartha_processing,
     module.agartha_identity
+  ]
+}
+
+module "agartha_backup" {
+  source = "./backup"
+
+  kubernetes_backup_namespace = "agartha-backup"
+
+  s3_endpoint          = "http://minio.agartha-storage.svc.cluster.local"
+  s3_access_key        = var.storage_s3_access_key
+  s3_secret_key        = var.storage_s3_secret_key
+  s3_backup_bucket_name = var.backup_s3_bucket_name
+
+  backup_schedule       = var.backup_schedule
+  backup_retention_days = var.backup_retention_days
+
+  backup_namespaces = [
+    "agartha-storage",
+    "agartha-catalog",
+    "agartha-monitoring",
+    "agartha-identity",
+    "agartha-processing-spark",
+    "agartha-processing-flink",
+    "agartha-processing-trino",
+    "agartha-notebooks",
+    "agartha-orchestration",
+    "agartha-bi",
+    "agartha-backup"
+  ]
+
+  # Network policy - allow ingress from monitoring and self
+  allowed_ingress_namespaces = [
+    "agartha-backup",
+    "agartha-monitoring"
+  ]
+
+  depends_on = [
+    module.agartha_storage
   ]
 }

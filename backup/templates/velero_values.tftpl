@@ -1,0 +1,67 @@
+kubectl:
+  image:
+    repository: docker.io/bitnami/kubectl
+    tag: latest
+
+upgradeCRDs: false
+
+initContainers:
+  - name: velero-plugin-for-aws
+    image: velero/velero-plugin-for-aws:v1.11.0
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+      - mountPath: /target
+        name: plugins
+
+configuration:
+  backupStorageLocation:
+    - name: default
+      provider: aws
+      bucket: ${s3_backup_bucket}
+      credential:
+        name: ${credentials_secret}
+        key: cloud
+      config:
+        region: minio
+        s3ForcePathStyle: "true"
+        s3Url: ${s3_endpoint}
+
+  volumeSnapshotLocation: []
+
+  uploaderType: kopia
+
+  defaultVolumesToFsBackup: true
+
+credentials:
+  useSecret: false
+
+schedules:
+  ${backup_schedule_name}:
+    disabled: false
+    schedule: "${backup_schedule}"
+    template:
+      ttl: "${backup_retention_days * 24}h0m0s"
+      includedNamespaces:
+%{ for ns in backup_namespaces ~}
+        - ${ns}
+%{ endfor ~}
+      defaultVolumesToFsBackup: true
+
+deployNodeAgent: true
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+nodeAgent:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
