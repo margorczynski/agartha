@@ -118,3 +118,15 @@ variable "superset_redis_resources" {
     limits   = { cpu = "200m", memory = "256Mi" }
   }
 }
+
+variable "superset_postgres_storage_size_gb" {
+  type        = number
+  description = "Persistent storage size in GB for Superset PostgreSQL"
+  default     = 8
+}
+
+variable "superset_redis_storage_size_gb" {
+  type        = number
+  description = "Persistent storage size in GB for Superset Redis"
+  default     = 2
+}

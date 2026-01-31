@@ -131,7 +131,7 @@ postgresql:
   primary:
     persistence:
       enabled: true
-      size: 8Gi
+      size: ${postgres_storage_size_gb}Gi
 
 rabbitmq:
   enabled: false

@@ -147,6 +147,18 @@ variable "processing_trino_worker_resources" {
   }
 }
 
+variable "processing_trino_coordinator_graceful_shutdown_seconds" {
+  type        = number
+  description = "Graceful shutdown timeout in seconds for the Trino coordinator to drain in-flight queries"
+  default     = 120
+}
+
+variable "processing_trino_worker_graceful_shutdown_seconds" {
+  type        = number
+  description = "Graceful shutdown timeout in seconds for Trino workers to complete running tasks"
+  default     = 120
+}
+
 variable "notebooks_jupyterhub_hub_resources" {
   type = object({
     requests = object({ cpu = string, memory = string })
@@ -169,6 +181,12 @@ variable "notebooks_jupyterhub_proxy_resources" {
     requests = { cpu = "100m", memory = "256Mi" }
     limits   = { cpu = "500m", memory = "512Mi" }
   }
+}
+
+variable "orchestration_dagster_postgres_storage_size_gb" {
+  type        = number
+  description = "Persistent storage size in GB for the Dagster PostgreSQL database"
+  default     = 8
 }
 
 variable "bi_superset_node_resources" {
@@ -217,6 +235,18 @@ variable "bi_superset_redis_resources" {
     requests = { cpu = "50m", memory = "64Mi" }
     limits   = { cpu = "200m", memory = "256Mi" }
   }
+}
+
+variable "bi_superset_postgres_storage_size_gb" {
+  type        = number
+  description = "Persistent storage size in GB for Superset PostgreSQL"
+  default     = 8
+}
+
+variable "bi_superset_redis_storage_size_gb" {
+  type        = number
+  description = "Persistent storage size in GB for Superset Redis"
+  default     = 2
 }
 
 variable "monitoring_prometheus_server_resources" {
@@ -276,6 +306,24 @@ variable "monitoring_promtail_resources" {
   default = {
     requests = { cpu = "50m", memory = "64Mi" }
     limits   = { cpu = "200m", memory = "256Mi" }
+  }
+}
+
+variable "identity_keycloak_replicas" {
+  type        = number
+  description = "Number of Keycloak replicas (>1 enables distributed cache and PostgreSQL replication)"
+  default     = 1
+}
+
+variable "identity_keycloak_resources" {
+  type = object({
+    requests = object({ cpu = string, memory = string })
+    limits   = object({ cpu = string, memory = string })
+  })
+  description = "Resource requests and limits for Keycloak"
+  default = {
+    requests = { cpu = "500m", memory = "1Gi" }
+    limits   = { cpu = "1000m", memory = "2Gi" }
   }
 }
 

@@ -177,20 +177,20 @@ resource "helm_release" "keycloak" {
       value = var.keycloak_postgres_resources.limits.memory
     },
     {
-      name  = "resources.limits.cpu"
-      value = "1000m"
-    },
-    {
-      name  = "resources.limits.memory"
-      value = "2Gi"
-    },
-    {
       name  = "resources.requests.cpu"
-      value = "500m"
+      value = var.keycloak_resources.requests.cpu
     },
     {
       name  = "resources.requests.memory"
-      value = "1Gi"
+      value = var.keycloak_resources.requests.memory
+    },
+    {
+      name  = "resources.limits.cpu"
+      value = var.keycloak_resources.limits.cpu
+    },
+    {
+      name  = "resources.limits.memory"
+      value = var.keycloak_resources.limits.memory
     },
     # Disable keycloakConfigCli - we use native realm import instead
     {
@@ -243,6 +243,62 @@ resource "helm_release" "keycloak" {
     {
       name  = "extraVolumeMounts[0].readOnly"
       value = "true"
+    },
+    # HA: Enable distributed Infinispan cache when running multiple replicas.
+    # Keycloak uses JGroups/DNS_PING for peer discovery via the headless service.
+    {
+      name  = "cache.enabled"
+      value = tostring(var.keycloak_replicas > 1)
+    },
+    {
+      name  = "extraEnvVars[3].name"
+      value = "KC_CACHE"
+    },
+    {
+      name  = "extraEnvVars[3].value"
+      value = var.keycloak_replicas > 1 ? "ispn" : "local"
+    },
+    {
+      name  = "extraEnvVars[4].name"
+      value = "KC_CACHE_STACK"
+    },
+    {
+      name  = "extraEnvVars[4].value"
+      value = "kubernetes"
+    },
+    # JGroups needs the namespace for DNS_PING peer discovery
+    {
+      name  = "extraEnvVars[5].name"
+      value = "JAVA_OPTS_APPEND"
+    },
+    {
+      name  = "extraEnvVars[5].value"
+      value = "-Djgroups.dns.query=keycloak-headless.${local.namespace}.svc.cluster.local"
+    },
+    # PostgreSQL HA: enable read replicas when Keycloak has multiple replicas
+    {
+      name  = "postgresql.architecture"
+      value = var.keycloak_replicas > 1 ? "replication" : "standalone"
+    },
+    {
+      name  = "postgresql.readReplicas.replicaCount"
+      value = var.keycloak_replicas > 1 ? "1" : "0"
+    },
+    {
+      name  = "postgresql.readReplicas.resources.requests.cpu"
+      value = var.keycloak_postgres_resources.requests.cpu
+    },
+    {
+      name  = "postgresql.readReplicas.resources.requests.memory"
+      value = var.keycloak_postgres_resources.requests.memory
+    },
+    {
+      name  = "postgresql.readReplicas.resources.limits.cpu"
+      value = var.keycloak_postgres_resources.limits.cpu
+    },
+    {
+      name  = "postgresql.readReplicas.resources.limits.memory"
+      value = var.keycloak_postgres_resources.limits.memory
     }
   ]
 

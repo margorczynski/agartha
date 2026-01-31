@@ -20,6 +20,7 @@ resource "helm_release" "dagster" {
       s3_endpoint                = local.s3_endpoint
       s3_warehouse               = local.warehouse_location
       postgres_existing_secret   = kubernetes_secret_v1.dagster_postgres_password.metadata[0].name
+      postgres_storage_size_gb   = var.dagster_postgres_storage_size_gb
     })
   ]
 

@@ -122,6 +122,10 @@ init:
 postgresql:
   image:
     tag: latest
+  primary:
+    persistence:
+      enabled: true
+      size: "${postgres_storage_size_gb}Gi"
   resources:
     requests:
       cpu: "${postgres_resources.requests.cpu}"
@@ -133,6 +137,10 @@ postgresql:
 redis:
   image:
     tag: latest
+  master:
+    persistence:
+      enabled: true
+      size: "${redis_storage_size_gb}Gi"
   resources:
     requests:
       cpu: "${redis_resources.requests.cpu}"

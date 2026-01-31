@@ -64,6 +64,8 @@ resource "helm_release" "superset" {
       worker_resources              = var.superset_worker_resources
       postgres_resources            = var.superset_postgres_resources
       redis_resources               = var.superset_redis_resources
+      postgres_storage_size_gb      = var.superset_postgres_storage_size_gb
+      redis_storage_size_gb         = var.superset_redis_storage_size_gb
     })
   ]
 

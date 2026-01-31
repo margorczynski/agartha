@@ -148,3 +148,15 @@ variable "trino_worker_resources" {
     limits   = { cpu = "2000m", memory = "4Gi" }
   }
 }
+
+variable "trino_coordinator_graceful_shutdown_seconds" {
+  type        = number
+  description = "Graceful shutdown timeout in seconds for the Trino coordinator to drain in-flight queries"
+  default     = 120
+}
+
+variable "trino_worker_graceful_shutdown_seconds" {
+  type        = number
+  description = "Graceful shutdown timeout in seconds for Trino workers to complete running tasks"
+  default     = 120
+}

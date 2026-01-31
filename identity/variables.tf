@@ -97,6 +97,18 @@ variable "allowed_ingress_namespaces" {
   description = "List of namespaces allowed to ingress to identity namespace"
 }
 
+variable "keycloak_resources" {
+  type = object({
+    requests = object({ cpu = string, memory = string })
+    limits   = object({ cpu = string, memory = string })
+  })
+  description = "Resource requests and limits for Keycloak"
+  default = {
+    requests = { cpu = "500m", memory = "1Gi" }
+    limits   = { cpu = "1000m", memory = "2Gi" }
+  }
+}
+
 variable "keycloak_postgres_resources" {
   type = object({
     requests = object({ cpu = string, memory = string })

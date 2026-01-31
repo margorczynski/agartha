@@ -119,6 +119,12 @@ variable "tls_private_key" {
   sensitive   = true
 }
 
+variable "dagster_postgres_storage_size_gb" {
+  type        = number
+  description = "Persistent storage size in GB for the Dagster PostgreSQL database"
+  default     = 8
+}
+
 variable "allowed_ingress_namespaces" {
   type        = list(string)
   description = "List of namespaces allowed to ingress to orchestration namespace"

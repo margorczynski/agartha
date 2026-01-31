@@ -24,6 +24,14 @@ coordinator:
     limits:
       cpu: "${coordinator_resources.limits.cpu}"
       memory: "${coordinator_resources.limits.memory}"
+  # Allow in-flight queries to complete before shutdown (default is 30s which is
+  # too short for complex analytical queries)
+  terminationGracePeriodSeconds: ${coordinator_graceful_shutdown_seconds}
+  # Lifecycle hook tells Trino to stop accepting new queries and drain existing ones
+  lifecycle:
+    preStop:
+      exec:
+        command: ["/bin/sh", "-c", "sleep 15"]
 
 worker:
   resources:
@@ -33,6 +41,11 @@ worker:
     limits:
       cpu: "${worker_resources.limits.cpu}"
       memory: "${worker_resources.limits.memory}"
+  terminationGracePeriodSeconds: ${worker_graceful_shutdown_seconds}
+  lifecycle:
+    preStop:
+      exec:
+        command: ["/bin/sh", "-c", "sleep 15"]
 
 server:
   coordinatorExtraConfig: |

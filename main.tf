@@ -142,9 +142,9 @@ module "agartha_identity" {
   keycloak_admin_password           = local.identity_keycloak_admin_password
   keycloak_postgres_password        = local.identity_keycloak_postgres_password
   keycloak_postgres_storage_size_gb = 10
-  keycloak_replicas                 = 1
-
-  keycloak_postgres_resources = var.identity_keycloak_postgres_resources
+  keycloak_replicas                 = var.identity_keycloak_replicas
+  keycloak_resources                = var.identity_keycloak_resources
+  keycloak_postgres_resources       = var.identity_keycloak_postgres_resources
 
   grafana_oauth_client_secret      = local.identity_grafana_oauth_client_secret
   superset_oauth_client_secret     = local.identity_superset_oauth_client_secret
@@ -188,10 +188,12 @@ module "agartha_processing" {
 
   trino_cluster_worker_num = 2
 
-  spark_operator_resources    = var.processing_spark_operator_resources
-  flink_operator_resources    = var.processing_flink_operator_resources
-  trino_coordinator_resources = var.processing_trino_coordinator_resources
-  trino_worker_resources      = var.processing_trino_worker_resources
+  spark_operator_resources                    = var.processing_spark_operator_resources
+  flink_operator_resources                    = var.processing_flink_operator_resources
+  trino_coordinator_resources                 = var.processing_trino_coordinator_resources
+  trino_worker_resources                      = var.processing_trino_worker_resources
+  trino_coordinator_graceful_shutdown_seconds = var.processing_trino_coordinator_graceful_shutdown_seconds
+  trino_worker_graceful_shutdown_seconds      = var.processing_trino_worker_graceful_shutdown_seconds
 
   # Keycloak OAuth integration
   trino_oauth_client_id        = module.agartha_identity.keycloak_trino_client_id
@@ -243,10 +245,12 @@ module "business_intelligence" {
   superset_node_replica_num   = 1
   superset_worker_replica_num = 1
 
-  superset_node_resources     = var.bi_superset_node_resources
-  superset_worker_resources   = var.bi_superset_worker_resources
-  superset_postgres_resources = var.bi_superset_postgres_resources
-  superset_redis_resources    = var.bi_superset_redis_resources
+  superset_node_resources           = var.bi_superset_node_resources
+  superset_worker_resources         = var.bi_superset_worker_resources
+  superset_postgres_resources       = var.bi_superset_postgres_resources
+  superset_redis_resources          = var.bi_superset_redis_resources
+  superset_postgres_storage_size_gb = var.bi_superset_postgres_storage_size_gb
+  superset_redis_storage_size_gb    = var.bi_superset_redis_storage_size_gb
 
   # Keycloak OAuth integration
   superset_oauth_client_id     = module.agartha_identity.keycloak_superset_client_id
@@ -287,6 +291,7 @@ module "agartha_orchestration" {
 
   dagster_webserver_replica_num               = 1
   dagster_postgres_password                   = local.orchestration_dagster_postgres_password
+  dagster_postgres_storage_size_gb            = var.orchestration_dagster_postgres_storage_size_gb
   dagster_run_coordinator_max_concurrent_runs = 10
 
   spark_namespace = "agartha-processing-spark"
