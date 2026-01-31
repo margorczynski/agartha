@@ -8,16 +8,6 @@ variable "ingress_host" {
   description = "The host for ingress access"
 }
 
-variable "storage_s3_access_key" {
-  type        = string
-  description = "The S3 access key to be created and used for the root user"
-}
-
-variable "storage_s3_secret_key" {
-  type        = string
-  description = "The S3 secret key to be created and used for the root user"
-}
-
 variable "storage_s3_warehouse_bucket_name" {
   type        = string
   description = "The S3 bucket name to be created and used for storing the data"
@@ -26,109 +16,6 @@ variable "storage_s3_warehouse_bucket_name" {
 variable "storage_s3_raw_bucket_name" {
   type        = string
   description = "The S3 bucket name to be created and used for raw/ingested data"
-}
-
-variable "monitoring_grafana_admin_password" {
-  type        = string
-  description = "The admin password for Grafana"
-  sensitive   = true
-}
-
-variable "orchestration_dagster_postgres_password" {
-  type        = string
-  description = "The password for the Dagster PostgreSQL database"
-  sensitive   = true
-}
-
-variable "catalog_postgres_password" {
-  type        = string
-  description = "The password for Nessie PostgreSQL catalog database"
-  sensitive   = true
-}
-
-variable "identity_keycloak_admin_password" {
-  type        = string
-  description = "The admin password for Keycloak"
-  sensitive   = true
-}
-
-variable "identity_keycloak_postgres_password" {
-  type        = string
-  description = "The password for Keycloak PostgreSQL database. Leave empty to auto-generate."
-  sensitive   = true
-  default     = ""
-}
-
-variable "identity_grafana_oauth_client_secret" {
-  type        = string
-  description = "The client secret for Grafana OAuth integration with Keycloak"
-  sensitive   = true
-}
-
-variable "identity_superset_oauth_client_secret" {
-  type        = string
-  description = "The client secret for Superset OAuth integration with Keycloak"
-  sensitive   = true
-}
-
-variable "identity_trino_oauth_client_secret" {
-  type        = string
-  description = "The client secret for Trino OAuth integration with Keycloak"
-  sensitive   = true
-}
-
-variable "processing_trino_internal_shared_secret" {
-  type        = string
-  description = "Shared secret for Trino internal communication when authentication is enabled"
-  sensitive   = true
-}
-
-variable "identity_minio_oauth_client_secret" {
-  type        = string
-  description = "The client secret for MinIO OAuth integration with Keycloak"
-  sensitive   = true
-}
-
-variable "identity_jupyterhub_oauth_client_secret" {
-  type        = string
-  description = "The client secret for JupyterHub OAuth integration with Keycloak"
-  sensitive   = true
-}
-
-variable "identity_dagster_oauth_client_secret" {
-  type        = string
-  description = "The client secret for Dagster OAuth integration with Keycloak"
-  sensitive   = true
-}
-
-variable "orchestration_dagster_oauth_cookie_secret" {
-  type        = string
-  description = "The cookie secret for Dagster OAuth2-Proxy session encryption. Must be exactly 16, 24, or 32 characters. Generate with: openssl rand -hex 16"
-  sensitive   = true
-}
-
-variable "identity_prometheus_oauth_client_secret" {
-  type        = string
-  description = "The client secret for Prometheus OAuth integration with Keycloak"
-  sensitive   = true
-}
-
-variable "monitoring_prometheus_oauth_cookie_secret" {
-  type        = string
-  description = "The cookie secret for Prometheus OAuth2-Proxy session encryption. Must be exactly 16, 24, or 32 characters. Generate with: openssl rand -hex 16"
-  sensitive   = true
-}
-
-variable "identity_alertmanager_oauth_client_secret" {
-  type        = string
-  description = "The client secret for Alertmanager OAuth integration with Keycloak"
-  sensitive   = true
-}
-
-variable "monitoring_alertmanager_oauth_cookie_secret" {
-  type        = string
-  description = "The cookie secret for Alertmanager OAuth2-Proxy session encryption. Must be exactly 16, 24, or 32 characters. Generate with: openssl rand -hex 16"
-  sensitive   = true
 }
 
 variable "tls_certificate_path" {

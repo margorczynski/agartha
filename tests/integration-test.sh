@@ -188,8 +188,9 @@ trap cleanup EXIT
 # ---------------------------------------------------------------------------
 kube_secret_value() {
     local namespace="$1" secret="$2" key="$3"
+    local escaped_key="${key//./\\.}"
     kubectl get secret "$secret" -n "$namespace" \
-        -o jsonpath="{.data['${key}']}" 2>/dev/null \
+        -o jsonpath="{.data['${escaped_key}']}" 2>/dev/null \
         | base64 -d 2>/dev/null
 }
 
@@ -203,8 +204,8 @@ mc_setup() {
     local config_env
     config_env=$(kube_secret_value agartha-storage minio-tenant-env config.env 2>/dev/null || true)
     local access_key secret_key
-    access_key=$(echo "$config_env" | grep -oP 'MINIO_ROOT_USER=\K.*' 2>/dev/null || echo "minioadmin")
-    secret_key=$(echo "$config_env" | grep -oP 'MINIO_ROOT_PASSWORD=\K.*' 2>/dev/null || echo "minioadmin")
+    access_key=$(echo "$config_env" | grep -oP 'MINIO_ROOT_USER="\K[^"]*' 2>/dev/null || echo "minioadmin")
+    secret_key=$(echo "$config_env" | grep -oP 'MINIO_ROOT_PASSWORD="\K[^"]*' 2>/dev/null || echo "minioadmin")
     access_key="${access_key%%[[:space:]]}"
     secret_key="${secret_key%%[[:space:]]}"
 

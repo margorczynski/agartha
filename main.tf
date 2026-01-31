@@ -6,8 +6,8 @@ module "agartha_storage" {
 
   s3_warehouse_bucket_name = var.storage_s3_warehouse_bucket_name
   s3_raw_bucket_name       = var.storage_s3_raw_bucket_name
-  s3_access_key            = var.storage_s3_access_key
-  s3_secret_key            = var.storage_s3_secret_key
+  s3_access_key            = local.storage_s3_access_key
+  s3_secret_key            = local.storage_s3_secret_key
 
   minio_tenant_servers_num            = 4
   minio_tenant_volumes_per_server_num = 2
@@ -48,10 +48,10 @@ module "agartha_catalog" {
   kubernetes_ingress_base_host = local.agartha_host
 
   storage_s3_endpoint         = "http://minio.agartha-storage.svc.cluster.local"
-  storage_s3_access_key       = var.storage_s3_access_key
-  storage_s3_secret_key       = var.storage_s3_secret_key
+  storage_s3_access_key       = local.storage_s3_access_key
+  storage_s3_secret_key       = local.storage_s3_secret_key
   storage_s3_warehouse_bucket = var.storage_s3_warehouse_bucket_name
-  catalog_postgres_password   = var.catalog_postgres_password
+  catalog_postgres_password   = local.catalog_postgres_password
 
   nessie_postgres_resources = var.catalog_nessie_postgres_resources
   nessie_resources          = var.catalog_nessie_resources
@@ -80,7 +80,7 @@ module "agartha_monitoring" {
   kubernetes_monitoring_namespace = "agartha-monitoring"
   kubernetes_ingress_base_host    = local.agartha_host
 
-  grafana_admin_password     = var.monitoring_grafana_admin_password
+  grafana_admin_password     = local.monitoring_grafana_admin_password
   prometheus_retention_days  = 15
   prometheus_storage_size_gb = 10
   grafana_storage_size_gb    = 2
@@ -110,13 +110,13 @@ module "agartha_monitoring" {
   # Prometheus OAuth2-Proxy integration
   prometheus_oauth_client_id     = module.agartha_identity.keycloak_prometheus_client_id
   prometheus_oauth_client_secret = module.agartha_identity.keycloak_prometheus_client_secret
-  prometheus_oauth_cookie_secret = var.monitoring_prometheus_oauth_cookie_secret
+  prometheus_oauth_cookie_secret = local.monitoring_prometheus_oauth_cookie_secret
   keycloak_issuer_url            = module.agartha_identity.keycloak_issuer_url
 
   # Alertmanager OAuth2-Proxy integration
   alertmanager_oauth_client_id     = module.agartha_identity.keycloak_alertmanager_client_id
   alertmanager_oauth_client_secret = module.agartha_identity.keycloak_alertmanager_client_secret
-  alertmanager_oauth_cookie_secret = var.monitoring_alertmanager_oauth_cookie_secret
+  alertmanager_oauth_cookie_secret = local.monitoring_alertmanager_oauth_cookie_secret
 
   # TLS
   tls_certificate = file(var.tls_certificate_path)
@@ -139,21 +139,21 @@ module "agartha_identity" {
   kubernetes_identity_namespace = "agartha-identity"
   kubernetes_ingress_base_host  = local.agartha_host
 
-  keycloak_admin_password           = var.identity_keycloak_admin_password
-  keycloak_postgres_password        = var.identity_keycloak_postgres_password
+  keycloak_admin_password           = local.identity_keycloak_admin_password
+  keycloak_postgres_password        = local.identity_keycloak_postgres_password
   keycloak_postgres_storage_size_gb = 10
   keycloak_replicas                 = 1
 
   keycloak_postgres_resources = var.identity_keycloak_postgres_resources
 
-  grafana_oauth_client_secret      = var.identity_grafana_oauth_client_secret
-  superset_oauth_client_secret     = var.identity_superset_oauth_client_secret
-  trino_oauth_client_secret        = var.identity_trino_oauth_client_secret
-  minio_oauth_client_secret        = var.identity_minio_oauth_client_secret
-  jupyterhub_oauth_client_secret   = var.identity_jupyterhub_oauth_client_secret
-  dagster_oauth_client_secret      = var.identity_dagster_oauth_client_secret
-  prometheus_oauth_client_secret   = var.identity_prometheus_oauth_client_secret
-  alertmanager_oauth_client_secret = var.identity_alertmanager_oauth_client_secret
+  grafana_oauth_client_secret      = local.identity_grafana_oauth_client_secret
+  superset_oauth_client_secret     = local.identity_superset_oauth_client_secret
+  trino_oauth_client_secret        = local.identity_trino_oauth_client_secret
+  minio_oauth_client_secret        = local.identity_minio_oauth_client_secret
+  jupyterhub_oauth_client_secret   = local.identity_jupyterhub_oauth_client_secret
+  dagster_oauth_client_secret      = local.identity_dagster_oauth_client_secret
+  prometheus_oauth_client_secret   = local.identity_prometheus_oauth_client_secret
+  alertmanager_oauth_client_secret = local.identity_alertmanager_oauth_client_secret
 
   # TLS
   tls_certificate = file(var.tls_certificate_path)
@@ -183,8 +183,8 @@ module "agartha_processing" {
 
   storage_s3_warehouse_location = "s3a://${var.storage_s3_warehouse_bucket_name}/"
   storage_s3_endpoint           = "http://minio.agartha-storage.svc.cluster.local"
-  storage_s3_access_key         = var.storage_s3_access_key
-  storage_s3_secret_key         = var.storage_s3_secret_key
+  storage_s3_access_key         = local.storage_s3_access_key
+  storage_s3_secret_key         = local.storage_s3_secret_key
 
   trino_cluster_worker_num = 2
 
@@ -201,7 +201,7 @@ module "agartha_processing" {
   keycloak_token_url           = module.agartha_identity.keycloak_token_url
   keycloak_jwks_url            = module.agartha_identity.keycloak_jwks_url
   keycloak_userinfo_url        = module.agartha_identity.keycloak_userinfo_url
-  trino_internal_shared_secret = var.processing_trino_internal_shared_secret
+  trino_internal_shared_secret = local.processing_trino_internal_shared_secret
 
   # TLS
   tls_certificate = file(var.tls_certificate_path)
@@ -282,11 +282,11 @@ module "agartha_orchestration" {
 
   storage_s3_warehouse_location = "s3a://${var.storage_s3_warehouse_bucket_name}/"
   storage_s3_endpoint           = "http://minio.agartha-storage.svc.cluster.local"
-  storage_s3_access_key         = var.storage_s3_access_key
-  storage_s3_secret_key         = var.storage_s3_secret_key
+  storage_s3_access_key         = local.storage_s3_access_key
+  storage_s3_secret_key         = local.storage_s3_secret_key
 
   dagster_webserver_replica_num               = 1
-  dagster_postgres_password                   = var.orchestration_dagster_postgres_password
+  dagster_postgres_password                   = local.orchestration_dagster_postgres_password
   dagster_run_coordinator_max_concurrent_runs = 10
 
   spark_namespace = "agartha-processing-spark"
@@ -295,7 +295,7 @@ module "agartha_orchestration" {
   # Keycloak OAuth integration
   dagster_oauth_client_id     = module.agartha_identity.keycloak_dagster_client_id
   dagster_oauth_client_secret = module.agartha_identity.keycloak_dagster_client_secret
-  dagster_oauth_cookie_secret = var.orchestration_dagster_oauth_cookie_secret
+  dagster_oauth_cookie_secret = local.orchestration_dagster_oauth_cookie_secret
   keycloak_issuer_url         = module.agartha_identity.keycloak_issuer_url
   keycloak_auth_url           = module.agartha_identity.keycloak_auth_url
   keycloak_token_url          = module.agartha_identity.keycloak_token_url
@@ -365,8 +365,8 @@ module "agartha_backup" {
   kubernetes_backup_namespace = "agartha-backup"
 
   s3_endpoint           = "http://minio.agartha-storage.svc.cluster.local"
-  s3_access_key         = var.storage_s3_access_key
-  s3_secret_key         = var.storage_s3_secret_key
+  s3_access_key         = local.storage_s3_access_key
+  s3_secret_key         = local.storage_s3_secret_key
   s3_backup_bucket_name = var.backup_s3_bucket_name
 
   backup_schedule       = var.backup_schedule
