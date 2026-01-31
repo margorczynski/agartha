@@ -2,6 +2,8 @@ configOverrides:
   secret: |
     import os
     SECRET_KEY = os.environ.get('SUPERSET_SECRET_KEY')
+  celery_concurrency: |
+    CELERY_CONFIG.worker_concurrency = 2
   proxy_fix: |
     from werkzeug.middleware.proxy_fix import ProxyFix
     def FLASK_APP_MUTATOR(app):
