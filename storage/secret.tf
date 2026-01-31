@@ -38,6 +38,7 @@ export MINIO_IDENTITY_OPENID_SCOPES="openid,profile,email,groups"
 export MINIO_IDENTITY_OPENID_CLAIM_NAME="groups"
 export MINIO_IDENTITY_OPENID_DISPLAY_NAME="Keycloak"
 export MINIO_IDENTITY_OPENID_REDIRECT_URI_DYNAMIC="on"
+export MINIO_KMS_SECRET_KEY="agartha-default-key:${local.encryption_key_b64}"
 EOH
   }
 

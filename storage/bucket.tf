@@ -39,8 +39,8 @@ resource "null_resource" "create_buckets" {
 
       # Create buckets with retry logic
       for i in 1 2 3; do
-        if kubectl exec -n ${var.kubernetes_storage_namespace} $POD_NAME -c minio -- sh -c 'mc alias set local http://localhost:9000 ${var.s3_access_key} ${var.s3_secret_key} && mc mb --ignore-existing local/${var.s3_warehouse_bucket_name} && mc mb --ignore-existing local/${var.s3_raw_bucket_name}'; then
-          echo "Buckets created successfully"
+        if kubectl exec -n ${var.kubernetes_storage_namespace} $POD_NAME -c minio -- sh -c 'mc alias set local http://localhost:9000 ${var.s3_access_key} ${var.s3_secret_key} && mc mb --ignore-existing local/${var.s3_warehouse_bucket_name} && mc mb --ignore-existing local/${var.s3_raw_bucket_name} && mc encrypt set sse-s3 local/${var.s3_warehouse_bucket_name} && mc encrypt set sse-s3 local/${var.s3_raw_bucket_name}'; then
+          echo "Buckets created and encrypted successfully"
           exit 0
         fi
         echo "Bucket creation attempt $i failed, retrying..."

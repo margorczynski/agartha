@@ -9,9 +9,9 @@ module "agartha_storage" {
   s3_access_key            = var.storage_s3_access_key
   s3_secret_key            = var.storage_s3_secret_key
 
-  minio_tenant_servers_num            = 1
-  minio_tenant_volumes_per_server_num = 4
-  minio_tenant_size_per_volume_gb     = 4
+  minio_tenant_servers_num            = 4
+  minio_tenant_volumes_per_server_num = 2
+  minio_tenant_size_per_volume_gb     = 10
 
   minio_operator_resources = var.storage_minio_operator_resources
   minio_tenant_resources   = var.storage_minio_tenant_resources

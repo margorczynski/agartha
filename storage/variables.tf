@@ -31,11 +31,21 @@ variable "s3_raw_bucket_name" {
 variable "minio_tenant_servers_num" {
   type        = number
   description = "The number of servers/pods the MinIO tenant will use"
+
+  validation {
+    condition     = var.minio_tenant_servers_num == 1 || var.minio_tenant_servers_num >= 4
+    error_message = "minio_tenant_servers_num must be 1 (single-node dev) or >= 4 (distributed erasure coding). Values 2-3 are invalid for MinIO distributed mode."
+  }
 }
 
 variable "minio_tenant_volumes_per_server_num" {
   type        = number
   description = "The number of volumes per server/pod the MinIO tenant will use"
+
+  validation {
+    condition     = var.minio_tenant_volumes_per_server_num >= 1
+    error_message = "minio_tenant_volumes_per_server_num must be at least 1."
+  }
 }
 
 variable "minio_tenant_size_per_volume_gb" {
