@@ -7,8 +7,69 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
 jobs:
+  security-scan:
+    name: Security Scanning
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run tfsec
+        uses: aquasecurity/tfsec-action@v1.0.0
+        with:
+          soft_fail: false
+          additional_args: --concise-output
+
+      - name: Install and run gitleaks
+        run: |
+          curl -s https://api.github.com/repos/gitleaks/gitleaks/releases/latest | grep "browser_download_url.*linux_x64.tar.gz" | cut -d '"' -f 4 | xargs curl -sL | tar xz
+          chmod +x gitleaks
+          ./gitleaks detect --source . --config .gitleaks.toml --verbose
+
+  linting:
+    name: OpenTofu Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v4
+
+      - name: Initialize TFLint
+        run: tflint --init
+
+      - name: Run TFLint
+        run: tflint --recursive --format compact
+
+  helm-validation:
+    name: Helm Chart Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+
+      - name: Validate Helm releases
+        run: |
+          find . -name "*.tf" -exec grep -l "helm_release" {} \; | while read file; do
+            dir=$(dirname "$file")
+            if [ -f "$dir/templates" ]; then
+              echo "Validating Helm chart in $dir"
+              helm lint "$dir/templates"
+            fi
+          done || echo "No Helm charts to validate or validation completed"
+
   validate:
+    name: OpenTofu Validation
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

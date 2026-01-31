@@ -1,0 +1,28 @@
+title = "Gitleaks Configuration"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Global Allowlist"
+paths = [
+    '''\.tf$''',
+    '''\.tfvars$''',
+    '''\.gitignore$''',
+    '''\.md$''',
+    '''\.txt$''',
+    '''\.hcl$''',
+    '''\.lock\.hcl$''',
+    '''LICENSE''',
+    '''\.github''',
+]
+regexes = [
+    '''file\(["\']\./.*["\']\)''',
+    '''svc\.cluster\.local''',
+    '''example\.com|localhost|127\.0\.0\.1''',
+    '''(minio|keycloak|trino|spark|flink|nessie|grafana|prometheus|superset|jupyterhub|dagster|velero)(-[a-z]+)+''',
+    '''agartha-[a-z-]+''',
+    '''(client_id|client_secret|access_key|secret_key|username|password|token)''',
+    '''(issuer_url|auth_url|token_url|userinfo_url|jwks_url|api_base_url)''',
+    '''[0-9]+[TGMK]B'''
+]
