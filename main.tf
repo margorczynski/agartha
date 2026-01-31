@@ -13,6 +13,9 @@ module "agartha_storage" {
   minio_tenant_volumes_per_server_num = 4
   minio_tenant_size_per_volume_gb     = 4
 
+  minio_operator_resources = var.storage_minio_operator_resources
+  minio_tenant_resources   = var.storage_minio_tenant_resources
+
   # Keycloak OAuth integration
   minio_oauth_client_id      = module.agartha_identity.keycloak_minio_client_id
   minio_oauth_client_secret  = module.agartha_identity.keycloak_minio_client_secret
@@ -50,6 +53,9 @@ module "agartha_catalog" {
   storage_s3_warehouse_bucket = var.storage_s3_warehouse_bucket_name
   catalog_postgres_password   = var.catalog_postgres_password
 
+  nessie_postgres_resources = var.catalog_nessie_postgres_resources
+  nessie_resources          = var.catalog_nessie_resources
+
   # TLS
   tls_certificate = file(var.tls_certificate_path)
   tls_private_key = file(var.tls_private_key_path)
@@ -86,6 +92,12 @@ module "agartha_monitoring" {
   flink_namespace  = "agartha-processing-flink"
 
   loki_storage_size_gb = 10
+
+  prometheus_server_resources = var.monitoring_prometheus_server_resources
+  grafana_resources           = var.monitoring_grafana_resources
+  alertmanager_resources      = var.monitoring_alertmanager_resources
+  loki_resources              = var.monitoring_loki_resources
+  promtail_resources          = var.monitoring_promtail_resources
 
   # Keycloak OAuth integration
   grafana_oauth_client_id     = module.agartha_identity.keycloak_grafana_client_id
@@ -132,6 +144,8 @@ module "agartha_identity" {
   keycloak_postgres_storage_size_gb = 10
   keycloak_replicas                 = 1
 
+  keycloak_postgres_resources = var.identity_keycloak_postgres_resources
+
   grafana_oauth_client_secret      = var.identity_grafana_oauth_client_secret
   superset_oauth_client_secret     = var.identity_superset_oauth_client_secret
   trino_oauth_client_secret        = var.identity_trino_oauth_client_secret
@@ -173,6 +187,11 @@ module "agartha_processing" {
   storage_s3_secret_key         = var.storage_s3_secret_key
 
   trino_cluster_worker_num = 2
+
+  spark_operator_resources    = var.processing_spark_operator_resources
+  flink_operator_resources    = var.processing_flink_operator_resources
+  trino_coordinator_resources = var.processing_trino_coordinator_resources
+  trino_worker_resources      = var.processing_trino_worker_resources
 
   # Keycloak OAuth integration
   trino_oauth_client_id        = module.agartha_identity.keycloak_trino_client_id
@@ -223,6 +242,11 @@ module "business_intelligence" {
 
   superset_node_replica_num   = 1
   superset_worker_replica_num = 1
+
+  superset_node_resources     = var.bi_superset_node_resources
+  superset_worker_resources   = var.bi_superset_worker_resources
+  superset_postgres_resources = var.bi_superset_postgres_resources
+  superset_redis_resources    = var.bi_superset_redis_resources
 
   # Keycloak OAuth integration
   superset_oauth_client_id     = module.agartha_identity.keycloak_superset_client_id
@@ -305,6 +329,9 @@ module "agartha_notebooks" {
   trino_port = 8080
 
   jupyterhub_storage_size_gb = 10
+
+  jupyterhub_hub_resources   = var.notebooks_jupyterhub_hub_resources
+  jupyterhub_proxy_resources = var.notebooks_jupyterhub_proxy_resources
 
   # Keycloak OAuth
   jupyterhub_oauth_client_id     = module.agartha_identity.keycloak_jupyterhub_client_id

@@ -85,6 +85,22 @@ resource "helm_release" "nessie_postgres" {
     {
       name  = "volumePermissions.enabled"
       value = "true"
+    },
+    {
+      name  = "primary.resources.requests.cpu"
+      value = var.nessie_postgres_resources.requests.cpu
+    },
+    {
+      name  = "primary.resources.requests.memory"
+      value = var.nessie_postgres_resources.requests.memory
+    },
+    {
+      name  = "primary.resources.limits.cpu"
+      value = var.nessie_postgres_resources.limits.cpu
+    },
+    {
+      name  = "primary.resources.limits.memory"
+      value = var.nessie_postgres_resources.limits.memory
     }
   ]
 
@@ -165,6 +181,22 @@ resource "helm_release" "nessie" {
     {
       name  = "catalog.iceberg.warehouses[0].location"
       value = "s3://${var.storage_s3_warehouse_bucket}/"
+    },
+    {
+      name  = "resources.requests.cpu"
+      value = var.nessie_resources.requests.cpu
+    },
+    {
+      name  = "resources.requests.memory"
+      value = var.nessie_resources.requests.memory
+    },
+    {
+      name  = "resources.limits.cpu"
+      value = var.nessie_resources.limits.cpu
+    },
+    {
+      name  = "resources.limits.memory"
+      value = var.nessie_resources.limits.memory
     }
   ]
 

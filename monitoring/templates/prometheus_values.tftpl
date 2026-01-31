@@ -1,6 +1,13 @@
 prometheus:
   prometheusSpec:
     retention: ${prometheus_retention_days}d
+    resources:
+      requests:
+        cpu: "${prometheus_server_resources.requests.cpu}"
+        memory: "${prometheus_server_resources.requests.memory}"
+      limits:
+        cpu: "${prometheus_server_resources.limits.cpu}"
+        memory: "${prometheus_server_resources.limits.memory}"
     storageSpec:
       volumeClaimTemplate:
         spec:
@@ -14,6 +21,15 @@ prometheus:
 
 grafana:
   enabled: true
+  initChownData:
+    enabled: false
+  resources:
+    requests:
+      cpu: "${grafana_resources.requests.cpu}"
+      memory: "${grafana_resources.requests.memory}"
+    limits:
+      cpu: "${grafana_resources.limits.cpu}"
+      memory: "${grafana_resources.limits.memory}"
   admin:
     existingSecret: ${grafana_admin_existing_secret}
     userKey: admin-user
@@ -51,6 +67,13 @@ grafana:
 alertmanager:
   enabled: true
   alertmanagerSpec:
+    resources:
+      requests:
+        cpu: "${alertmanager_resources.requests.cpu}"
+        memory: "${alertmanager_resources.requests.memory}"
+      limits:
+        cpu: "${alertmanager_resources.limits.cpu}"
+        memory: "${alertmanager_resources.limits.memory}"
     storage:
       volumeClaimTemplate:
         spec:

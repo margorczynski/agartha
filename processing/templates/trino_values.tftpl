@@ -16,6 +16,24 @@ additionalConfigProperties:
   - http-server.process-forwarded=true
   - internal-communication.shared-secret=${trino_internal_shared_secret}
 
+coordinator:
+  resources:
+    requests:
+      cpu: "${coordinator_resources.requests.cpu}"
+      memory: "${coordinator_resources.requests.memory}"
+    limits:
+      cpu: "${coordinator_resources.limits.cpu}"
+      memory: "${coordinator_resources.limits.memory}"
+
+worker:
+  resources:
+    requests:
+      cpu: "${worker_resources.requests.cpu}"
+      memory: "${worker_resources.requests.memory}"
+    limits:
+      cpu: "${worker_resources.limits.cpu}"
+      memory: "${worker_resources.limits.memory}"
+
 server:
   coordinatorExtraConfig: |
     http-server.authentication.type=oauth2

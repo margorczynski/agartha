@@ -5,6 +5,25 @@ resource "helm_release" "minio_operator" {
   chart      = "operator"
   version    = "7.1.1"
 
+  set = [
+    {
+      name  = "resources.requests.cpu"
+      value = var.minio_operator_resources.requests.cpu
+    },
+    {
+      name  = "resources.requests.memory"
+      value = var.minio_operator_resources.requests.memory
+    },
+    {
+      name  = "resources.limits.cpu"
+      value = var.minio_operator_resources.limits.cpu
+    },
+    {
+      name  = "resources.limits.memory"
+      value = var.minio_operator_resources.limits.memory
+    }
+  ]
+
   depends_on = [
     kubernetes_namespace_v1.storage_namespace
   ]
@@ -81,6 +100,25 @@ resource "helm_release" "minio_tenant" {
     {
       name  = "tenant.certificate.externalCaCertSecret[0].name"
       value = "minio-trusted-ca"
+    },
+    #
+    # Resource limits
+    #
+    {
+      name  = "tenant.pools[0].resources.requests.cpu"
+      value = var.minio_tenant_resources.requests.cpu
+    },
+    {
+      name  = "tenant.pools[0].resources.requests.memory"
+      value = var.minio_tenant_resources.requests.memory
+    },
+    {
+      name  = "tenant.pools[0].resources.limits.cpu"
+      value = var.minio_tenant_resources.limits.cpu
+    },
+    {
+      name  = "tenant.pools[0].resources.limits.memory"
+      value = var.minio_tenant_resources.limits.memory
     }
   ]
 

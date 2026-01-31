@@ -70,3 +70,51 @@ variable "allowed_ingress_namespaces" {
   type        = list(string)
   description = "List of namespaces allowed to ingress to bi namespace"
 }
+
+variable "superset_node_resources" {
+  type = object({
+    requests = object({ cpu = string, memory = string })
+    limits   = object({ cpu = string, memory = string })
+  })
+  description = "Resource requests and limits for Superset webserver nodes"
+  default = {
+    requests = { cpu = "250m", memory = "512Mi" }
+    limits   = { cpu = "1000m", memory = "2Gi" }
+  }
+}
+
+variable "superset_worker_resources" {
+  type = object({
+    requests = object({ cpu = string, memory = string })
+    limits   = object({ cpu = string, memory = string })
+  })
+  description = "Resource requests and limits for Superset workers"
+  default = {
+    requests = { cpu = "250m", memory = "512Mi" }
+    limits   = { cpu = "1000m", memory = "2Gi" }
+  }
+}
+
+variable "superset_postgres_resources" {
+  type = object({
+    requests = object({ cpu = string, memory = string })
+    limits   = object({ cpu = string, memory = string })
+  })
+  description = "Resource requests and limits for Superset PostgreSQL"
+  default = {
+    requests = { cpu = "250m", memory = "256Mi" }
+    limits   = { cpu = "500m", memory = "512Mi" }
+  }
+}
+
+variable "superset_redis_resources" {
+  type = object({
+    requests = object({ cpu = string, memory = string })
+    limits   = object({ cpu = string, memory = string })
+  })
+  description = "Resource requests and limits for Superset Redis"
+  default = {
+    requests = { cpu = "50m", memory = "64Mi" }
+    limits   = { cpu = "200m", memory = "256Mi" }
+  }
+}

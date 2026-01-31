@@ -25,6 +25,8 @@ resource "helm_release" "trino" {
       trino_oauth_client_id         = var.trino_oauth_client_id
       trino_oauth_client_secret     = var.trino_oauth_client_secret
       trino_internal_shared_secret  = var.trino_internal_shared_secret
+      coordinator_resources         = var.trino_coordinator_resources
+      worker_resources              = var.trino_worker_resources
     })
   ]
 

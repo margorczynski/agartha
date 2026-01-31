@@ -91,9 +91,23 @@ envFromSecrets:
 
 supersetNode:
   replicaCount: ${superset_node_replica_num}
+  resources:
+    requests:
+      cpu: "${node_resources.requests.cpu}"
+      memory: "${node_resources.requests.memory}"
+    limits:
+      cpu: "${node_resources.limits.cpu}"
+      memory: "${node_resources.limits.memory}"
 
 supersetWorker:
   replicaCount: ${superset_worker_replica_num}
+  resources:
+    requests:
+      cpu: "${worker_resources.requests.cpu}"
+      memory: "${worker_resources.requests.memory}"
+    limits:
+      cpu: "${worker_resources.limits.cpu}"
+      memory: "${worker_resources.limits.memory}"
 
 init:
   adminUser:
@@ -106,10 +120,24 @@ init:
 postgresql:
   image:
     tag: latest
+  resources:
+    requests:
+      cpu: "${postgres_resources.requests.cpu}"
+      memory: "${postgres_resources.requests.memory}"
+    limits:
+      cpu: "${postgres_resources.limits.cpu}"
+      memory: "${postgres_resources.limits.memory}"
 
 redis:
   image:
     tag: latest
+  resources:
+    requests:
+      cpu: "${redis_resources.requests.cpu}"
+      memory: "${redis_resources.requests.memory}"
+    limits:
+      cpu: "${redis_resources.limits.cpu}"
+      memory: "${redis_resources.limits.memory}"
 
 bootstrapScript: |
   #!/bin/bash

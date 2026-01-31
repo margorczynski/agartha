@@ -89,3 +89,27 @@ variable "allowed_ingress_namespaces" {
   type        = list(string)
   description = "List of namespaces allowed to ingress to notebooks namespace"
 }
+
+variable "jupyterhub_hub_resources" {
+  type = object({
+    requests = object({ cpu = string, memory = string })
+    limits   = object({ cpu = string, memory = string })
+  })
+  description = "Resource requests and limits for JupyterHub hub"
+  default = {
+    requests = { cpu = "250m", memory = "512Mi" }
+    limits   = { cpu = "500m", memory = "1Gi" }
+  }
+}
+
+variable "jupyterhub_proxy_resources" {
+  type = object({
+    requests = object({ cpu = string, memory = string })
+    limits   = object({ cpu = string, memory = string })
+  })
+  description = "Resource requests and limits for JupyterHub proxy"
+  default = {
+    requests = { cpu = "100m", memory = "256Mi" }
+    limits   = { cpu = "500m", memory = "512Mi" }
+  }
+}

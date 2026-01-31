@@ -1,6 +1,13 @@
 # JupyterHub Helm values with Keycloak SSO integration
 
 hub:
+  resources:
+    requests:
+      cpu: "${hub_resources.requests.cpu}"
+      memory: "${hub_resources.requests.memory}"
+    limits:
+      cpu: "${hub_resources.limits.cpu}"
+      memory: "${hub_resources.limits.memory}"
   config:
     JupyterHub:
       authenticator_class: generic-oauth
@@ -108,6 +115,14 @@ cull:
   maxAge: 0
 
 proxy:
+  chp:
+    resources:
+      requests:
+        cpu: "${proxy_resources.requests.cpu}"
+        memory: "${proxy_resources.requests.memory}"
+      limits:
+        cpu: "${proxy_resources.limits.cpu}"
+        memory: "${proxy_resources.limits.memory}"
   service:
     type: ClusterIP
 
