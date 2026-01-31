@@ -60,6 +60,10 @@ resource "helm_release" "superset" {
       keycloak_api_base_url         = var.keycloak_api_base_url
       oauth_credentials_secret_name = kubernetes_secret_v1.superset_oauth_credentials.metadata[0].name
       superset_admin_password       = random_password.superset_admin_password.result
+      node_resources                = var.superset_node_resources
+      worker_resources              = var.superset_worker_resources
+      postgres_resources            = var.superset_postgres_resources
+      redis_resources               = var.superset_redis_resources
     })
   ]
 

@@ -5,6 +5,7 @@ resource "helm_release" "kube_prometheus_stack" {
   chart            = "kube-prometheus-stack"
   version          = "81.0.0"
   create_namespace = false
+  timeout          = 600
 
   values = [
     templatefile("${path.module}/templates/prometheus_values.tftpl", {
@@ -23,6 +24,9 @@ resource "helm_release" "kube_prometheus_stack" {
       keycloak_token_url            = var.keycloak_token_url
       keycloak_userinfo_url         = var.keycloak_userinfo_url
       ingress_base_host             = var.kubernetes_ingress_base_host
+      prometheus_server_resources   = var.prometheus_server_resources
+      grafana_resources             = var.grafana_resources
+      alertmanager_resources        = var.alertmanager_resources
     })
   ]
 

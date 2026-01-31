@@ -1,5 +1,12 @@
 loki:
   enabled: true
+  resources:
+    requests:
+      cpu: "${loki_resources.requests.cpu}"
+      memory: "${loki_resources.requests.memory}"
+    limits:
+      cpu: "${loki_resources.limits.cpu}"
+      memory: "${loki_resources.limits.memory}"
   persistence:
     enabled: true
     size: ${loki_storage_size_gb}Gi
@@ -44,6 +51,13 @@ loki:
 
 promtail:
   enabled: true
+  resources:
+    requests:
+      cpu: "${promtail_resources.requests.cpu}"
+      memory: "${promtail_resources.requests.memory}"
+    limits:
+      cpu: "${promtail_resources.limits.cpu}"
+      memory: "${promtail_resources.limits.memory}"
   config:
     clients:
       - url: http://loki:3100/loki/api/v1/push

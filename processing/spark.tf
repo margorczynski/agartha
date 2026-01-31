@@ -23,6 +23,22 @@ resource "helm_release" "spark_operator" {
     {
       name  = "ingressUrlFormat"
       value = "spark.agartha.minikubehost.com/{{$appName}}"
+    },
+    {
+      name  = "controller.resources.requests.cpu"
+      value = var.spark_operator_resources.requests.cpu
+    },
+    {
+      name  = "controller.resources.requests.memory"
+      value = var.spark_operator_resources.requests.memory
+    },
+    {
+      name  = "controller.resources.limits.cpu"
+      value = var.spark_operator_resources.limits.cpu
+    },
+    {
+      name  = "controller.resources.limits.memory"
+      value = var.spark_operator_resources.limits.memory
     }
   ]
 

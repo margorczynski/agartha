@@ -149,3 +149,63 @@ variable "allowed_ingress_namespaces" {
   type        = list(string)
   description = "List of namespaces allowed to ingress to monitoring namespace"
 }
+
+variable "prometheus_server_resources" {
+  type = object({
+    requests = object({ cpu = string, memory = string })
+    limits   = object({ cpu = string, memory = string })
+  })
+  description = "Resource requests and limits for the Prometheus server"
+  default = {
+    requests = { cpu = "500m", memory = "1Gi" }
+    limits   = { cpu = "2000m", memory = "4Gi" }
+  }
+}
+
+variable "grafana_resources" {
+  type = object({
+    requests = object({ cpu = string, memory = string })
+    limits   = object({ cpu = string, memory = string })
+  })
+  description = "Resource requests and limits for Grafana"
+  default = {
+    requests = { cpu = "100m", memory = "256Mi" }
+    limits   = { cpu = "500m", memory = "512Mi" }
+  }
+}
+
+variable "alertmanager_resources" {
+  type = object({
+    requests = object({ cpu = string, memory = string })
+    limits   = object({ cpu = string, memory = string })
+  })
+  description = "Resource requests and limits for Alertmanager"
+  default = {
+    requests = { cpu = "50m", memory = "64Mi" }
+    limits   = { cpu = "200m", memory = "256Mi" }
+  }
+}
+
+variable "loki_resources" {
+  type = object({
+    requests = object({ cpu = string, memory = string })
+    limits   = object({ cpu = string, memory = string })
+  })
+  description = "Resource requests and limits for Loki"
+  default = {
+    requests = { cpu = "250m", memory = "256Mi" }
+    limits   = { cpu = "500m", memory = "1Gi" }
+  }
+}
+
+variable "promtail_resources" {
+  type = object({
+    requests = object({ cpu = string, memory = string })
+    limits   = object({ cpu = string, memory = string })
+  })
+  description = "Resource requests and limits for Promtail"
+  default = {
+    requests = { cpu = "50m", memory = "64Mi" }
+    limits   = { cpu = "200m", memory = "256Mi" }
+  }
+}

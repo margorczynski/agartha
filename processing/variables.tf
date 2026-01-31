@@ -100,3 +100,51 @@ variable "trino_allowed_ingress_namespaces" {
   type        = list(string)
   description = "List of namespaces allowed to ingress to trino namespace"
 }
+
+variable "spark_operator_resources" {
+  type = object({
+    requests = object({ cpu = string, memory = string })
+    limits   = object({ cpu = string, memory = string })
+  })
+  description = "Resource requests and limits for the Spark operator controller"
+  default = {
+    requests = { cpu = "250m", memory = "512Mi" }
+    limits   = { cpu = "500m", memory = "512Mi" }
+  }
+}
+
+variable "flink_operator_resources" {
+  type = object({
+    requests = object({ cpu = string, memory = string })
+    limits   = object({ cpu = string, memory = string })
+  })
+  description = "Resource requests and limits for the Flink operator"
+  default = {
+    requests = { cpu = "250m", memory = "512Mi" }
+    limits   = { cpu = "1000m", memory = "1Gi" }
+  }
+}
+
+variable "trino_coordinator_resources" {
+  type = object({
+    requests = object({ cpu = string, memory = string })
+    limits   = object({ cpu = string, memory = string })
+  })
+  description = "Resource requests and limits for the Trino coordinator"
+  default = {
+    requests = { cpu = "1000m", memory = "2Gi" }
+    limits   = { cpu = "2000m", memory = "4Gi" }
+  }
+}
+
+variable "trino_worker_resources" {
+  type = object({
+    requests = object({ cpu = string, memory = string })
+    limits   = object({ cpu = string, memory = string })
+  })
+  description = "Resource requests and limits for Trino workers"
+  default = {
+    requests = { cpu = "1000m", memory = "2Gi" }
+    limits   = { cpu = "2000m", memory = "4Gi" }
+  }
+}

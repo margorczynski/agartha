@@ -96,6 +96,8 @@ resource "helm_release" "jupyterhub" {
       nessie_uri                    = var.nessie_uri
       trino_host                    = var.trino_host
       trino_port                    = var.trino_port
+      hub_resources                 = var.jupyterhub_hub_resources
+      proxy_resources               = var.jupyterhub_proxy_resources
     })
   ]
 

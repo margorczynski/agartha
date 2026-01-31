@@ -161,6 +161,22 @@ resource "helm_release" "keycloak" {
       value = "12-debian-12-r50"
     },
     {
+      name  = "postgresql.primary.resources.requests.cpu"
+      value = var.keycloak_postgres_resources.requests.cpu
+    },
+    {
+      name  = "postgresql.primary.resources.requests.memory"
+      value = var.keycloak_postgres_resources.requests.memory
+    },
+    {
+      name  = "postgresql.primary.resources.limits.cpu"
+      value = var.keycloak_postgres_resources.limits.cpu
+    },
+    {
+      name  = "postgresql.primary.resources.limits.memory"
+      value = var.keycloak_postgres_resources.limits.memory
+    },
+    {
       name  = "resources.limits.cpu"
       value = "1000m"
     },

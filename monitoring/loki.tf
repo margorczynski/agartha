@@ -9,6 +9,8 @@ resource "helm_release" "loki_stack" {
   values = [
     templatefile("${path.module}/templates/loki_values.tftpl", {
       loki_storage_size_gb = var.loki_storage_size_gb
+      loki_resources       = var.loki_resources
+      promtail_resources   = var.promtail_resources
     })
   ]
 

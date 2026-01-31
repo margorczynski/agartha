@@ -17,6 +17,22 @@ resource "helm_release" "flink_operator" {
     {
       name  = "webhook.create"
       value = "false"
+    },
+    {
+      name  = "resources.requests.cpu"
+      value = var.flink_operator_resources.requests.cpu
+    },
+    {
+      name  = "resources.requests.memory"
+      value = var.flink_operator_resources.requests.memory
+    },
+    {
+      name  = "resources.limits.cpu"
+      value = var.flink_operator_resources.limits.cpu
+    },
+    {
+      name  = "resources.limits.memory"
+      value = var.flink_operator_resources.limits.memory
     }
   ]
 
