@@ -5,7 +5,7 @@ on:
     branches: ['**']
   push:
     branches:
-      - main
+      - master
 
 permissions:
   contents: read
