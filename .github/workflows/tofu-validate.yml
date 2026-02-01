@@ -60,13 +60,98 @@ jobs:
 
       - name: Validate Helm releases
         run: |
-          find . -name "*.tf" -exec grep -l "helm_release" {} \; | while read file; do
-            dir=$(dirname "$file")
-            if [ -f "$dir/templates" ]; then
-              echo "Validating Helm chart in $dir"
-              helm lint "$dir/templates"
+          set -e
+          echo "Validating Helm charts referenced in Terraform files..."
+          
+          declare -A charts
+          declare -A versions
+          
+          while IFS= read -r -d '' tf_file; do
+            in_helm_release=false
+            resource_name=""
+            
+            while IFS= read -r line || [[ -n "$line" ]]; do
+              if [[ "$line" =~ ^resource[[:space:]]+"\"helm_release\"" ]]; then
+                in_helm_release=true
+                resource_name=$(echo "$line" | sed -n 's/.*"\(helm_release\)"[[:space:]]*"\([^"]*\)".*/\2/p')
+                continue
+              fi
+              
+              if $in_helm_release; then
+                if [[ "$line" =~ repository[[:space:]]*=[[:space:]]*\"([^\"]+)\" ]]; then
+                  repo="${BASH_REMATCH[1]}"
+                fi
+                if [[ "$line" =~ chart[[:space:]]*=[[:space:]]*\"([^\"]+)\" ]]; then
+                  chart_name="${BASH_REMATCH[1]}"
+                fi
+                if [[ "$line" =~ version[[:space:]]*=[[:space:]]*\"([^\"]+)\" ]]; then
+                  chart_version="${BASH_REMATCH[1]}"
+                fi
+                
+                if [[ "$line" =~ ^[[:space:]]*\}[[:space:]]*$ ]]; then
+                  if [[ -n "$repo" && -n "$chart_name" ]]; then
+                    chart_key="${repo}|${chart_name}"
+                    if [[ -n "$chart_version" ]]; then
+                      charts["$chart_key"]="$chart_version"
+                      echo "Found chart: $repo / $chart_name @ $chart_version"
+                    else
+                      charts["$chart_key"]=""
+                      echo "Found chart: $repo / $chart_name (versionless)"
+                    fi
+                  fi
+                  repo=""
+                  chart_name=""
+                  chart_version=""
+                  in_helm_release=false
+                fi
+              fi
+            done < "$tf_file"
+          done < <(find . -name "*.tf" -type f -print0)
+          
+          if [ ${#charts[@]} -eq 0 ]; then
+            echo "No Helm charts found to validate"
+            exit 0
+          fi
+          
+          echo ""
+          echo "Validating ${#charts[@]} chart(s)..."
+          
+          for chart_key in "${!charts[@]}"; do
+            IFS='|' read -r repo chart_name <<< "$chart_key"
+            version="${charts[$chart_key]}"
+            
+            echo ""
+            echo "Checking: $repo / $chart_name ${version:+@ $version}"
+            
+            repo_name=$(echo "$repo" | sed 's/[^a-zA-Z0-9]/_/g')
+            
+            if ! helm repo add "$repo_name" "$repo" --no-update > /dev/null 2>&1; then
+              echo "ERROR: Failed to add Helm repository: $repo"
+              exit 1
             fi
-          done || echo "No Helm charts to validate or validation completed"
+            
+            helm repo update "$repo_name" > /dev/null 2>&1
+            
+            if [ -n "$version" ]; then
+              if helm search repo "$repo_name/$chart_name" --version "$version" > /dev/null 2>&1; then
+                echo "✓ Chart $chart_name version $version is available"
+              else
+                echo "ERROR: Chart $chart_name version $version not found in repository $repo"
+                helm search repo "$repo_name/$chart_name" || true
+                exit 1
+              fi
+            else
+              if helm search repo "$repo_name/$chart_name" > /dev/null 2>&1; then
+                echo "✓ Chart $chart_name is available"
+              else
+                echo "ERROR: Chart $chart_name not found in repository $repo"
+                exit 1
+              fi
+            fi
+          done
+          
+          echo ""
+          echo "All Helm charts validated successfully"
 
   validate:
     name: OpenTofu Validation
