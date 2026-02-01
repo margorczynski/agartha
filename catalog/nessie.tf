@@ -53,7 +53,7 @@ resource "kubernetes_secret_v1" "nessie_datasource_creds" {
 resource "helm_release" "nessie_postgres" {
   namespace  = var.kubernetes_catalog_namespace
   name       = "nessie-postgres"
-  repository = "https://charts.bitnami.com/bitnami"
+  repository = "https://repo.broadcom.com/bitnami-files"
   chart      = "postgresql"
   version    = "18.2.3"
 

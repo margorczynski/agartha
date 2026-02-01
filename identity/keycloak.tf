@@ -32,7 +32,7 @@ resource "kubernetes_secret_v1" "keycloak_admin_password" {
 resource "helm_release" "keycloak" {
   namespace  = local.namespace
   name       = "keycloak"
-  repository = "https://charts.bitnami.com/bitnami"
+  repository = "https://repo.broadcom.com/bitnami-files"
   chart      = "keycloak"
   version    = "25.2.0"
 
