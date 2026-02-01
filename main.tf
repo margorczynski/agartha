@@ -228,6 +228,7 @@ module "agartha_processing" {
     "agartha-monitoring",
     "agartha-notebooks",
     "agartha-bi",
+    "agartha-orchestration",
     "ingress-nginx"
   ]
 

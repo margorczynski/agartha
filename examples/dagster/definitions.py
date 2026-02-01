@@ -22,6 +22,9 @@ from dlt.sources.helpers.rest_client import RESTClient
 from dlt.sources.helpers.rest_client.paginators import HeaderLinkPaginator
 
 from dagster import (
+    AssetCheckExecutionContext,
+    AssetCheckResult,
+    AssetCheckSpec,
     AssetExecutionContext,
     AssetSelection,
     Config,
@@ -32,6 +35,7 @@ from dagster import (
     MetadataValue,
     ScheduleDefinition,
     asset,
+    asset_check,
     define_asset_job,
 )
 from pydantic import Field
@@ -356,6 +360,51 @@ def github_source(
                 count += 1
 
     return [repositories, contributors, issues, pull_requests]
+
+
+# ============================================================================
+# Trino Resource
+# ============================================================================
+
+
+class TrinoResource(ConfigurableResource):
+    """
+    Dagster resource for executing SQL queries via Trino.
+
+    This resource provides a connection to Trino for running SQL-based
+    data quality checks on Iceberg tables.
+    """
+
+    host: str = Field(
+        default="trino.agartha-processing-trino.svc.cluster.local",
+        description="Trino coordinator host",
+    )
+    port: int = Field(default=8080, description="Trino port")
+    catalog: str = Field(default="agartha", description="Trino catalog")
+    user: str = Field(default="dagster", description="Trino user")
+
+    def execute_query(self, sql: str) -> list[dict]:
+        """
+        Execute a SQL query and return results as a list of dictionaries.
+
+        Args:
+            sql: SQL query to execute
+
+        Returns:
+            List of dictionaries where each dict represents a row
+        """
+        from trino.dbapi import connect
+
+        conn = connect(
+            host=self.host,
+            port=self.port,
+            catalog=self.catalog,
+            user=self.user,
+        )
+        cursor = conn.cursor()
+        cursor.execute(sql)
+        columns = [desc[0] for desc in cursor.description]
+        return [dict(zip(columns, row)) for row in cursor.fetchall()]
 
 
 # ============================================================================
@@ -888,6 +937,163 @@ def github_pull_requests(
 
 
 # ============================================================================
+# Data Quality Checks for Iceberg Tables
+# ============================================================================
+
+
+@asset_check(
+    asset=raw_iceberg_github_repos,
+    blocking=True,
+    description="Ensure repositories table is not empty",
+)
+def github_repositories_row_count(
+    trino: TrinoResource,
+) -> AssetCheckResult:
+    """Check that the github_repositories table contains data."""
+    result = trino.execute_query(
+        "SELECT COUNT(*) as row_count FROM agartha.raw.github_repositories"
+    )
+    row_count = result[0]["row_count"]
+    return AssetCheckResult(
+        passed=bool(row_count > 0),
+        metadata={"row_count": row_count},
+    )
+
+
+@asset_check(
+    asset=raw_iceberg_github_repos,
+    blocking=True,
+    description="Ensure no null repository IDs",
+)
+def github_repositories_id_not_null(
+    trino: TrinoResource,
+) -> AssetCheckResult:
+    """Check that all repository IDs are non-null."""
+    result = trino.execute_query(
+        "SELECT COUNT(*) as null_count FROM agartha.raw.github_repositories WHERE id IS NULL"
+    )
+    null_count = result[0]["null_count"]
+    return AssetCheckResult(
+        passed=bool(null_count == 0),
+        metadata={"null_count": null_count},
+    )
+
+
+@asset_check(
+    asset=raw_iceberg_github_repos,
+    blocking=True,
+    description="Ensure no duplicate repository IDs",
+)
+def github_repositories_id_unique(
+    trino: TrinoResource,
+) -> AssetCheckResult:
+    """Check that all repository IDs are unique."""
+    result = trino.execute_query(
+        "SELECT COUNT(*) - COUNT(DISTINCT id) as duplicate_count FROM agartha.raw.github_repositories"
+    )
+    duplicate_count = result[0]["duplicate_count"]
+    return AssetCheckResult(
+        passed=bool(duplicate_count == 0),
+        metadata={"duplicate_count": duplicate_count},
+    )
+
+
+@asset_check(
+    asset=raw_iceberg_github_repos,
+    blocking=True,
+    description="Ensure critical columns (name, full_name, default_branch) are not null",
+)
+def github_repositories_critical_columns_not_null(
+    trino: TrinoResource,
+) -> AssetCheckResult:
+    """Check that critical columns are non-null."""
+    result = trino.execute_query(
+        "SELECT COUNT(*) as null_count FROM agartha.raw.github_repositories WHERE name IS NULL OR full_name IS NULL OR default_branch IS NULL"
+    )
+    null_count = result[0]["null_count"]
+    return AssetCheckResult(
+        passed=bool(null_count == 0),
+        metadata={"null_count": null_count},
+    )
+
+
+@asset_check(
+    asset=raw_iceberg_github_contributors,
+    blocking=True,
+    description="Ensure contributors table is not empty",
+)
+def github_contributors_row_count(
+    trino: TrinoResource,
+) -> AssetCheckResult:
+    """Check that the github_contributors table contains data."""
+    result = trino.execute_query(
+        "SELECT COUNT(*) as row_count FROM agartha.raw.github_contributors"
+    )
+    row_count = result[0]["row_count"]
+    return AssetCheckResult(
+        passed=bool(row_count > 0),
+        metadata={"row_count": row_count},
+    )
+
+
+@asset_check(
+    asset=raw_iceberg_github_contributors,
+    blocking=True,
+    description="Ensure composite primary key (repo_name, contributor_id) is not null",
+)
+def github_contributors_pk_not_null(
+    trino: TrinoResource,
+) -> AssetCheckResult:
+    """Check that the composite primary key columns are non-null."""
+    result = trino.execute_query(
+        "SELECT COUNT(*) as null_count FROM agartha.raw.github_contributors WHERE repo_name IS NULL OR contributor_id IS NULL"
+    )
+    null_count = result[0]["null_count"]
+    return AssetCheckResult(
+        passed=bool(null_count == 0),
+        metadata={"null_count": null_count},
+    )
+
+
+@asset_check(
+    asset=raw_iceberg_github_contributors,
+    blocking=True,
+    description="Ensure unique (repo_name, contributor_id) combinations",
+)
+def github_contributors_pk_unique(
+    trino: TrinoResource,
+) -> AssetCheckResult:
+    """Check that the composite primary key is unique."""
+    result = trino.execute_query(
+        "SELECT COUNT(*) - COUNT(DISTINCT concat(repo_name, '-', contributor_id)) as duplicate_count FROM agartha.raw.github_contributors"
+    )
+    duplicate_count = result[0]["duplicate_count"]
+    return AssetCheckResult(
+        passed=bool(duplicate_count == 0),
+        metadata={"duplicate_count": duplicate_count},
+    )
+
+
+@asset_check(
+    asset=raw_iceberg_github_contributors,
+    blocking=True,
+    description="Ensure contributions count is non-negative",
+)
+def github_contributions_valid(
+    trino: TrinoResource,
+) -> AssetCheckResult:
+    """Check that all contribution counts are non-negative."""
+    result = trino.execute_query(
+        "SELECT COUNT(*) as invalid_count FROM agartha.raw.github_contributors WHERE contributions < 0"
+    )
+    invalid_count = result[0]["invalid_count"]
+    return AssetCheckResult(
+        passed=bool(invalid_count == 0),
+        metadata={"invalid_count": invalid_count},
+    )
+
+
+# ============================================================================
 # Jobs and Schedules
 # ============================================================================
 
@@ -942,7 +1148,18 @@ defs = Definitions(
     resources={
         "spark_operator": SparkOperatorResource(),
         "dlt_pipeline": DltPipelineResource(),
+        "trino": TrinoResource(),
     },
+    asset_checks=[
+        github_repositories_row_count,
+        github_repositories_id_not_null,
+        github_repositories_id_unique,
+        github_repositories_critical_columns_not_null,
+        github_contributors_row_count,
+        github_contributors_pk_not_null,
+        github_contributors_pk_unique,
+        github_contributions_valid,
+    ],
     jobs=[github_full_pipeline_job, github_ingestion_job, github_spark_pipeline_job],
     schedules=[daily_github_pipeline_schedule],
 )
