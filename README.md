@@ -106,18 +106,12 @@ S3_SECRET_KEY=$(kubectl get secret -n agartha-orchestration dagster-s3-credentia
 mc alias set local http://127.0.0.1:9000 "$S3_ACCESS_KEY" "$S3_SECRET_KEY"
 ```
 
-2. **Upload the example code**:
+2. **Upload the example code** (includes `requirements.txt` for pip dependencies):
 ```bash
 mc cp --recursive examples/dagster/ local/agartha-dagster-code/agartha-pipelines/
 ```
 
-3. **Upload a requirements file** for the Python dependencies:
-```bash
-printf 'dlt[filesystem]>=1.0.0\ns3fs>=2024.2.0\npyarrow>=15.0.0\nboto3\n' | \
-  mc pipe local/agartha-dagster-code/agartha-pipelines/requirements.txt
-```
-
-4. **Restart the user code pod** to pick up the new code:
+3. **Restart the user code pod** to pick up the new code:
 ```bash
 kubectl rollout restart deployment dagster-agartha-pipelines -n agartha-orchestration
 ```
