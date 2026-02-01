@@ -51,6 +51,17 @@ locals {
 
         print(f"Synced {count} files from s3://{bucket}/{prefix} -> {dest}")
 
+        # If no files were synced, write a placeholder so the gRPC server starts
+        if count == 0:
+            placeholder = os.path.join(dest, "definitions.py")
+            os.makedirs(dest, exist_ok=True)
+            with open(placeholder, "w") as f:
+                f.write(
+                    "from dagster import Definitions\n"
+                    "defs = Definitions(assets=[], jobs=[], schedules=[])\n"
+                )
+            print(f"No code found in S3 - wrote placeholder definitions to {placeholder}")
+
         # Install requirements.txt files if present
         pip_target = os.environ.get("DAGSTER_PIP_TARGET", "")
         for root, dirs, files in os.walk(dest):
