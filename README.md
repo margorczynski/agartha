@@ -94,29 +94,13 @@ tofu apply -auto-approve
 
 ### Upload example Dagster pipelines
 
-After `tofu apply` completes, the Dagster user code deployment starts with an empty placeholder. To load the example GitHub ETL pipelines (dlt ingestion + Spark processing into Iceberg tables):
+After `tofu apply` completes, the Dagster user code deployment starts with an empty placeholder. To load the example GitHub ETL pipelines (dlt ingestion + Spark processing into Iceberg tables), run the upload script:
 
-1. **Set up MinIO client** (port-forward and configure alias):
 ```bash
-kubectl port-forward -n agartha-storage svc/minio 9000:80 &
-S3_ACCESS_KEY=$(kubectl get secret -n agartha-orchestration dagster-s3-credentials \
-  -o jsonpath='{.data.S3_ACCESS_KEY_ID}' | base64 -d)
-S3_SECRET_KEY=$(kubectl get secret -n agartha-orchestration dagster-s3-credentials \
-  -o jsonpath='{.data.S3_SECRET_ACCESS_KEY}' | base64 -d)
-mc alias set local http://127.0.0.1:9000 "$S3_ACCESS_KEY" "$S3_SECRET_KEY"
+./examples/dagster/upload.sh
 ```
 
-2. **Upload the example code** (includes `requirements.txt` for pip dependencies):
-```bash
-mc cp --recursive examples/dagster/ local/agartha-dagster-code/agartha-pipelines/
-```
-
-3. **Restart the user code pod** to pick up the new code:
-```bash
-kubectl rollout restart deployment dagster-agartha-pipelines -n agartha-orchestration
-```
-
-The assets should appear in the Dagster UI at `dagster.agartha.<your-host>` after the pod becomes ready (this takes a couple of minutes as it installs pip dependencies on startup).
+This downloads the MinIO client (if needed), uploads the example code to S3, restarts the pod, and waits for it to become ready. The assets should then be visible in the Dagster UI at `dagster.agartha.<your-host>`.
 
 ### Add local routing
 To make the endpoints accessible we need to setup some customer routing that will redirect us to the minikube IP address. 
