@@ -8,7 +8,7 @@
 |processing | Processing data (batches and streams) | Spark, Trino, Flink|agartha-processing-[spark/flink/trino]|
 |notebooks| Notebooks for interactive processing | JupyterHub|agartha-notebooks|
 |bi| Data visualization, dashboards and BI| Superset|agartha-bi|
-|orchestration| Workflow management and scheduling| Airflow|agartha-orchestration|
+|orchestration| Workflow management and scheduling| Dagster|agartha-orchestration|
 |monitoring| Logging, monitoring and alerts |Grafana, Prometheus, Loki, Alertmanager|agartha-monitoring|
 |identity| Identity and access management |Keycloak| agartha-identity|
 
@@ -91,6 +91,38 @@ cd agartha
 tofu init
 tofu apply -auto-approve
 ```
+
+### Upload example Dagster pipelines
+
+After `tofu apply` completes, the Dagster user code deployment starts with an empty placeholder. To load the example GitHub ETL pipelines (dlt ingestion + Spark processing into Iceberg tables):
+
+1. **Set up MinIO client** (port-forward and configure alias):
+```bash
+kubectl port-forward -n agartha-storage svc/minio 9000:80 &
+S3_ACCESS_KEY=$(kubectl get secret -n agartha-orchestration dagster-s3-credentials \
+  -o jsonpath='{.data.S3_ACCESS_KEY_ID}' | base64 -d)
+S3_SECRET_KEY=$(kubectl get secret -n agartha-orchestration dagster-s3-credentials \
+  -o jsonpath='{.data.S3_SECRET_ACCESS_KEY}' | base64 -d)
+mc alias set local http://127.0.0.1:9000 "$S3_ACCESS_KEY" "$S3_SECRET_KEY"
+```
+
+2. **Upload the example code**:
+```bash
+mc cp --recursive examples/dagster/ local/agartha-dagster-code/agartha-pipelines/
+```
+
+3. **Upload a requirements file** for the Python dependencies:
+```bash
+printf 'dlt[filesystem]>=1.0.0\ns3fs>=2024.2.0\npyarrow>=15.0.0\nboto3\n' | \
+  mc pipe local/agartha-dagster-code/agartha-pipelines/requirements.txt
+```
+
+4. **Restart the user code pod** to pick up the new code:
+```bash
+kubectl rollout restart deployment dagster-agartha-pipelines -n agartha-orchestration
+```
+
+The assets should appear in the Dagster UI at `dagster.agartha.<your-host>` after the pod becomes ready (this takes a couple of minutes as it installs pip dependencies on startup).
 
 ### Add local routing
 To make the endpoints accessible we need to setup some customer routing that will redirect us to the minikube IP address. 
