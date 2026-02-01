@@ -1,0 +1,20 @@
+# Spark scripts ConfigMap for user pipeline code.
+#
+# Apply this to deploy your PySpark scripts to the Spark namespace:
+#   kubectl create configmap dagster-spark-scripts \
+#     --from-file=../spark_jobs/ \
+#     -n agartha-processing-spark
+#
+# Or apply this manifest directly after populating the data section:
+#   kubectl apply -f spark-scripts-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dagster-spark-scripts
+  namespace: agartha-processing-spark
+  labels:
+    app.kubernetes.io/part-of: dagster
+data: {}
+  # Populate with your spark scripts, e.g.:
+  # raw_github_repos.py: |
+  #   <contents of spark_jobs/raw_github_repos.py>

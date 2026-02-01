@@ -85,6 +85,12 @@ variable "allowed_ingress_namespaces" {
   description = "List of namespaces allowed to ingress to storage namespace"
 }
 
+variable "s3_dagster_code_bucket_name" {
+  type        = string
+  description = "The S3 bucket name for storing Dagster user code"
+  default     = "agartha-dagster-code"
+}
+
 variable "minio_operator_resources" {
   type = object({
     requests = object({ cpu = string, memory = string })

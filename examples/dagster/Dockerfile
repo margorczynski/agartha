@@ -10,3 +10,6 @@ RUN pip install --no-cache-dir \
 
 # Create dlt state directory
 RUN mkdir -p /tmp/dlt_pipelines && chmod 777 /tmp/dlt_pipelines
+
+# Copy pipeline code into image
+COPY definitions.py /opt/dagster/app/definitions.py

@@ -57,17 +57,24 @@ variable "flink_namespace" {
   description = "The Kubernetes namespace where Flink operator is deployed"
 }
 
-variable "dagster_user_code_image" {
-  type        = string
-  description = "Docker image for Dagster user code deployment (must include dlt dependencies)"
-  default     = "docker.io/dagster/dagster-k8s:1.12.11"
+variable "dagster_user_code_deployments" {
+  type = map(object({
+    code_path = string
+    image     = optional(string, "docker.io/dagster/dagster-k8s:1.12.11")
+    replicas  = optional(number, 1)
+  }))
+  description = "Map of user code deployments. Key = deployment name, code_path = S3 prefix in code bucket."
+
+  validation {
+    condition     = length(var.dagster_user_code_deployments) > 0
+    error_message = "At least one user code deployment must be defined."
+  }
 }
 
-variable "github_access_token" {
+variable "dagster_code_bucket" {
   type        = string
-  description = "GitHub personal access token for higher API rate limits (optional)"
-  sensitive   = true
-  default     = ""
+  description = "S3 bucket name for storing Dagster user code"
+  default     = "agartha-dagster-code"
 }
 
 # Keycloak OAuth integration for Dagster
