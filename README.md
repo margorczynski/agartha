@@ -89,6 +89,7 @@ minikube start && minikube addons enable ingress &&  minikube dashboard
 git clone https://github.com/margorczynski/agartha.git
 cd agartha
 tofu init
+tofu import 'module.agartha_identity.kubernetes_config_map_v1.coredns_override' kube-system/coredns
 tofu apply -auto-approve
 ```
 
