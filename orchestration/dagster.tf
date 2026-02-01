@@ -1,7 +1,7 @@
 locals {
   # Use the first deployment's image for the run launcher
-  first_deployment_key   = keys(var.dagster_user_code_deployments)[0]
-  run_launcher_image     = var.dagster_user_code_deployments[local.first_deployment_key].image
+  first_deployment_key     = keys(var.dagster_user_code_deployments)[0]
+  run_launcher_image       = var.dagster_user_code_deployments[local.first_deployment_key].image
   run_launcher_image_parts = split(":", local.run_launcher_image)
   run_launcher_image_repo  = join(":", slice(local.run_launcher_image_parts, 0, length(local.run_launcher_image_parts) - 1))
   run_launcher_image_tag   = element(local.run_launcher_image_parts, length(local.run_launcher_image_parts) - 1)

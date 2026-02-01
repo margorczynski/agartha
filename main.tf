@@ -7,8 +7,8 @@ module "agartha_storage" {
   s3_warehouse_bucket_name    = var.storage_s3_warehouse_bucket_name
   s3_raw_bucket_name          = var.storage_s3_raw_bucket_name
   s3_dagster_code_bucket_name = var.storage_s3_dagster_code_bucket_name
-  s3_access_key            = local.storage_s3_access_key
-  s3_secret_key            = local.storage_s3_secret_key
+  s3_access_key               = local.storage_s3_access_key
+  s3_secret_key               = local.storage_s3_secret_key
 
   minio_tenant_servers_num            = 4
   minio_tenant_volumes_per_server_num = 2
@@ -293,8 +293,8 @@ module "agartha_orchestration" {
   dagster_webserver_replica_num               = 1
   dagster_postgres_password                   = local.orchestration_dagster_postgres_password
   dagster_postgres_storage_size_gb            = var.orchestration_dagster_postgres_storage_size_gb
-  dagster_user_code_deployments              = var.orchestration_dagster_user_code_deployments
-  dagster_code_bucket                        = var.storage_s3_dagster_code_bucket_name
+  dagster_user_code_deployments               = var.orchestration_dagster_user_code_deployments
+  dagster_code_bucket                         = var.storage_s3_dagster_code_bucket_name
   dagster_run_coordinator_max_concurrent_runs = 10
 
   spark_namespace = "agartha-processing-spark"
