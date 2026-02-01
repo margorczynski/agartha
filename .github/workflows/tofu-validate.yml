@@ -116,6 +116,29 @@ jobs:
           echo ""
           echo "Validating ${#charts[@]} chart(s)..."
           
+          retry_with_backoff() {
+            local max_attempts=$1
+            shift
+            local cmd=("$@")
+            local attempt=1
+            
+            while [ $attempt -le $max_attempts ]; do
+              if "${cmd[@]}" > /dev/null 2>&1; then
+                return 0
+              fi
+              
+              if [ $attempt -lt $max_attempts ]; then
+                local wait_time=$((attempt * 2))
+                echo "  Attempt $attempt failed, retrying in ${wait_time}s..."
+                sleep $wait_time
+              fi
+              
+              ((attempt++))
+            done
+            
+            return 1
+          }
+          
           for chart_key in "${!charts[@]}"; do
             IFS='|' read -r repo chart_name <<< "$chart_key"
             version="${charts[$chart_key]}"
@@ -125,12 +148,15 @@ jobs:
             
             repo_name=$(echo "$repo" | sed 's/[^a-zA-Z0-9]/_/g')
             
-            if ! helm repo add "$repo_name" "$repo" --no-update > /dev/null 2>&1; then
-              echo "ERROR: Failed to add Helm repository: $repo"
+            if ! retry_with_backoff 5 helm repo add "$repo_name" "$repo" --no-update; then
+              echo "ERROR: Failed to add Helm repository after 5 attempts: $repo"
               exit 1
             fi
             
-            helm repo update "$repo_name" > /dev/null 2>&1
+            if ! retry_with_backoff 3 helm repo update "$repo_name"; then
+              echo "ERROR: Failed to update Helm repository after 3 attempts: $repo"
+              exit 1
+            fi
             
             if [ -n "$version" ]; then
               if helm search repo "$repo_name/$chart_name" --version "$version" > /dev/null 2>&1; then
