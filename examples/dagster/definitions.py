@@ -378,9 +378,17 @@ class SparkOperatorResource(ConfigurableResource):
         default_factory=lambda: os.environ.get("SPARK_IMAGE", "apache/spark:3.5.3-python3"),
         description="Spark container image",
     )
-    scripts_config_map: str = Field(
-        default="dagster-spark-scripts",
-        description="ConfigMap containing PySpark scripts",
+    code_bucket: str = Field(
+        default_factory=lambda: os.environ.get("DAGSTER_CODE_BUCKET", "agartha-dagster-code"),
+        description="S3 bucket containing pipeline code",
+    )
+    code_path: str = Field(
+        default_factory=lambda: os.environ.get("DAGSTER_CODE_PATH", "agartha-pipelines"),
+        description="S3 prefix for this deployment's code",
+    )
+    sync_image: str = Field(
+        default="docker.io/dagster/dagster-k8s:1.12.11",
+        description="Image for the init container that syncs code from S3",
     )
     scripts_mount_path: str = Field(
         default="/opt/spark/scripts",
@@ -520,6 +528,38 @@ class SparkOperatorResource(ConfigurableResource):
                     "memory": "1g",
                     "labels": {"version": "3.5.3"},
                     "serviceAccount": self.service_account,
+                    "initContainers": [
+                        {
+                            "name": "sync-scripts",
+                            "image": self.sync_image,
+                            "command": [
+                                "python", "-c",
+                                "import subprocess, sys; "
+                                "subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-q', 'boto3']); "
+                                "import boto3; "
+                                "from botocore.config import Config; "
+                                "import os; "
+                                f"bucket = '{self.code_bucket}'; "
+                                f"prefix = '{self.code_path}/spark_jobs'; "
+                                f"dest = '{self.scripts_mount_path}'; "
+                                f"s3 = boto3.client('s3', endpoint_url='{self.s3_endpoint}'.rstrip('/'), "
+                                f"aws_access_key_id='{self.s3_access_key}', "
+                                f"aws_secret_access_key='{self.s3_secret_key}', "
+                                "region_name='us-east-1', "
+                                "config=Config(s3={'addressing_style': 'path'})); "
+                                "pages = s3.get_paginator('list_objects_v2').paginate(Bucket=bucket, Prefix=prefix); "
+                                "[("
+                                "os.makedirs(os.path.dirname(os.path.join(dest, k[len(prefix):].lstrip('/'))), exist_ok=True), "
+                                "s3.download_file(bucket, k, os.path.join(dest, k[len(prefix):].lstrip('/')))"
+                                ") for p in pages for o in p.get('Contents', []) "
+                                "if not (k := o['Key']).endswith('/')]; "
+                                "print(f'Synced scripts from s3://{bucket}/{prefix} -> {dest}')",
+                            ],
+                            "volumeMounts": [
+                                {"name": "spark-scripts", "mountPath": self.scripts_mount_path},
+                            ],
+                        },
+                    ],
                     "volumeMounts": [
                         {"name": "spark-scripts", "mountPath": self.scripts_mount_path},
                         {"name": "ivy-cache", "mountPath": "/home/spark/.ivy2"},
@@ -550,7 +590,7 @@ class SparkOperatorResource(ConfigurableResource):
                     ],
                 },
                 "volumes": [
-                    {"name": "spark-scripts", "configMap": {"name": self.scripts_config_map}},
+                    {"name": "spark-scripts", "emptyDir": {}},
                     {"name": "ivy-cache", "emptyDir": {}},
                 ],
             },

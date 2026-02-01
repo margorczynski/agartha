@@ -1,27 +1,30 @@
 resource "kubernetes_deployment_v1" "dagster_user_code" {
+  for_each = var.dagster_user_code_deployments
+
   metadata {
-    name      = "dagster-agartha-pipelines"
+    name      = "dagster-${each.key}"
     namespace = local.namespace
     labels = merge(local.dagster_labels, {
       "app.kubernetes.io/component" = "user-code"
+      "app.kubernetes.io/instance"  = each.key
     })
   }
 
   spec {
-    replicas = 1
+    replicas = each.value.replicas
 
     selector {
       match_labels = {
-        "app.kubernetes.io/name"      = "dagster-user-code"
-        "app.kubernetes.io/component" = "agartha-pipelines"
+        "app.kubernetes.io/name"     = "dagster-user-code"
+        "app.kubernetes.io/instance" = each.key
       }
     }
 
     template {
       metadata {
         labels = {
-          "app.kubernetes.io/name"      = "dagster-user-code"
-          "app.kubernetes.io/component" = "agartha-pipelines"
+          "app.kubernetes.io/name"     = "dagster-user-code"
+          "app.kubernetes.io/instance" = each.key
         }
       }
 
@@ -30,24 +33,40 @@ resource "kubernetes_deployment_v1" "dagster_user_code" {
 
         container {
           name  = "user-code"
-          image = var.dagster_user_code_image
+          image = each.value.image
 
           port {
             container_port = 3030
             name           = "grpc"
           }
 
-          # Install dlt at startup and run the gRPC server
           command = ["/bin/sh", "-c"]
-          args = [<<-EOT
-            pip install --no-cache-dir "dlt[filesystem]>=1.0.0" "s3fs>=2024.2.0" "pyarrow>=15.0.0" "boto3" && \
-            dagster api grpc -h 0.0.0.0 -p 3030 -f /opt/dagster/app/definitions.py
-          EOT
+          args = [
+            "python /opt/dagster/scripts/sync_code.py && dagster api grpc -h 0.0.0.0 -p 3030 -f /opt/dagster/deployments/${each.key}/definitions.py"
           ]
+
+          env {
+            name  = "DAGSTER_CODE_BUCKET"
+            value = var.dagster_code_bucket
+          }
+          env {
+            name  = "DAGSTER_CODE_PATH"
+            value = each.value.code_path
+          }
+          env {
+            name  = "DAGSTER_CODE_DEST"
+            value = "/opt/dagster/deployments/${each.key}"
+          }
 
           env_from {
             config_map_ref {
               name = kubernetes_config_map_v1.dagster_storage_config.metadata[0].name
+            }
+          }
+
+          env_from {
+            secret_ref {
+              name = kubernetes_secret_v1.dagster_s3_credentials.metadata[0].name
             }
           }
 
@@ -57,24 +76,10 @@ resource "kubernetes_deployment_v1" "dagster_user_code" {
             }
           }
 
-          # dlt-specific environment variables
-          env {
-            name  = "DLT_S3_BUCKET"
-            value = "agartha-raw"
-          }
-
-          # Optional GitHub token for higher rate limits
-          dynamic "env" {
-            for_each = var.github_access_token != "" ? [1] : []
-            content {
-              name  = "GITHUB_ACCESS_TOKEN"
-              value = var.github_access_token
-            }
-          }
-
           volume_mount {
-            name       = "dagster-code"
-            mount_path = "/opt/dagster/app"
+            name       = "sync-script"
+            mount_path = "/opt/dagster/scripts"
+            read_only  = true
           }
 
           volume_mount {
@@ -97,7 +102,7 @@ resource "kubernetes_deployment_v1" "dagster_user_code" {
             exec {
               command = ["dagster", "api", "grpc-health-check", "-p", "3030"]
             }
-            initial_delay_seconds = 60 # Increased for pip install time
+            initial_delay_seconds = 120
             period_seconds        = 10
           }
 
@@ -105,19 +110,18 @@ resource "kubernetes_deployment_v1" "dagster_user_code" {
             exec {
               command = ["dagster", "api", "grpc-health-check", "-p", "3030"]
             }
-            initial_delay_seconds = 60 # Increased for pip install time
+            initial_delay_seconds = 120
             period_seconds        = 30
           }
         }
 
         volume {
-          name = "dagster-code"
+          name = "sync-script"
           config_map {
-            name = kubernetes_config_map_v1.dagster_user_code.metadata[0].name
+            name = kubernetes_config_map_v1.dagster_code_sync_script.metadata[0].name
           }
         }
 
-        # Persistent volume for dlt pipeline state (incremental loading)
         volume {
           name = "dlt-state"
           empty_dir {}
@@ -127,24 +131,26 @@ resource "kubernetes_deployment_v1" "dagster_user_code" {
   }
 
   depends_on = [
-    helm_release.dagster,
-    kubernetes_config_map_v1.dagster_user_code
+    helm_release.dagster
   ]
 }
 
 resource "kubernetes_service_v1" "dagster_user_code" {
+  for_each = var.dagster_user_code_deployments
+
   metadata {
-    name      = "dagster-agartha-pipelines"
+    name      = "dagster-${each.key}"
     namespace = local.namespace
     labels = merge(local.dagster_labels, {
       "app.kubernetes.io/component" = "user-code"
+      "app.kubernetes.io/instance"  = each.key
     })
   }
 
   spec {
     selector = {
-      "app.kubernetes.io/name"      = "dagster-user-code"
-      "app.kubernetes.io/component" = "agartha-pipelines"
+      "app.kubernetes.io/name"     = "dagster-user-code"
+      "app.kubernetes.io/instance" = each.key
     }
 
     port {
@@ -157,4 +163,14 @@ resource "kubernetes_service_v1" "dagster_user_code" {
   depends_on = [
     kubernetes_deployment_v1.dagster_user_code
   ]
+}
+
+moved {
+  from = kubernetes_deployment_v1.dagster_user_code
+  to   = kubernetes_deployment_v1.dagster_user_code["agartha-pipelines"]
+}
+
+moved {
+  from = kubernetes_service_v1.dagster_user_code
+  to   = kubernetes_service_v1.dagster_user_code["agartha-pipelines"]
 }

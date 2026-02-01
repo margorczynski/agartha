@@ -183,6 +183,24 @@ variable "notebooks_jupyterhub_proxy_resources" {
   }
 }
 
+variable "orchestration_dagster_user_code_deployments" {
+  type = map(object({
+    code_path = string
+    image     = optional(string, "docker.io/dagster/dagster-k8s:1.12.11")
+    replicas  = optional(number, 1)
+  }))
+  description = "Map of user code deployments. Key = deployment name, code_path = S3 prefix in code bucket."
+  default = {
+    "agartha-pipelines" = { code_path = "agartha-pipelines" }
+  }
+}
+
+variable "storage_s3_dagster_code_bucket_name" {
+  type        = string
+  description = "The S3 bucket name for storing Dagster user code"
+  default     = "agartha-dagster-code"
+}
+
 variable "orchestration_dagster_postgres_storage_size_gb" {
   type        = number
   description = "Persistent storage size in GB for the Dagster PostgreSQL database"

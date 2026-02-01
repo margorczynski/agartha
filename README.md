@@ -8,7 +8,7 @@
 |processing | Processing data (batches and streams) | Spark, Trino, Flink|agartha-processing-[spark/flink/trino]|
 |notebooks| Notebooks for interactive processing | JupyterHub|agartha-notebooks|
 |bi| Data visualization, dashboards and BI| Superset|agartha-bi|
-|orchestration| Workflow management and scheduling| Airflow|agartha-orchestration|
+|orchestration| Workflow management and scheduling| Dagster|agartha-orchestration|
 |monitoring| Logging, monitoring and alerts |Grafana, Prometheus, Loki, Alertmanager|agartha-monitoring|
 |identity| Identity and access management |Keycloak| agartha-identity|
 
@@ -91,6 +91,16 @@ cd agartha
 tofu init
 tofu apply -auto-approve
 ```
+
+### Upload example Dagster pipelines
+
+After `tofu apply` completes, the Dagster user code deployment starts with an empty placeholder. To load the example GitHub ETL pipelines (dlt ingestion + Spark processing into Iceberg tables), run the upload script:
+
+```bash
+./examples/dagster/upload.sh
+```
+
+This downloads the MinIO client (if needed), uploads the example code to S3, restarts the pod, and waits for it to become ready. The assets should then be visible in the Dagster UI at `dagster.agartha.<your-host>`.
 
 ### Add local routing
 To make the endpoints accessible we need to setup some customer routing that will redirect us to the minikube IP address. 
